@@ -19,8 +19,15 @@
 
 #include "json_shared.h"
 
-typedef struct json_value json_value_t;
+typedef struct json_value   json_value_t;
+
+typedef struct json_object  json_object_t;
+typedef struct json_array   json_array_t;
+typedef struct json_string  json_string_t;
+typedef struct json_number  json_number_t;
+
 typedef struct json_visitor json_visitor_t;
+
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -30,51 +37,72 @@ struct json_object_field {
    json_value_t *value;
 };
 
-typedef struct json_object {
-   unsigned int         count    (json_object_t *this);
-   json_object_field_t  get_field(json_object_t *this, int i);
-   json_value_t        *get_value(json_object_t *this, char *key);
-   void                 set_value(json_object_t *this, char *key, json_value_t *value);
-   void                 del_value(json_object_t *this, char *key);
-} json_object_t;
+typedef void                 (*json_object_accept_fn   ) (json_object_t *this);
+typedef unsigned int         (*json_object_count_fn    ) (json_object_t *this, json_visitor_t *visitor);
+typedef json_object_field_t  (*json_object_get_field_fn) (json_object_t *this, int i);
+typedef json_value_t        *(*json_object_get_value_fn) (json_object_t *this, char *key);
+typedef void                 (*json_object_set_value_fn) (json_object_t *this, char *key, json_value_t *value);
+typedef void                 (*json_object_del_value_fn) (json_object_t *this, char *key);
+
+struct json_object {
+   json_object_accept_fn    accept   ;
+   json_object_count_fn     count    ;
+   json_object_get_field_fn get_field;
+   json_object_get_value_fn get_value;
+   json_object_set_value_fn set_value;
+   json_object_del_value_fn del_value;
+};
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-typedef struct json_array {
-   unsigned int  count(json_array_t *this);
-   json_value_t *get  (json_array_t *this, int i);
-   void          set  (json_array_t *this, int i, json_value_t *value);
-   void          add  (json_array_t *this,        json_value_t *value);
-   void          del  (json_array_t *this, int i);
-} json_array_t;
+typedef void          (*json_array_accept_fn) (json_array_t *this, json_visitor_t *visitor);
+typedef unsigned int  (*json_array_count_fn ) (json_array_t *this);
+typedef json_value_t *(*json_array_get_fn   ) (json_array_t *this, int i);
+typedef void          (*json_array_set_fn   ) (json_array_t *this, int i, json_value_t *value);
+typedef void          (*json_array_add_fn   ) (json_array_t *this,        json_value_t *value);
+typedef void          (*json_array_del_fn   ) (json_array_t *this, int i);
+
+struct json_array {
+   json_array_accept_fn accept;
+   json_array_count_fn  count ;
+   json_array_get_fn    get   ;
+   json_array_set_fn    set   ;
+   json_array_add_fn    add   ;
+   json_array_del_fn    del   ;
+};
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-typedef struct json_string {
-   char *get(json_string_t *string);
-   void  set(json_string_t *string, char *format, ...);
-} json_string_t;
+typedef void  (*json_string_accept_fn) (json_string_t *this, json_visitor_t *visitor);
+typedef char *(*json_string_get_fn   ) (json_string_t *string);
+typedef void  (*json_string_set_fn   ) (json_string_t *string, char *format, ...);
+
+struct json_string {
+   json_string_accept_fn accept;
+   json_string_get_fn    get   ;
+   json_string_set_fn    set   ;
+};
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-typedef struct json_number {
-   int    is_int   (json_number_t *this);
-   int    to_int   (json_number_t *this);
-   double to_double(json_number_t *this);
-   void   set      (json_number_t *this, int integral, int decimal, int decimal_exp, int exp);
-} json_number_t;
+typedef void   (*json_number_accept_fn   ) (json_number_t *this, json_visitor_t *visitor);
+typedef int    (*json_number_is_int_fn   ) (json_number_t *this);
+typedef int    (*json_number_to_int_fn   ) (json_number_t *this);
+typedef double (*json_number_to_double_fn) (json_number_t *this);
+typedef void   (*json_number_set_fn      ) (json_number_t *this, int integral, int decimal, int decimal_exp, int exp);
+
+struct json_number {
+   json_number_accept_fn    accept   ;
+   json_number_is_int_fn    is_int   ;
+   json_number_to_int_fn    to_int   ;
+   json_number_to_double_fn to_double;
+   json_number_set_fn       set      ;
+};
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 struct json_value {
-   void (*accept)(json_value_t *this);
-
-   union {
-      json_object_t object;
-      json_array_t  array;
-      json_string_t string;
-      json_number_t number;
-   } value;
+   void (*accept) (json_value_t *this, json_visitor_t *visitor);
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -88,9 +116,9 @@ struct json_visitor {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-json_object_t *json_new_object();
-json_array_t  *json_new_array();
-json_string_t *json_new_string();
-json_number_t *json_new_number();
+__PUBLIC__ json_value_t *json_new_object();
+__PUBLIC__ json_value_t *json_new_array();
+__PUBLIC__ json_value_t *json_new_string();
+__PUBLIC__ json_value_t *json_new_number();
 
 #endif /* _YACJP_JSON_VALUE_H_ */

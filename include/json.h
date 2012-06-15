@@ -17,9 +17,9 @@
 #ifndef _YACJP_JSON_H_
 #define _YACJP_JSON_H_
 
+#include "json_shared.h"
 #include "json_stream.h"
 #include "json_value.h"
-#include "json_shared.h"
 
 __PUBLIC__ json_value_t *json_parse(json_stream_t *stream);
 

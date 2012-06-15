@@ -18,4 +18,5 @@
 
 int main() {
    json_value_t value;
+   return 0;
 }
