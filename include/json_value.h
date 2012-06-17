@@ -75,7 +75,7 @@ struct json_array {
 
 typedef void  (*json_string_accept_fn) (json_string_t *this, json_visitor_t *visitor);
 typedef char *(*json_string_get_fn   ) (json_string_t *string);
-typedef void  (*json_string_set_fn   ) (json_string_t *string, char *format, ...);
+typedef void  (*json_string_set_fn   ) (json_string_t *string, char *format, ...) __attribute__((format(printf, 2, 3)));
 
 struct json_string {
    json_string_accept_fn accept;
