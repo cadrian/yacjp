@@ -25,6 +25,7 @@ typedef struct json_object  json_object_t;
 typedef struct json_array   json_array_t;
 typedef struct json_string  json_string_t;
 typedef struct json_number  json_number_t;
+typedef struct json_const   json_const_t;
 
 typedef struct json_visitor json_visitor_t;
 
@@ -109,18 +110,36 @@ struct json_value {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+typedef enum {
+     json_false=0,
+     json_true,
+     json_null,
+} json_const_e;
+
+typedef void         (*json_const_accept_fn) (json_const_t *this, json_visitor_t *visitor);
+typedef json_const_e (*json_const_value_fn ) (json_const_t *this);
+
+struct json_const {
+     json_const_accept_fn accept;
+     json_const_value_fn  value ;
+};
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
 struct json_visitor {
      void (*visit_object) (json_visitor_t *this, json_object_t *visited);
      void (*visit_array)  (json_visitor_t *this, json_array_t  *visited);
      void (*visit_string) (json_visitor_t *this, json_string_t *visited);
      void (*visit_number) (json_visitor_t *this, json_number_t *visited);
+     void (*visit_const)  (json_visitor_t *this, json_const_t  *visited);
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-__PUBLIC__ json_value_t *json_new_object();
-__PUBLIC__ json_value_t *json_new_array();
-__PUBLIC__ json_value_t *json_new_string();
-__PUBLIC__ json_value_t *json_new_number();
+__PUBLIC__ json_object_t *json_new_object();
+__PUBLIC__ json_array_t  *json_new_array();
+__PUBLIC__ json_string_t *json_new_string();
+__PUBLIC__ json_number_t *json_new_number();
+__PUBLIC__ json_const_t  *json_const(json_const_e);
 
 #endif /* _YACJP_JSON_VALUE_H_ */

@@ -58,13 +58,13 @@ static void set(struct json_string_impl *this, char *format, ...) {
      }
 }
 
-__PUBLIC__ json_value_t *json_new_string() {
-     struct json_string_impl *result = (struct json_string_impl *)malloc(sizeof(json_string_t *));
+__PUBLIC__ json_string_t *json_new_string() {
+     struct json_string_impl *result = (struct json_string_impl *)malloc(sizeof(struct json_string_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_string_accept_fn)accept;
      result->fn.get       = (json_string_get_fn   )get;
      result->fn.set       = (json_string_set_fn   )set;
      result->capacity     = 0;
      result->string       = "";
-     return (json_value_t*)result;
+     return (json_string_t*)result;
 }

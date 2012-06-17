@@ -14,10 +14,10 @@ target/libyacjp.so: $(OBJ)
 	ld -shared -o $@ -lm $(OBJ)
 
 target/%.o: src/%.c $(INCLUDE)/*.h
-	$(CC) -fPIC -fvisibility=hidden -I $(INCLUDE) -c $< -o $@
+	$(CC) -g -fPIC -fvisibility=hidden -I $(INCLUDE) -c $< -o $@
 
 target/test: test/test.c
-	$(CC) -I $(INCLUDE) -L target -lyacjp $< -o $@
+	$(CC) -g -I $(INCLUDE) -L target -lyacjp $< -o $@
 
 clean:
 	rm -rf target

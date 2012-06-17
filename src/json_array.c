@@ -36,13 +36,13 @@ static void grow(struct json_array_impl *this) {
      json_value_t **new_values;
      if (this->capacity == 0) {
           new_capacity = 4;
-          new_values = (json_value_t **)malloc(new_capacity * sizeof(json_value_t **));
+          new_values = (json_value_t **)malloc(new_capacity * sizeof(json_value_t*));
      }
      else {
           new_capacity = this->capacity * 2;
-          new_values = (json_value_t **)malloc(new_capacity * sizeof(json_value_t **));
-          memset(new_values + this->capacity, 0, this->capacity);
-          memcpy(new_values, this->values, this->capacity);
+          new_values = (json_value_t **)malloc(new_capacity * sizeof(json_value_t*));
+          memset(new_values + this->capacity, 0, this->capacity * sizeof(json_value_t*));
+          memcpy(new_values, this->values, this->capacity * sizeof(json_value_t*));
           free(this->values);
      }
      this->capacity = new_capacity;
@@ -102,8 +102,8 @@ static void del(struct json_array_impl *this, int index) {
      }
 }
 
-__PUBLIC__ json_value_t *json_new_array() {
-     struct json_array_impl *result = (struct json_array_impl *)malloc(sizeof(json_array_t *));
+__PUBLIC__ json_array_t *json_new_array() {
+     struct json_array_impl *result = (struct json_array_impl *)malloc(sizeof(struct json_array_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_array_accept_fn)accept;
      result->fn.count     = (json_array_count_fn )count ;
@@ -115,5 +115,5 @@ __PUBLIC__ json_value_t *json_new_array() {
      result->capacity     = 0;
      result->count        = 0;
      result->values       = NULL;
-     return (json_value_t*)result;
+     return (json_array_t*)result;
 }

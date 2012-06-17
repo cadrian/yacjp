@@ -57,8 +57,8 @@ static void set(struct json_number_impl *this, int i, int d, int dx, int x) {
      this->exponent = x;
 }
 
-__PUBLIC__ json_value_t *json_new_number() {
-     struct json_number_impl *result = (struct json_number_impl *)malloc(sizeof(json_number_t *));
+__PUBLIC__ json_number_t *json_new_number() {
+     struct json_number_impl *result = (struct json_number_impl *)malloc(sizeof(struct json_number_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_number_accept_fn   )accept;
      result->fn.is_int    = (json_number_is_int_fn   )is_int;
@@ -66,5 +66,5 @@ __PUBLIC__ json_value_t *json_new_number() {
      result->fn.to_double = (json_number_to_double_fn)to_double;
      result->fn.set       = (json_number_set_fn      )set;
      set(result, 0, 0, 0, 0);
-     return (json_value_t*)result;
+     return (json_number_t*)result;
 }

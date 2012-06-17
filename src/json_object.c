@@ -73,15 +73,15 @@ static void grow(struct json_object_impl *this) {
      int new_capacity;
      json_object_field_t field;
      int i, index;
-     if (this->capacity = 0) {
+     if (this->capacity == 0) {
           new_capacity = 4;
-          new_fields = (json_object_field_t *)malloc(new_capacity * sizeof(json_object_field_t *));
-          memset(new_fields, 0, new_capacity * sizeof(json_object_field_t *));
+          new_fields = (json_object_field_t *)malloc(new_capacity * sizeof(json_object_field_t));
+          memset(new_fields, 0, new_capacity * sizeof(json_object_field_t));
      }
      else {
           new_capacity = this->capacity * 2;
-          new_fields = (json_object_field_t *)malloc(new_capacity * sizeof(json_object_field_t *));
-          memset(new_fields, 0, new_capacity * sizeof(json_object_field_t *));
+          new_fields = (json_object_field_t *)malloc(new_capacity * sizeof(json_object_field_t));
+          memset(new_fields, 0, new_capacity * sizeof(json_object_field_t));
           for (i = 0; i < this->capacity; i++) {
                field = this->fields[i];
                if (field.key) {
@@ -113,7 +113,7 @@ static json_object_field_t get_field(struct json_object_impl *this, int index) {
                i++;
           } while (i < this->capacity && !this->fields[i].key);
      }
-     if (i < this->capacity) {
+     if (i >= 0 && i < this->capacity) {
           result = this->fields[i];
      }
      return result;
@@ -129,9 +129,9 @@ static json_value_t *get_value(struct json_object_impl *this, const char *key) {
 }
 
 static void set_value(struct json_object_impl *this, const char *key, json_value_t *value) {
-     int index = index_of(this->fields, this->capacity, key);
+     int index = this->capacity == 0 ? -1 : index_of(this->fields, this->capacity, key);
      if (index < 0) {
-          if (this->count * 3 > this->capacity * 2) {
+          if (this->count * 3 >= this->capacity * 2) {
                grow(this);
                index = index_of(this->fields, this->capacity, key);
           }
@@ -151,8 +151,8 @@ static void del_value(struct json_object_impl *this, const char *key) {
      }
 }
 
-__PUBLIC__ json_value_t *json_new_object() {
-     struct json_object_impl *result = (struct json_object_impl *)malloc(sizeof(json_object_t *));
+__PUBLIC__ json_object_t *json_new_object() {
+     struct json_object_impl *result = (struct json_object_impl *)malloc(sizeof(struct json_object_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_object_accept_fn   )accept   ;
      result->fn.count     = (json_object_count_fn    )count    ;
@@ -165,5 +165,5 @@ __PUBLIC__ json_value_t *json_new_object() {
      result->fields       = NULL;
      result->last_index = -1;
      result->last_field = -1;
-     return (json_value_t*)result;
+     return (json_object_t*)result;
 }
