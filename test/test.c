@@ -21,9 +21,9 @@ int main() {
      json_value_t *v;
      json_value_t *t = (json_value_t*)json_const(json_true);
      value->set_value(value, "foo", t);
-     if (strcmp("foo", value->get_field(value, 0).key)) return 1;
-     if (value->get_field(value, 0).value != t) return 2;
      v = value->get_value(value, "foo");
-     if (v != t) return 3;
+     if (v != t) return 1;
+     if (strcmp("foo", value->get_field(value, 0).key)) return 2;
+     if (value->get_field(value, 0).value != t) return 3;
      return 0;
 }

@@ -107,7 +107,7 @@ static json_object_field_t get_field(struct json_object_impl *this, int index) {
           this->last_field = -1;
      }
      i = this->last_field;
-     while (this->last_index < index) {
+     while (this->last_index < index && i < this->capacity) {
           this->last_index++;
           do {
                i++;
@@ -115,6 +115,7 @@ static json_object_field_t get_field(struct json_object_impl *this, int index) {
      }
      if (i >= 0 && i < this->capacity) {
           result = this->fields[i];
+          this->last_field = i;
      }
      return result;
 }
@@ -138,6 +139,8 @@ static void set_value(struct json_object_impl *this, const char *key, json_value
           index = -index - 1;
           this->fields[index].key = key;
           this->count++;
+          this->last_index = -1;
+          this->last_field = -1;
      }
      this->fields[index].value = value;
 }
@@ -148,6 +151,8 @@ static void del_value(struct json_object_impl *this, const char *key) {
           this->fields[index].key   = NULL;
           this->fields[index].value = NULL;
           this->count--;
+          this->last_index = -1;
+          this->last_field = -1;
      }
 }
 
