@@ -15,6 +15,7 @@
 */
 
 #include <stdlib.h>
+#include <math.h>
 
 #include "json_value.h"
 
@@ -38,15 +39,15 @@ static int is_int(struct json_number_impl *this) {
 static int to_int(struct json_number_impl *this) {
      int sign = this->integral;
      if (sign) sign = sign > 0 ? 1 : -1;
-     return this->integral * 10 ^ this->exponent
-          + sign * this->decimal * 10 ^ (this->exponent - this->decimal_exp);
+     return this->integral * pow(10, this->exponent)
+          + sign * this->decimal * pow(10, (this->exponent - this->decimal_exp));
 }
 
 static double to_double(struct json_number_impl *this) {
      int sign = this->integral;
      if (sign) sign = sign > 0 ? 1 : -1;
-     return (double)this->integral * 10.0 ^ this->exponent
-          + sign * (double)this->decimal / 10.0 ^ (this->decimal_exp - this->exponent);
+     return (double)this->integral * pow(10, this->exponent)
+          + sign * (double)this->decimal / pow(10, (this->decimal_exp - this->exponent));
 }
 
 static void set(struct json_number_impl *this, int i, int d, int dx, int x) {

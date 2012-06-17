@@ -11,7 +11,7 @@ target:
 	test -d target || mkdir target
 
 target/libyacjp.so: $(OBJ)
-	ld -shared -o $@ $(OBJ)
+	ld -shared -o $@ -lm $(OBJ)
 
 target/%.o: src/%.c $(INCLUDE)/*.h
 	$(CC) -fPIC -fvisibility=hidden -I $(INCLUDE) -c $< -o $@

@@ -33,16 +33,16 @@ typedef struct json_visitor json_visitor_t;
 
 typedef struct json_object_field json_object_field_t;
 struct json_object_field {
-   char *key;
+   const char *key;
    json_value_t *value;
 };
 
-typedef void                 (*json_object_accept_fn   ) (json_object_t *this);
-typedef unsigned int         (*json_object_count_fn    ) (json_object_t *this, json_visitor_t *visitor);
-typedef json_object_field_t  (*json_object_get_field_fn) (json_object_t *this, int i);
-typedef json_value_t        *(*json_object_get_value_fn) (json_object_t *this, char *key);
-typedef void                 (*json_object_set_value_fn) (json_object_t *this, char *key, json_value_t *value);
-typedef void                 (*json_object_del_value_fn) (json_object_t *this, char *key);
+typedef void                 (*json_object_accept_fn   ) (json_object_t *this, json_visitor_t *visitor);
+typedef unsigned int         (*json_object_count_fn    ) (json_object_t *this);
+typedef json_object_field_t  (*json_object_get_field_fn) (json_object_t *this, int index);
+typedef json_value_t        *(*json_object_get_value_fn) (json_object_t *this, const char *key);
+typedef void                 (*json_object_set_value_fn) (json_object_t *this, const char *key, json_value_t *value);
+typedef void                 (*json_object_del_value_fn) (json_object_t *this, const char *key);
 
 struct json_object {
    json_object_accept_fn    accept   ;

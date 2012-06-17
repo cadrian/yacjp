@@ -15,6 +15,7 @@
 */
 
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "json_value.h"
 
@@ -33,7 +34,7 @@ static char *get(struct json_string_impl *this) {
      return this->string;
 }
 
-static void set(struct json_string_impl *this, char *format, ...) __attribute__((format(printf, 2, 3))) {
+static void set(struct json_string_impl *this, char *format, ...) {
      va_list args;
      int c = this->capacity;
      int n;
