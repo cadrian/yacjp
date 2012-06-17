@@ -89,6 +89,7 @@ static void grow(struct json_object_impl *this) {
                     new_fields[index] = field;
                }
           }
+          free(this->fields);
      }
      this->capacity = new_capacity;
      this->fields = new_fields;
