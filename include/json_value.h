@@ -147,10 +147,10 @@ struct json_visitor {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-__PUBLIC__ json_object_t *json_new_object();
-__PUBLIC__ json_array_t  *json_new_array();
-__PUBLIC__ json_string_t *json_new_string();
-__PUBLIC__ json_number_t *json_new_number();
-__PUBLIC__ json_const_t  *json_const(json_const_e);
+__PUBLIC__ json_object_t *json_new_object(json_memory_t memory);
+__PUBLIC__ json_array_t  *json_new_array (json_memory_t memory);
+__PUBLIC__ json_string_t *json_new_string(json_memory_t memory);
+__PUBLIC__ json_number_t *json_new_number(json_memory_t memory);
+__PUBLIC__ json_const_t  *json_const(json_const_e value);
 
 #endif /* _YACJP_JSON_VALUE_H_ */

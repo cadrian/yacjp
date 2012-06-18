@@ -14,7 +14,6 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
 #include <string.h>
 
 #include "json_value.h"
@@ -25,6 +24,7 @@
 
 struct json_object_impl {
      struct json_object fn;
+     json_memory_t memory;
 
      int capacity;
      int count;
@@ -75,12 +75,12 @@ static void grow(struct json_object_impl *this) {
      int i, index;
      if (this->capacity == 0) {
           new_capacity = 4;
-          new_fields = (json_object_field_t *)malloc(new_capacity * sizeof(json_object_field_t));
+          new_fields = (json_object_field_t *)this->memory.malloc(new_capacity * sizeof(json_object_field_t));
           memset(new_fields, 0, new_capacity * sizeof(json_object_field_t));
      }
      else {
           new_capacity = this->capacity * 2;
-          new_fields = (json_object_field_t *)malloc(new_capacity * sizeof(json_object_field_t));
+          new_fields = (json_object_field_t *)this->memory.malloc(new_capacity * sizeof(json_object_field_t));
           memset(new_fields, 0, new_capacity * sizeof(json_object_field_t));
           for (i = 0; i < this->capacity; i++) {
                field = this->fields[i];
@@ -89,7 +89,7 @@ static void grow(struct json_object_impl *this) {
                     new_fields[index] = field;
                }
           }
-          free(this->fields);
+          this->memory.free(this->fields);
      }
      this->capacity = new_capacity;
      this->fields = new_fields;
@@ -137,7 +137,8 @@ static void set_value(struct json_object_impl *this, const char *key, json_value
                index = index_of(this->fields, this->capacity, key);
           }
           index = -index - 1;
-          this->fields[index].key = key;
+          this->fields[index].key = this->memory.malloc(strlen(key)+1);
+          strcpy((char*)this->fields[index].key, key);
           this->count++;
           this->last_index = -1;
           this->last_field = -1;
@@ -148,6 +149,7 @@ static void set_value(struct json_object_impl *this, const char *key, json_value
 static void del_value(struct json_object_impl *this, const char *key) {
      int index = index_of(this->fields, this->capacity, key);
      if (index >= 0) {
+          this->memory.free((char*)this->fields[index].key);
           this->fields[index].key   = NULL;
           this->fields[index].value = NULL;
           this->count--;
@@ -157,12 +159,12 @@ static void del_value(struct json_object_impl *this, const char *key) {
 }
 
 static void free_(struct json_object_impl *this) {
-     if (this->fields) free(this->fields);
-     free(this);
+     if (this->fields) this->memory.free(this->fields);
+     this->memory.free(this);
 }
 
-__PUBLIC__ json_object_t *json_new_object() {
-     struct json_object_impl *result = (struct json_object_impl *)malloc(sizeof(struct json_object_impl));
+__PUBLIC__ json_object_t *json_new_object(json_memory_t memory) {
+     struct json_object_impl *result = (struct json_object_impl *)memory.malloc(sizeof(struct json_object_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_object_accept_fn   )accept   ;
      result->fn.free      = (json_object_free_fn     )free_    ;
@@ -171,6 +173,7 @@ __PUBLIC__ json_object_t *json_new_object() {
      result->fn.get_value = (json_object_get_value_fn)get_value;
      result->fn.set_value = (json_object_set_value_fn)set_value;
      result->fn.del_value = (json_object_del_value_fn)del_value;
+     result->memory       = memory;
      result->capacity     = 0;
      result->count        = 0;
      result->fields       = NULL;

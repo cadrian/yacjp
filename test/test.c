@@ -28,7 +28,7 @@ static void assert_(int test, const char *message, int line, const char *file) {
 #define assert(t) assert_((t), #t, __LINE__, __FILE__)
 
 int main() {
-     json_object_t *value = json_new_object();
+     json_object_t *value = json_new_object(stdlib_memory);
      json_value_t *v;
      json_value_t *t = (json_value_t*)json_const(json_true);
      json_value_t *f = (json_value_t*)json_const(json_false);

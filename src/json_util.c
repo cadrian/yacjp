@@ -16,6 +16,10 @@
 
 #include "json_value.h"
 
+__PUBLIC__ json_memory_t stdlib_memory = {
+     malloc, free
+};
+
 static void kill_object(json_visitor_t *this, json_object_t *visited) {
      json_object_field_t field;
      while (visited->count(visited) > 0) {

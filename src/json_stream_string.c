@@ -18,6 +18,8 @@
 
 struct json_stream_string {
      struct json_stream fn;
+     json_memory_t memory;
+
      char *string;
      int index;
 };
@@ -34,12 +36,13 @@ static int item(struct json_stream_string *this) {
      return result ? result : EOF;
 }
 
-__PUBLIC__ json_stream_t *new_json_stream_from_string(char *string) {
-     struct json_stream_string *result = (struct json_stream_string *)malloc(sizeof(struct json_stream_string));
+__PUBLIC__ json_stream_t *new_json_stream_from_string(char *string, json_memory_t memory) {
+     struct json_stream_string *result = (struct json_stream_string *)memory.malloc(sizeof(struct json_stream_string));
      if (!result) return NULL;
      result->fn.next = (next_fn)next;
      result->fn.item = (item_fn)item;
-     result->string = string;
-     result->index = 0;
+     result->memory  = memory;
+     result->string  = string;
+     result->index   = 0;
      return &(result->fn);
 }

@@ -1,5 +1,5 @@
 /*
-  This file is part of YACJP.
+  This file is part of YacJP.
 
   YacJP is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -14,13 +14,13 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
 #include <string.h>
 
 #include "json_value.h"
 
 struct json_array_impl {
      struct json_array fn;
+     json_memory_t memory;
 
      int capacity;
      int count;
@@ -36,14 +36,14 @@ static void grow(struct json_array_impl *this) {
      json_value_t **new_values;
      if (this->capacity == 0) {
           new_capacity = 4;
-          new_values = (json_value_t **)malloc(new_capacity * sizeof(json_value_t*));
+          new_values = (json_value_t **)this->memory.malloc(new_capacity * sizeof(json_value_t*));
      }
      else {
           new_capacity = this->capacity * 2;
-          new_values = (json_value_t **)malloc(new_capacity * sizeof(json_value_t*));
+          new_values = (json_value_t **)this->memory.malloc(new_capacity * sizeof(json_value_t*));
           memset(new_values + this->capacity, 0, this->capacity * sizeof(json_value_t*));
           memcpy(new_values, this->values, this->capacity * sizeof(json_value_t*));
-          free(this->values);
+          this->memory.free(this->values);
      }
      this->capacity = new_capacity;
      this->values = new_values;
@@ -103,12 +103,12 @@ static void del(struct json_array_impl *this, int index) {
 }
 
 static void free_(struct json_array_impl *this) {
-     if (this->values) free(this->values);
-     free(this);
+     if (this->values) this->memory.free(this->values);
+     this->memory.free(this);
 }
 
-__PUBLIC__ json_array_t *json_new_array() {
-     struct json_array_impl *result = (struct json_array_impl *)malloc(sizeof(struct json_array_impl));
+__PUBLIC__ json_array_t *json_new_array(json_memory_t memory) {
+     struct json_array_impl *result = (struct json_array_impl *)memory.malloc(sizeof(struct json_array_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_array_accept_fn)accept;
      result->fn.free      = (json_array_free_fn  )free_ ;
@@ -118,6 +118,7 @@ __PUBLIC__ json_array_t *json_new_array() {
      result->fn.ins       = (json_array_set_fn   )ins   ;
      result->fn.add       = (json_array_add_fn   )add   ;
      result->fn.del       = (json_array_del_fn   )del   ;
+     result->memory       = memory;
      result->capacity     = 0;
      result->count        = 0;
      result->values       = NULL;

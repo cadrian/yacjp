@@ -14,13 +14,13 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
 #include <stdarg.h>
 
 #include "json_value.h"
 
 struct json_string_impl {
      struct json_string fn;
+     json_memory_t memory;
 
      int capacity;
      char *string;
@@ -48,12 +48,12 @@ static void set(struct json_string_impl *this, char *format, ...) {
                do {
                     c *= 2;
                } while (n >= c);
-               this->string = realloc(this->string, c);
+               this->memory.free(this->string);
           }
           else {
                c = 4;
-               this->string = malloc(c);
           }
+          this->string = this->memory.malloc(c);
           this->capacity = c;
           va_start(args, format);
           vsnprintf(this->string, c, format, args);
@@ -62,17 +62,18 @@ static void set(struct json_string_impl *this, char *format, ...) {
 }
 
 static void free_(struct json_string_impl *this) {
-     if (this->string) free(this->string);
-     free(this);
+     if (this->string) this->memory.free(this->string);
+     this->memory.free(this);
 }
 
-__PUBLIC__ json_string_t *json_new_string() {
-     struct json_string_impl *result = (struct json_string_impl *)malloc(sizeof(struct json_string_impl));
+__PUBLIC__ json_string_t *json_new_string(json_memory_t memory) {
+     struct json_string_impl *result = (struct json_string_impl *)memory.malloc(sizeof(struct json_string_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_string_accept_fn)accept;
      result->fn.free      = (json_string_free_fn  )free_ ;
      result->fn.get       = (json_string_get_fn   )get   ;
      result->fn.set       = (json_string_set_fn   )set   ;
+     result->memory       = memory;
      result->capacity     = 0;
      result->string       = NULL;
      return (json_string_t*)result;

@@ -23,7 +23,7 @@
 
 typedef void (*json_on_error_fn)(json_stream_t *stream, int line, int column, const char *format, ...);
 
-__PUBLIC__ json_value_t *json_parse(json_stream_t *stream, json_on_error_fn on_error);
+__PUBLIC__ json_value_t *json_parse(json_stream_t *stream, json_on_error_fn on_error, json_memory_t memory);
 __PUBLIC__ json_visitor_t *json_kill();
 
 #endif /* _YACJP_JSON_H_ */

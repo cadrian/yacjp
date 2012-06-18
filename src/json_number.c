@@ -14,13 +14,13 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
 #include <math.h>
 
 #include "json_value.h"
 
 struct json_number_impl {
      struct json_number fn;
+     json_memory_t memory;
 
      int integral;
      int decimal;
@@ -58,11 +58,11 @@ static void set(struct json_number_impl *this, int i, int d, int dx, int x) {
 }
 
 static void free_(struct json_number_impl *this) {
-     free(this);
+     this->memory.free(this);
 }
 
-__PUBLIC__ json_number_t *json_new_number() {
-     struct json_number_impl *result = (struct json_number_impl *)malloc(sizeof(struct json_number_impl));
+__PUBLIC__ json_number_t *json_new_number(json_memory_t memory) {
+     struct json_number_impl *result = (struct json_number_impl *)memory.malloc(sizeof(struct json_number_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_number_accept_fn   )accept;
      result->fn.free      = (json_number_free_fn     )free_ ;
@@ -70,6 +70,7 @@ __PUBLIC__ json_number_t *json_new_number() {
      result->fn.to_int    = (json_number_to_int_fn   )to_int;
      result->fn.to_double = (json_number_to_double_fn)to_double;
      result->fn.set       = (json_number_set_fn      )set;
+     result->memory       = memory;
      set(result, 0, 0, 0, 0);
      return (json_number_t*)result;
 }

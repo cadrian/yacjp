@@ -20,6 +20,8 @@
 
 struct json_stream_file {
      struct json_stream fn;
+     json_memory_t memory;
+
      FILE *file;
      char buffer[BUFFER_SIZE];
      int max;
@@ -50,13 +52,14 @@ static int item(struct json_stream_file *this) {
      return this->buffer[this->index];
 }
 
-__PUBLIC__ json_stream_t *new_json_stream_from_file(FILE *file) {
-     struct json_stream_file *result = (struct json_stream_file *)malloc(sizeof(struct json_stream_file));
+__PUBLIC__ json_stream_t *new_json_stream_from_file(FILE *file, json_memory_t memory) {
+     struct json_stream_file *result = (struct json_stream_file *)memory.malloc(sizeof(struct json_stream_file));
      if (!result) return NULL;
      result->fn.next = (next_fn)next;
      result->fn.item = (item_fn)item;
-     result->file = file;
-     result->max = fread(result->buffer, sizeof(char), BUFFER_SIZE, file);
-     result->index = 0;
+     result->memory  = memory;
+     result->file    = file;
+     result->max     = fread(result->buffer, sizeof(char), BUFFER_SIZE, file);
+     result->index   = 0;
      return &(result->fn);
 }

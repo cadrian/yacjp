@@ -17,7 +17,6 @@
 #ifndef _YACJP_JSON_STREAM_H_
 #define _YACJP_JSON_STREAM_H_
 
-#include <stdlib.h>
 #include <stdio.h>
 
 #include "json_shared.h"
@@ -32,8 +31,8 @@ struct json_stream {
    item_fn item;
 };
 
-__PUBLIC__ json_stream_t *new_json_stream_from_string(char *string);
-__PUBLIC__ json_stream_t *new_json_stream_from_file(FILE *file);
-__PUBLIC__ json_stream_t *new_json_stream_from_file_description(int fd);
+__PUBLIC__ json_stream_t *new_json_stream_from_string          (char *string, json_memory_t memory);
+__PUBLIC__ json_stream_t *new_json_stream_from_file            (FILE *file,   json_memory_t memory);
+__PUBLIC__ json_stream_t *new_json_stream_from_file_description(int fd,       json_memory_t memory);
 
 #endif /* _YACJP_JSON_STREAM_H_ */
