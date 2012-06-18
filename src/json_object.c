@@ -156,10 +156,16 @@ static void del_value(struct json_object_impl *this, const char *key) {
      }
 }
 
+static void free_(struct json_object_impl *this) {
+     if (this->fields) free(this->fields);
+     free(this);
+}
+
 __PUBLIC__ json_object_t *json_new_object() {
      struct json_object_impl *result = (struct json_object_impl *)malloc(sizeof(struct json_object_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_object_accept_fn   )accept   ;
+     result->fn.free      = (json_object_free_fn     )free_    ;
      result->fn.count     = (json_object_count_fn    )count    ;
      result->fn.get_field = (json_object_get_field_fn)get_field;
      result->fn.get_value = (json_object_get_value_fn)get_value;

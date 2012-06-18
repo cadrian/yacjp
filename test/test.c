@@ -65,5 +65,7 @@ int main() {
      assert(!strcmp("foo", value->get_field(value, 0).key));
      assert(value->get_field(value, 0).value == n);
 
+     value->accept(value, json_kill());
+
      return 0;
 }

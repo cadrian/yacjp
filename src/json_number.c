@@ -57,10 +57,15 @@ static void set(struct json_number_impl *this, int i, int d, int dx, int x) {
      this->exponent = x;
 }
 
+static void free_(struct json_number_impl *this) {
+     free(this);
+}
+
 __PUBLIC__ json_number_t *json_new_number() {
      struct json_number_impl *result = (struct json_number_impl *)malloc(sizeof(struct json_number_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_number_accept_fn   )accept;
+     result->fn.free      = (json_number_free_fn     )free_ ;
      result->fn.is_int    = (json_number_is_int_fn   )is_int;
      result->fn.to_int    = (json_number_to_int_fn   )to_int;
      result->fn.to_double = (json_number_to_double_fn)to_double;

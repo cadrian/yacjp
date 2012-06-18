@@ -102,10 +102,16 @@ static void del(struct json_array_impl *this, int index) {
      }
 }
 
+static void free_(struct json_array_impl *this) {
+     if (this->values) free(this->values);
+     free(this);
+}
+
 __PUBLIC__ json_array_t *json_new_array() {
      struct json_array_impl *result = (struct json_array_impl *)malloc(sizeof(struct json_array_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_array_accept_fn)accept;
+     result->fn.free      = (json_array_free_fn  )free_ ;
      result->fn.count     = (json_array_count_fn )count ;
      result->fn.get       = (json_array_get_fn   )get   ;
      result->fn.set       = (json_array_set_fn   )set   ;

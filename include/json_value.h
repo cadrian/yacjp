@@ -39,6 +39,7 @@ struct json_object_field {
 };
 
 typedef void                 (*json_object_accept_fn   ) (json_object_t *this, json_visitor_t *visitor);
+typedef void                 (*json_object_free_fn     ) (json_object_t *this);
 typedef unsigned int         (*json_object_count_fn    ) (json_object_t *this);
 typedef json_object_field_t  (*json_object_get_field_fn) (json_object_t *this, int index);
 typedef json_value_t        *(*json_object_get_value_fn) (json_object_t *this, const char *key);
@@ -47,6 +48,7 @@ typedef void                 (*json_object_del_value_fn) (json_object_t *this, c
 
 struct json_object {
      json_object_accept_fn    accept   ;
+     json_object_free_fn      free     ;
      json_object_count_fn     count    ;
      json_object_get_field_fn get_field;
      json_object_get_value_fn get_value;
@@ -57,6 +59,7 @@ struct json_object {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 typedef void          (*json_array_accept_fn) (json_array_t *this, json_visitor_t *visitor);
+typedef void          (*json_array_free_fn  ) (json_array_t *this);
 typedef unsigned int  (*json_array_count_fn ) (json_array_t *this);
 typedef json_value_t *(*json_array_get_fn   ) (json_array_t *this, int index);
 typedef void          (*json_array_set_fn   ) (json_array_t *this, int index, json_value_t *value);
@@ -66,6 +69,7 @@ typedef void          (*json_array_del_fn   ) (json_array_t *this, int index);
 
 struct json_array {
      json_array_accept_fn accept;
+     json_array_free_fn   free  ;
      json_array_count_fn  count ;
      json_array_get_fn    get   ;
      json_array_set_fn    set   ;
@@ -77,11 +81,13 @@ struct json_array {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 typedef void  (*json_string_accept_fn) (json_string_t *this, json_visitor_t *visitor);
-typedef char *(*json_string_get_fn   ) (json_string_t *string);
-typedef void  (*json_string_set_fn   ) (json_string_t *string, char *format, ...) __attribute__((format(printf, 2, 3)));
+typedef void  (*json_string_free_fn  ) (json_string_t *this);
+typedef char *(*json_string_get_fn   ) (json_string_t *this);
+typedef void  (*json_string_set_fn   ) (json_string_t *this, char *format, ...) __attribute__((format(printf, 2, 3)));
 
 struct json_string {
      json_string_accept_fn accept;
+     json_string_free_fn   free  ;
      json_string_get_fn    get   ;
      json_string_set_fn    set   ;
 };
@@ -89,6 +95,7 @@ struct json_string {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 typedef void   (*json_number_accept_fn   ) (json_number_t *this, json_visitor_t *visitor);
+typedef void   (*json_number_free_fn     ) (json_number_t *this);
 typedef int    (*json_number_is_int_fn   ) (json_number_t *this);
 typedef int    (*json_number_to_int_fn   ) (json_number_t *this);
 typedef double (*json_number_to_double_fn) (json_number_t *this);
@@ -96,16 +103,11 @@ typedef void   (*json_number_set_fn      ) (json_number_t *this, int integral, i
 
 struct json_number {
      json_number_accept_fn    accept   ;
+     json_number_free_fn      free     ;
      json_number_is_int_fn    is_int   ;
      json_number_to_int_fn    to_int   ;
      json_number_to_double_fn to_double;
      json_number_set_fn       set      ;
-};
-
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-struct json_value {
-     void (*accept) (json_value_t *this, json_visitor_t *visitor);
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -117,11 +119,20 @@ typedef enum {
 } json_const_e;
 
 typedef void         (*json_const_accept_fn) (json_const_t *this, json_visitor_t *visitor);
+typedef void         (*json_const_free_fn  ) (json_const_t *this);
 typedef json_const_e (*json_const_value_fn ) (json_const_t *this);
 
 struct json_const {
      json_const_accept_fn accept;
+     json_const_free_fn   free  ;
      json_const_value_fn  value ;
+};
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+struct json_value {
+     void (*accept) (json_value_t *this, json_visitor_t *visitor);
+     void (*free)   (json_value_t *this);
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

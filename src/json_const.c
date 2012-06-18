@@ -33,10 +33,14 @@ static json_const_e value(struct json_const_impl *this) {
      return this->value;
 }
 
+static void free_(struct json_const_impl *this) {
+     /* nothing */
+}
+
 struct json_const_impl _json_const[] = {
-     {{(json_const_accept_fn)accept, (json_const_value_fn )value}, json_false},
-     {{(json_const_accept_fn)accept, (json_const_value_fn )value}, json_true },
-     {{(json_const_accept_fn)accept, (json_const_value_fn )value}, json_null },
+     {{(json_const_accept_fn)accept, (json_const_free_fn)free_, (json_const_value_fn )value}, json_false},
+     {{(json_const_accept_fn)accept, (json_const_free_fn)free_, (json_const_value_fn )value}, json_true },
+     {{(json_const_accept_fn)accept, (json_const_free_fn)free_, (json_const_value_fn )value}, json_null },
 };
 
 __PUBLIC__ json_const_t *json_const(json_const_e value) {

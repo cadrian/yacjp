@@ -40,17 +40,20 @@ static void set(struct json_string_impl *this, char *format, ...) {
      int n;
 
      va_start(args, format);
-     n = vsnprintf(this->string, c, format, args);
+     n = vsnprintf(c ? this->string : "", c, format, args);
      va_end(args);
 
      if (n >= c) {
-          if (c == 0) {
-               c = 4;
+          if (c) {
+               do {
+                    c *= 2;
+               } while (n >= c);
+               this->string = realloc(this->string, c);
           }
-          do {
-               c *= 2;
-          } while (n >= c);
-          this->string = realloc(this->string, c);
+          else {
+               c = 4;
+               this->string = malloc(c);
+          }
           this->capacity = c;
           va_start(args, format);
           vsnprintf(this->string, c, format, args);
@@ -58,13 +61,19 @@ static void set(struct json_string_impl *this, char *format, ...) {
      }
 }
 
+static void free_(struct json_string_impl *this) {
+     if (this->string) free(this->string);
+     free(this);
+}
+
 __PUBLIC__ json_string_t *json_new_string() {
      struct json_string_impl *result = (struct json_string_impl *)malloc(sizeof(struct json_string_impl));
      if (!result) return NULL;
      result->fn.accept    = (json_string_accept_fn)accept;
-     result->fn.get       = (json_string_get_fn   )get;
-     result->fn.set       = (json_string_set_fn   )set;
+     result->fn.free      = (json_string_free_fn  )free_ ;
+     result->fn.get       = (json_string_get_fn   )get   ;
+     result->fn.set       = (json_string_set_fn   )set   ;
      result->capacity     = 0;
-     result->string       = "";
+     result->string       = NULL;
      return (json_string_t*)result;
 }
