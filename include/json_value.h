@@ -38,22 +38,22 @@ struct json_object_field {
      json_value_t *value;
 };
 
-typedef void                 (*json_object_accept_fn   ) (json_object_t *this, json_visitor_t *visitor);
-typedef void                 (*json_object_free_fn     ) (json_object_t *this);
-typedef unsigned int         (*json_object_count_fn    ) (json_object_t *this);
-typedef json_object_field_t  (*json_object_get_field_fn) (json_object_t *this, int index);
-typedef json_value_t        *(*json_object_get_value_fn) (json_object_t *this, const char *key);
-typedef void                 (*json_object_set_value_fn) (json_object_t *this, const char *key, json_value_t *value);
-typedef void                 (*json_object_del_value_fn) (json_object_t *this, const char *key);
+typedef void                 (*json_object_accept_fn) (json_object_t *this, json_visitor_t *visitor);
+typedef void                 (*json_object_free_fn  ) (json_object_t *this);
+typedef unsigned int         (*json_object_count_fn ) (json_object_t *this);
+typedef void                 (*json_object_keys_fn  ) (json_object_t *this, const char **keys);
+typedef json_value_t        *(*json_object_get_fn   ) (json_object_t *this, const char *key);
+typedef json_value_t        *(*json_object_set_fn   ) (json_object_t *this, const char *key, json_value_t *value);
+typedef json_value_t        *(*json_object_del_fn   ) (json_object_t *this, const char *key);
 
 struct json_object {
-     json_object_accept_fn    accept   ;
-     json_object_free_fn      free     ;
-     json_object_count_fn     count    ;
-     json_object_get_field_fn get_field;
-     json_object_get_value_fn get_value;
-     json_object_set_value_fn set_value;
-     json_object_del_value_fn del_value;
+     json_object_accept_fn accept;
+     json_object_free_fn   free  ;
+     json_object_count_fn  count ;
+     json_object_keys_fn   keys  ;
+     json_object_get_fn    get   ;
+     json_object_set_fn    set   ;
+     json_object_del_fn    del   ;
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

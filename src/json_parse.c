@@ -142,7 +142,7 @@ static json_object_t *parse_object(struct json_parse_context *context) {
           else {
                key = parse_string(context);
                if (key) {
-                    if (result->get_value(result, key->get(key))) {
+                    if (result->get(result, key->get(key))) {
                          err = 1;
                          error(context, "Duplicate key: '%s'", key->get(key));
                     }
@@ -158,7 +158,7 @@ static json_object_t *parse_object(struct json_parse_context *context) {
                               err = 1;
                          }
                          else {
-                              result->set_value(result, key->get(key), value);
+                              result->set(result, key->get(key), value);
                               key->free(key);
                               skip_blanks(context);
                               switch(item(context)) {

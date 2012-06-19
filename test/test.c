@@ -33,37 +33,49 @@ int main() {
      json_value_t *t = (json_value_t*)json_const(json_true);
      json_value_t *f = (json_value_t*)json_const(json_false);
      json_value_t *n = (json_value_t*)json_const(json_null);
+     const char *keys[2];
 
      assert(value->count(value) == 0);
 
-     value->set_value(value, "foo", t);
+     value->set(value, "foo", t);
      assert(value->count(value) == 1);
-     v = value->get_value(value, "foo");
+     v = value->get(value, "foo");
      assert(v == t);
-     assert(!strcmp("foo", value->get_field(value, 0).key));
-     assert(value->get_field(value, 0).value == t);
+     keys[0] = keys[1] = NULL;
+     value->keys(value, keys);
+     assert(!strcmp("foo", keys[0]));
+     assert(keys[1] == NULL);
 
-     value->set_value(value, "bar", f);
+     value->set(value, "bar", f);
      assert(value->count(value) == 2);
-     v = value->get_value(value, "bar");
+     v = value->get(value, "bar");
      assert(v == f);
-     assert(!strcmp("bar", value->get_field(value, 1).key));
-     assert(value->get_field(value, 1).value == f);
-     v = value->get_value(value, "foo");
+     v = value->get(value, "foo");
      assert(v == t);
-     assert(!strcmp("foo", value->get_field(value, 0).key));
-     assert(value->get_field(value, 0).value == t);
+     keys[0] = keys[1] = NULL;
+     value->keys(value, keys);
+     assert(!strcmp("foo", keys[0]));
+     assert(!strcmp("bar", keys[1]));
 
-     value->set_value(value, "foo", n);
+     value->set(value, "foo", n);
      assert(value->count(value) == 2);
-     v = value->get_value(value, "bar");
+     v = value->get(value, "bar");
      assert(v == f);
-     assert(!strcmp("bar", value->get_field(value, 1).key));
-     assert(value->get_field(value, 1).value == f);
-     v = value->get_value(value, "foo");
+     v = value->get(value, "foo");
      assert(v == n);
-     assert(!strcmp("foo", value->get_field(value, 0).key));
-     assert(value->get_field(value, 0).value == n);
+     keys[0] = keys[1] = NULL;
+     value->keys(value, keys);
+     assert(!strcmp("foo", keys[0]));
+     assert(!strcmp("bar", keys[1]));
+
+     value->del(value, "foo");
+     assert(value->count(value) == 1);
+     v = value->get(value, "bar");
+     assert(v == f);
+     keys[0] = keys[1] = NULL;
+     value->keys(value, keys);
+     assert(!strcmp("bar", keys[0]));
+     assert(keys[1] == NULL);
 
      value->accept(value, json_kill());
 

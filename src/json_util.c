@@ -14,6 +14,8 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <alloca.h>
+
 #include "json_value.h"
 
 __PUBLIC__ json_memory_t stdlib_memory = {
@@ -21,13 +23,15 @@ __PUBLIC__ json_memory_t stdlib_memory = {
 };
 
 static void kill_object(json_visitor_t *this, json_object_t *visited) {
-     json_object_field_t field;
-     while (visited->count(visited) > 0) {
-          field = visited->get_field(visited, 0);
-          visited->del_value(visited, field.key);
-          if (field.value) {
-               field.value->accept(field.value, this);
-          }
+     json_value_t *v;
+     int i;
+     int n = visited->count(visited);
+     const char **keys = (const char **)alloca(n * sizeof(const char*));
+     visited->keys(visited, keys);
+     for (i = 0; i < n; i++) {
+          json_value_t *v = visited->get(visited, keys[i]);
+          visited->del(visited, keys[i]);
+          v->accept(v, this);
      }
      visited->free(visited);
 }
