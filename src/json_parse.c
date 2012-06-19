@@ -213,7 +213,171 @@ static json_array_t *parse_array(struct json_parse_context *context) {
      return result;
 }
 
+#define NUM_STATE_ERROR              -2
+#define NUM_STATE_DONE               -1
+#define NUM_STATE_INTEGRAL            0
+#define NUM_STATE_DECIMAL_FIRST      10
+#define NUM_STATE_DECIMAL_MORE       11
+#define NUM_STATE_EXP_SIGN_OR_FIRST  20
+#define NUM_STATE_EXP_FIRST          21
+#define NUM_STATE_EXP_MORE           22
+
 static json_number_t *parse_number(struct json_parse_context *context) {
+     json_number_t * result = NULL;
+     int state, i=0, d=0, dx=0, x=0, n=1, nx=1;
+     if (item(context) == '-') {
+          n = -1;
+          next(context);
+     }
+     switch(item(context)) {
+     case '0':
+          state = NUM_STATE_DONE;
+          next(context);
+          break;
+     case '1': case '2': case '3':
+     case '4': case '5': case '6':
+     case '7': case '8': case '9':
+          i = item(context) - '0';
+          state = NUM_STATE_INTEGRAL;
+          next(context);
+          break;
+     default:
+          state = NUM_STATE_ERROR;
+          error(context, "Invalid number", 0);
+     }
+
+     while (state >= 0) {
+          int c= item(context);
+          if (c == -1) {
+               state = -2;
+               error(context, "Invalid number", 0);
+          }
+          else {
+               switch(state) {
+
+               case NUM_STATE_INTEGRAL           :
+                    switch(c) {
+                    case '.':
+                         state = NUM_STATE_DECIMAL_FIRST;
+                         next(context);
+                         break;
+                    case 'e': case 'E':
+                         state = NUM_STATE_EXP_SIGN_OR_FIRST;
+                         next(context);
+                         break;
+                    case '0':
+                    case '1': case '2': case '3':
+                    case '4': case '5': case '6':
+                    case '7': case '8': case '9':
+                         i = i * 10 + item(context) - '0';
+                         state = NUM_STATE_INTEGRAL;
+                         next(context);
+                         break;
+                    default:
+                         state = NUM_STATE_DONE;
+                    }
+                    break;
+
+               case NUM_STATE_DECIMAL_FIRST      :
+                    switch(c) {
+                    case '0':
+                    case '1': case '2': case '3':
+                    case '4': case '5': case '6':
+                    case '7': case '8': case '9':
+                         d = item(context) - '0';
+                         dx = 1;
+                         state = NUM_STATE_DECIMAL_MORE;
+                         next(context);
+                         break;
+                    default:
+                         state = NUM_STATE_ERROR;
+                         error(context, "Invalid number", 0);
+                    }
+                    break;
+
+               case NUM_STATE_DECIMAL_MORE       :
+                    switch(c) {
+                    case 'e': case 'E':
+                         state = NUM_STATE_EXP_SIGN_OR_FIRST;
+                         next(context);
+                    case '0':
+                    case '1': case '2': case '3':
+                    case '4': case '5': case '6':
+                    case '7': case '8': case '9':
+                         d = d * 10 + item(context) - '0';
+                         dx++;
+                         state = NUM_STATE_DECIMAL_MORE;
+                         next(context);
+                         break;
+                    default:
+                         state = NUM_STATE_DONE;
+                    }
+                    break;
+
+               case NUM_STATE_EXP_SIGN_OR_FIRST  :
+                    switch(c) {
+                    case '+':
+                         state = NUM_STATE_EXP_FIRST;
+                         next(context);
+                         break;
+                    case '-':
+                         nx = -1;
+                         state = NUM_STATE_EXP_FIRST;
+                         next(context);
+                         break;
+                    case '0':
+                    case '1': case '2': case '3':
+                    case '4': case '5': case '6':
+                    case '7': case '8': case '9':
+                         x = item(context) - '0';
+                         state = NUM_STATE_EXP_MORE;
+                         next(context);
+                         break;
+                    default:
+                         state = NUM_STATE_ERROR;
+                         error(context, "Invalid number", 0);
+                    }
+                    break;
+
+               case NUM_STATE_EXP_FIRST          :
+                    switch(c) {
+                    case '0':
+                    case '1': case '2': case '3':
+                    case '4': case '5': case '6':
+                    case '7': case '8': case '9':
+                         x = item(context) - '0';
+                         state = NUM_STATE_EXP_MORE;
+                         next(context);
+                         break;
+                    default:
+                         state = NUM_STATE_ERROR;
+                         error(context, "Invalid number", 0);
+                    }
+                    break;
+
+               case NUM_STATE_EXP_MORE           :
+                    switch(c) {
+                    case '0':
+                    case '1': case '2': case '3':
+                    case '4': case '5': case '6':
+                    case '7': case '8': case '9':
+                         x = x * 10 + item(context) - '0';
+                         state = NUM_STATE_EXP_MORE;
+                         next(context);
+                         break;
+                    default:
+                         state = NUM_STATE_DONE;
+                    }
+                    break;
+               }
+          }
+     }
+
+     if (state == NUM_STATE_DONE) {
+          result = json_new_number(context->memory);
+          result->set(result, n*i, d, dx, nx*x);
+     }
+     return result;
 }
 
 static json_string_t *parse_string(struct json_parse_context *context) {
