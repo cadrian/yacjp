@@ -52,14 +52,28 @@ static int item(struct json_input_stream_file_descriptor *this) {
      return this->buffer[this->index];
 }
 
-__PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_description(int fd, json_memory_t memory) {
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int fd, json_memory_t memory) {
      struct json_input_stream_file_descriptor *result = (struct json_input_stream_file_descriptor *)memory.malloc(sizeof(struct json_input_stream_file_descriptor));
      if (!result) return NULL;
-     result->fn.next = (next_fn)next;
-     result->fn.item = (item_fn)item;
+     result->fn.next = (json_input_stream_next_fn)next;
+     result->fn.item = (json_input_stream_item_fn)item;
      result->memory  = memory;
      result->fd      = fd;
      result->max     = read(fd, result->buffer, BUFFER_SIZE);
      result->index   = 0;
      return &(result->fn);
+}
+
+
+
+struct json_output_stream_file {
+     struct json_output_stream fn;
+     json_memory_t memory;
+
+     int fd;
+};
+
+__PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd, json_memory_t memory) {
+     /* not (yet) supported */
+     return NULL;
 }
