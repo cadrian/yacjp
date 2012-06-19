@@ -18,7 +18,7 @@
 
 #include "json.h"
 
-static void default_on_error(json_stream_t *stream, int line, int column, const char *format, ...) {
+static void default_on_error(json_input_stream_t *stream, int line, int column, const char *format, ...) {
      va_list args;
      va_start(args, format);
      fprintf(stderr, "**** Syntax error line %d, column %d: ", line, column);
@@ -28,7 +28,7 @@ static void default_on_error(json_stream_t *stream, int line, int column, const 
 }
 
 struct json_parse_context {
-     json_stream_t *stream;
+     json_input_stream_t *stream;
      json_on_error_fn on_error;
      int line;
      int column;
@@ -65,7 +65,7 @@ static int skip_word(struct json_parse_context *context, const char *word) {
      return result;
 }
 
-__PUBLIC__ json_value_t *json_parse(json_stream_t *stream, json_on_error_fn on_error, json_memory_t memory) {
+__PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, json_memory_t memory) {
      struct json_parse_context _context = {
           stream,
           on_error ? on_error : &default_on_error,

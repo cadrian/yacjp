@@ -18,8 +18,8 @@
 
 #define BUFFER_SIZE 4096
 
-struct json_stream_file {
-     struct json_stream fn;
+struct json_input_stream_file {
+     struct json_input_stream fn;
      json_memory_t memory;
 
      FILE *file;
@@ -28,7 +28,7 @@ struct json_stream_file {
      int index;
 };
 
-static int next(struct json_stream_file *this) {
+static int next(struct json_input_stream_file *this) {
      int result = 0;
      if (this->max) {
           if (this->index < this->max) {
@@ -45,15 +45,15 @@ static int next(struct json_stream_file *this) {
      return result;
 }
 
-static int item(struct json_stream_file *this) {
+static int item(struct json_input_stream_file *this) {
      if (this->max == 0) {
           return EOF;
      }
      return this->buffer[this->index];
 }
 
-__PUBLIC__ json_stream_t *new_json_stream_from_file(FILE *file, json_memory_t memory) {
-     struct json_stream_file *result = (struct json_stream_file *)memory.malloc(sizeof(struct json_stream_file));
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_file(FILE *file, json_memory_t memory) {
+     struct json_input_stream_file *result = (struct json_input_stream_file *)memory.malloc(sizeof(struct json_input_stream_file));
      if (!result) return NULL;
      result->fn.next = (next_fn)next;
      result->fn.item = (item_fn)item;

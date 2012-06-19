@@ -16,28 +16,28 @@
 
 #include "json_stream.h"
 
-struct json_stream_string {
-     struct json_stream fn;
+struct json_input_stream_string {
+     struct json_input_stream fn;
      json_memory_t memory;
 
      char *string;
      int index;
 };
 
-static int next(struct json_stream_string *this) {
+static int next(struct json_input_stream_string *this) {
      if (this->string[this->index]) {
           this->index++;
      }
      return 0;
 }
 
-static int item(struct json_stream_string *this) {
+static int item(struct json_input_stream_string *this) {
      int result = this->string[this->index];
      return result ? result : EOF;
 }
 
-__PUBLIC__ json_stream_t *new_json_stream_from_string(char *string, json_memory_t memory) {
-     struct json_stream_string *result = (struct json_stream_string *)memory.malloc(sizeof(struct json_stream_string));
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_string(char *string, json_memory_t memory) {
+     struct json_input_stream_string *result = (struct json_input_stream_string *)memory.malloc(sizeof(struct json_input_stream_string));
      if (!result) return NULL;
      result->fn.next = (next_fn)next;
      result->fn.item = (item_fn)item;
