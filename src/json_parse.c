@@ -247,9 +247,9 @@ static json_number_t *parse_number(struct json_parse_context *context) {
      }
 
      while (state >= 0) {
-          int c= item(context);
-          if (c == -1) {
-               state = -2;
+          int c = item(context);
+          if (c < 0) {
+               state = NUM_STATE_ERROR;
                error(context, "Invalid number", 0);
           }
           else {
@@ -269,7 +269,7 @@ static json_number_t *parse_number(struct json_parse_context *context) {
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
                     case '7': case '8': case '9':
-                         i = i * 10 + item(context) - '0';
+                         i = i * 10 + c - '0';
                          state = NUM_STATE_INTEGRAL;
                          next(context);
                          break;
@@ -284,7 +284,7 @@ static json_number_t *parse_number(struct json_parse_context *context) {
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
                     case '7': case '8': case '9':
-                         d = item(context) - '0';
+                         d = c - '0';
                          dx = 1;
                          state = NUM_STATE_DECIMAL_MORE;
                          next(context);
@@ -304,7 +304,7 @@ static json_number_t *parse_number(struct json_parse_context *context) {
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
                     case '7': case '8': case '9':
-                         d = d * 10 + item(context) - '0';
+                         d = d * 10 + c - '0';
                          dx++;
                          state = NUM_STATE_DECIMAL_MORE;
                          next(context);
@@ -329,7 +329,7 @@ static json_number_t *parse_number(struct json_parse_context *context) {
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
                     case '7': case '8': case '9':
-                         x = item(context) - '0';
+                         x = c - '0';
                          state = NUM_STATE_EXP_MORE;
                          next(context);
                          break;
@@ -345,7 +345,7 @@ static json_number_t *parse_number(struct json_parse_context *context) {
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
                     case '7': case '8': case '9':
-                         x = item(context) - '0';
+                         x = c - '0';
                          state = NUM_STATE_EXP_MORE;
                          next(context);
                          break;
@@ -361,7 +361,7 @@ static json_number_t *parse_number(struct json_parse_context *context) {
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
                     case '7': case '8': case '9':
-                         x = x * 10 + item(context) - '0';
+                         x = x * 10 + c - '0';
                          state = NUM_STATE_EXP_MORE;
                          next(context);
                          break;
@@ -380,7 +380,120 @@ static json_number_t *parse_number(struct json_parse_context *context) {
      return result;
 }
 
+#define STR_STATE_ERROR    -2
+#define STR_STATE_DONE     -1
+#define STR_STATE_CHAR      0
+#define STR_STATE_ESCAPE    1
+#define STR_STATE_UNICODE0 10
+#define STR_STATE_UNICODE1 11
+#define STR_STATE_UNICODE2 12
+#define STR_STATE_UNICODE3 13
+
+/* TODO: fix unicode support (here totally wrong) + correct support for character appending */
+
 static json_string_t *parse_string(struct json_parse_context *context) {
+     int state, unicode;
+     json_string_t *result = json_new_string(context->memory);
+
+     next(context); // skip '"'
+     state = STR_STATE_CHAR;
+     while (state >= 0) {
+          int c = item(context);
+          if (c < 0) {
+               state = STR_STATE_ERROR;
+               error(context, "Invalid string", 0);
+          }
+          else {
+               switch(state) {
+
+               case STR_STATE_CHAR:
+                    switch(c) {
+                    case '\\':
+                         state = STR_STATE_ESCAPE;
+                         break;
+                    case '"':
+                         state = STR_STATE_DONE;
+                         break;
+                    default:
+                         result->set(result, "%s%c", result->get(result), c);
+                    }
+                    break;
+
+               case STR_STATE_ESCAPE:
+                    switch(c) {
+                    case '"': case '/':
+                         result->set(result, "%s%c", result->get(result), c);
+                         break;
+                    case 'b':
+                         result->set(result, "%s\b", result->get(result));
+                         break;
+                    case 'f':
+                         result->set(result, "%s\f", result->get(result));
+                         break;
+                    case 'n':
+                         result->set(result, "%s\n", result->get(result));
+                         break;
+                    case 'r':
+                         result->set(result, "%s\r", result->get(result));
+                         break;
+                    case 't':
+                         result->set(result, "%s\t", result->get(result));
+                         break;
+                    case 'u':
+                         state = STR_STATE_UNICODE0;
+                         unicode = 0;
+                         break;
+                    default:
+                         state = STR_STATE_ERROR;
+                         error(context, "Invalid escape sequence", 0);
+                    }
+                    break;
+
+               case STR_STATE_UNICODE0: case STR_STATE_UNICODE1:
+               case STR_STATE_UNICODE2: case STR_STATE_UNICODE3:
+                    switch(c) {
+                    case '0':
+                    case '1': case '2': case '3':
+                    case '4': case '5': case '6':
+                    case '7': case '8': case '9':
+                         unicode = unicode * 16 + c - '0';
+                         break;
+                    case 'a': case 'b': case 'c':
+                    case 'd': case 'e': case 'f':
+                         unicode = unicode * 16 + c - 'a' + 10;
+                         break;
+                    case 'A': case 'B': case 'C':
+                    case 'D': case 'E': case 'F':
+                         unicode = unicode * 16 + c - 'A' + 10;
+                         break;
+                    default:
+                         state = STR_STATE_ERROR;
+                         error(context, "Invalid unicode sequence: expected 4 hex, got only %d", state - STR_STATE_UNICODE0);
+                    }
+                    if (state == STR_STATE_UNICODE3) {
+                         if (unicode > 255) { /* TODO */
+                              state = STR_STATE_ERROR;
+                              error(context, "Unicode not yet supported (got \\u%04x)", unicode);
+                         }
+                         else {
+                              result->set(result, "%s%c", result->get(result), unicode);
+                              state = STR_STATE_CHAR;
+                         }
+                    }
+                    else {
+                         state++;
+                    }
+                    break;
+               }
+               next(context);
+          }
+     }
+
+     if (state == STR_STATE_ERROR) {
+          result->free(result);
+          result = NULL;
+     }
+     return result;
 }
 
 static json_const_t *parse_true(struct json_parse_context *context) {
