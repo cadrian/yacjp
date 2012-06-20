@@ -120,9 +120,12 @@ static void iterate(struct json_hash_impl *this, hash_iterator_fn iterator, void
 
 static void *get(struct json_hash_impl *this, const void *key) {
      void *result = NULL;
-     int index = index_of(this->entries, this->keys, this->capacity, key);
-     if (index >= 0) {
-          result = this->entries[index].value;
+     int index;
+     if (this->capacity) {
+          index = index_of(this->entries, this->keys, this->capacity, key);
+          if (index >= 0) {
+               result = this->entries[index].value;
+          }
      }
      return result;
 }

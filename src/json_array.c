@@ -66,7 +66,7 @@ static void set(struct json_array_impl *this, int index, json_value_t *value) {
           this->values[index] = value;
      }
      else {
-          while (index > this->capacity) {
+          while (index >= this->capacity) {
                grow(this);
           }
           this->values[index] = value;

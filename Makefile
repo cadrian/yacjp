@@ -2,6 +2,7 @@ OBJ=$(shell ls -1 src/*.c | sed -r 's|^src/|target/out/|g;s|\.c|.o|g')
 TST=$(shell ls -1 test/test*.c | sed -r 's|^test/|target/test/|g;s|\.c|.run|g')
 
 CFLAGS ?= -g
+RUN ?=
 
 all: target/libyacjp.so run-test
 	echo "Done."
@@ -15,7 +16,7 @@ clean:
 
 target/test/%.run: target/out/%.exe
 	echo "  Running test: $<"
-	LD_LIBRARY_PATH=target $< 2>&1 > $(@:.run=.log) && touch $@
+	LD_LIBRARY_PATH=target $(RUN) $< && touch $@
 	echo
 
 target:
