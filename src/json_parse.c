@@ -15,6 +15,7 @@
 */
 
 #include <stdarg.h>
+#include <string.h>
 
 #include "json.h"
 
@@ -33,6 +34,8 @@ struct json_parse_context {
      int line;
      int column;
      json_memory_t memory;
+     char *utf8_buffer;
+     int   utf8_capacity;
 };
 
 static json_value_t  *parse_value (struct json_parse_context *context);
@@ -65,6 +68,24 @@ static int skip_word(struct json_parse_context *context, const char *word) {
      return result;
 }
 
+static char *utf8(struct json_parse_context *context, json_string_t *string) {
+     char *result = context->utf8_buffer;
+     int capacity = context->utf8_capacity;
+     int n = string->utf8(string, result, capacity);
+     if (n >= capacity) {
+          do {
+               capacity <<= 1;
+          } while (n >= capacity);
+          result = context->memory.malloc(capacity);
+          strcpy(result, context->utf8_buffer);
+          context->memory.free(context->utf8_buffer);
+          context->utf8_buffer = result;
+          context->utf8_capacity = capacity;
+          string->utf8(string, result, capacity);
+     }
+     return result;
+}
+
 __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, json_memory_t memory) {
      struct json_parse_context _context = {
           stream,
@@ -72,6 +93,8 @@ __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_f
           1,
           1,
           memory,
+          memory.malloc(128),
+          128,
      };
      struct json_parse_context *context = &_context;
      json_value_t *result = parse_value(context);
@@ -79,6 +102,7 @@ __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_f
      if (item(context) != -1) {
           error(context, "Trailing characters", 0);
      }
+     memory.free(_context.utf8_buffer);
      return result;
 }
 
@@ -142,9 +166,9 @@ static json_object_t *parse_object(struct json_parse_context *context) {
           else {
                key = parse_string(context);
                if (key) {
-                    if (result->get(result, key->get(key))) {
+                    if (result->get(result, utf8(context, key))) {
                          err = 1;
-                         error(context, "Duplicate key: '%s'", key->get(key));
+                         error(context, "Duplicate key: '%s'", utf8(context, key));
                     }
                     else {
                          skip_blanks(context);
@@ -158,7 +182,7 @@ static json_object_t *parse_object(struct json_parse_context *context) {
                               err = 1;
                          }
                          else {
-                              result->set(result, key->get(key), value);
+                              result->set(result, utf8(context, key), value);
                               key->free(key);
                               skip_blanks(context);
                               switch(item(context)) {
@@ -415,29 +439,29 @@ static json_string_t *parse_string(struct json_parse_context *context) {
                          state = STR_STATE_DONE;
                          break;
                     default:
-                         result->set(result, "%s%c", result->get(result), c);
+                         result->add_utf8(result, c);
                     }
                     break;
 
                case STR_STATE_ESCAPE:
                     switch(c) {
                     case '"': case '/':
-                         result->set(result, "%s%c", result->get(result), c);
+                         result->add(result, c);
                          break;
                     case 'b':
-                         result->set(result, "%s\b", result->get(result));
+                         result->add(result, '\b');
                          break;
                     case 'f':
-                         result->set(result, "%s\f", result->get(result));
+                         result->add(result, '\f');
                          break;
                     case 'n':
-                         result->set(result, "%s\n", result->get(result));
+                         result->add(result, '\n');
                          break;
                     case 'r':
-                         result->set(result, "%s\r", result->get(result));
+                         result->add(result, '\r');
                          break;
                     case 't':
-                         result->set(result, "%s\t", result->get(result));
+                         result->add(result, '\t');
                          break;
                     case 'u':
                          state = STR_STATE_UNICODE0;
@@ -471,14 +495,8 @@ static json_string_t *parse_string(struct json_parse_context *context) {
                          error(context, "Invalid unicode sequence: expected 4 hex, got only %d", state - STR_STATE_UNICODE0);
                     }
                     if (state == STR_STATE_UNICODE3) {
-                         if (unicode > 255) { /* TODO */
-                              state = STR_STATE_ERROR;
-                              error(context, "Unicode not yet supported (got \\u%04x)", unicode);
-                         }
-                         else {
-                              result->set(result, "%s%c", result->get(result), unicode);
-                              state = STR_STATE_CHAR;
-                         }
+                         result->add(result, unicode);
+                         state = STR_STATE_CHAR;
                     }
                     else {
                          state++;
