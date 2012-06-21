@@ -324,6 +324,7 @@ static json_number_t *parse_number(struct json_parse_context *context) {
                     case 'e': case 'E':
                          state = NUM_STATE_EXP_SIGN_OR_FIRST;
                          next(context);
+                         break;
                     case '0':
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
@@ -412,8 +413,6 @@ static json_number_t *parse_number(struct json_parse_context *context) {
 #define STR_STATE_UNICODE1 11
 #define STR_STATE_UNICODE2 12
 #define STR_STATE_UNICODE3 13
-
-/* TODO: fix unicode support (here totally wrong) + correct support for character appending */
 
 static json_string_t *parse_string(struct json_parse_context *context) {
      int state, unicode;

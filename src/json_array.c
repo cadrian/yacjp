@@ -122,5 +122,5 @@ __PUBLIC__ json_array_t *json_new_array(json_memory_t memory) {
      result->capacity     = 0;
      result->count        = 0;
      result->values       = NULL;
-     return (json_array_t*)result;
+     return &(result->fn);
 }

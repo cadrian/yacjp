@@ -18,11 +18,13 @@
 #include <stdlib.h>
 
 static void assert_(int test, const char *message, int line, const char *file) {
+     int *a = 0;
      static int counter = 0;
      counter++;
      if (!test) {
           fprintf(stderr, "Assertion %d (%s:%d) failed: %s\n", counter, file, line, message);
-          exit(counter);
+          fflush(stderr);
+          *a = counter;
      }
 }
 

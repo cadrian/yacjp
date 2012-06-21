@@ -71,5 +71,5 @@ __PUBLIC__ json_object_t *json_new_object(json_memory_t memory) {
      result->fn.del    = (json_object_del_fn   )del    ;
      result->memory    = memory                        ;
      result->hash      = new_hash(memory, hash_strings);
-     return (json_object_t*)result;
+     return &(result->fn);
 }

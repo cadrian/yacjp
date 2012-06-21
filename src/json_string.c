@@ -329,5 +329,5 @@ __PUBLIC__ json_string_t *json_new_string(json_memory_t memory) {
      result->accu_count    = 0;
      result->accu          = 0;
 
-     return (json_string_t*)result;
+     return &(result->fn);
 }

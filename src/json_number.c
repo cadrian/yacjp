@@ -94,5 +94,5 @@ __PUBLIC__ json_number_t *json_new_number(json_memory_t memory) {
      result->fn.to_string = (json_number_to_string_fn)to_string;
      result->memory       = memory;
      set(result, 0, 0, 0, 0);
-     return (json_number_t*)result;
+     return &(result->fn);
 }
