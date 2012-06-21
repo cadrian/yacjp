@@ -31,10 +31,8 @@ struct json_input_stream_file_descriptor {
 static int next(struct json_input_stream_file_descriptor *this) {
      int result = 0;
      if (this->max) {
-          if (this->index < this->max) {
-               this->index++;
-          }
-          else {
+          this->index++;
+          if (this->index >= this->max) {
                this->max = read(this->fd, this->buffer, BUFFER_SIZE);
                this->index = 0;
                if (this->max < 0) {
@@ -59,8 +57,9 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int f
      result->fn.item = (json_input_stream_item_fn)item;
      result->memory  = memory;
      result->fd      = fd;
-     result->max     = read(fd, result->buffer, BUFFER_SIZE);
+     result->max     = -1;
      result->index   = 0;
+     next(result);
      return &(result->fn);
 }
 
