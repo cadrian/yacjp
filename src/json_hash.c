@@ -56,9 +56,9 @@ __PUBLIC__ hash_keys_t hash_strings = {
 static int index_of(json_hash_entry_t *entries, hash_keys_t keys, int capacity, const void *key) {
      compare_fn cmp = keys.compare;
 
-     int h = keys.hash(key);
-     int j = h;
-     int perturb = h;
+     unsigned int h = keys.hash(key);
+     unsigned int j = h;
+     unsigned int perturb = h;
 
      int result = j % capacity;
      const void *k = entries[result].key;
