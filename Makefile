@@ -20,8 +20,9 @@ target/test/%.run: target/out/%.exe
 	echo
 
 target:
-	mkdir -p target/out
+	mkdir -p target/out/data
 	mkdir -p target/test
+	cp -a test/data/* target/out/data/
 
 target/libyacjp.so: target $(OBJ)
 	echo "Linking library: $@"

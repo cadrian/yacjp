@@ -53,7 +53,7 @@ static json_const_t  *parse_null  (struct json_parse_context *context);
 
 static void skip_blanks(struct json_parse_context *context) {
      int c = item(context);
-     while (c == ' ' || c == '\f' || c == '\t') {
+     while (c == ' ' || c == '\f' || c == '\t' || c == '\n' || c == '\r') {
           next(context);
           c = item(context);
      }

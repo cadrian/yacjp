@@ -33,10 +33,8 @@ struct json_input_stream_file {
 static int next(struct json_input_stream_file *this) {
      int result = 0;
      if (this->max) {
-          if (this->index < this->max) {
-               this->index++;
-          }
-          else {
+          this->index++;
+          if (this->index >= this->max) {
                this->max = fread(this->buffer, sizeof(char), BUFFER_SIZE, this->file);
                this->index = 0;
                if (this->max == 0 && ferror(this->file)) {
@@ -61,8 +59,9 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file(FILE *file, json
      result->fn.item = (json_input_stream_item_fn)item;
      result->memory  = memory;
      result->file    = file;
-     result->max     = fread(result->buffer, sizeof(char), BUFFER_SIZE, file);
+     result->max     = -1;
      result->index   = 0;
+     next(result);
      return &(result->fn);
 }
 

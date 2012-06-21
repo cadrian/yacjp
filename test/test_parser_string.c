@@ -20,7 +20,7 @@
 static json_input_stream_t *stream;
 
 static void on_error(json_input_stream_t *s, int line, int column, const char *format, ...) {
-     assert(s == stream);
+     assert(0);
 }
 
 static char *source = "{\"key\":[1, 2], \"foo\": \"data\", \"bar\": {\"a\": 1.4e9}}";
