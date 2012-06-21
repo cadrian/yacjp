@@ -23,7 +23,6 @@ __PUBLIC__ json_memory_t stdlib_memory = {
 };
 
 static void kill_object(json_visitor_t *this, json_object_t *visited) {
-     json_value_t *v;
      int i;
      int n = visited->count(visited);
      const char **keys = (const char **)alloca(n * sizeof(const char*));
@@ -39,12 +38,9 @@ static void kill_object(json_visitor_t *this, json_object_t *visited) {
 static void kill_array(json_visitor_t *this, json_array_t  *visited) {
      int n = visited->count(visited);
      int i;
-     json_value_t *v;
      for (i = n; i --> 0; ) {
-          v = visited->get(visited, i);
-          if (v) {
-               v->accept(v, this);
-          }
+          json_value_t *v = visited->get(visited, i);
+          v->accept(v, this);
      }
      visited->free(visited);
 }
@@ -62,11 +58,12 @@ static void kill_const(json_visitor_t *this, json_const_t  *visited) {
 }
 
 json_visitor_t json_killer = {
-     &kill_object,
-     &kill_array ,
-     &kill_string,
-     &kill_number,
-     &kill_const ,
+     0, /* don't del this singleton */
+     (json_visit_object_fn)&kill_object,
+     (json_visit_array_fn )&kill_array ,
+     (json_visit_string_fn)&kill_string,
+     (json_visit_number_fn)&kill_number,
+     (json_visit_const_fn )&kill_const ,
 };
 
 __PUBLIC__ json_visitor_t *json_kill() {

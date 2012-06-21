@@ -445,7 +445,7 @@ static json_string_t *parse_string(struct json_parse_context *context) {
 
                case STR_STATE_ESCAPE:
                     switch(c) {
-                    case '"': case '/':
+                    case '"': case '\\':
                          result->add(result, c);
                          break;
                     case 'b':

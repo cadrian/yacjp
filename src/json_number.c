@@ -15,6 +15,7 @@
 */
 
 #include <math.h>
+#include <stdio.h>
 
 #include "json_value.h"
 
@@ -57,6 +58,26 @@ static void set(struct json_number_impl *this, int i, int d, int dx, int x) {
      this->exponent = x;
 }
 
+static int to_string(struct json_number_impl *this, char *buffer, size_t size) {
+     if (this->decimal_exp == 0) {
+          if (this->exponent == 0) {
+               return snprintf(buffer, size, "%01d", this->integral);
+          }
+          else {
+               return snprintf(buffer, size, "%01de%+d", this->integral, this->exponent);
+          }
+     }
+     else {
+          int n = this->decimal_exp - snprintf("", 0, "%d", this->decimal);
+          if (this->exponent == 0) {
+               return snprintf(buffer, size, "%d.%0*d", this->integral, n, this->decimal);
+          }
+          else {
+               return snprintf(buffer, size, "%d.%0*de%+d", this->integral, n, this->decimal, this->exponent);
+          }
+     }
+}
+
 static void free_(struct json_number_impl *this) {
      this->memory.free(this);
 }
@@ -70,6 +91,7 @@ __PUBLIC__ json_number_t *json_new_number(json_memory_t memory) {
      result->fn.to_int    = (json_number_to_int_fn   )to_int;
      result->fn.to_double = (json_number_to_double_fn)to_double;
      result->fn.set       = (json_number_set_fn      )set;
+     result->fn.to_string = (json_number_to_string_fn)to_string;
      result->memory       = memory;
      set(result, 0, 0, 0, 0);
      return (json_number_t*)result;

@@ -113,6 +113,7 @@ typedef int    (*json_number_is_int_fn   ) (json_number_t *this);
 typedef int    (*json_number_to_int_fn   ) (json_number_t *this);
 typedef double (*json_number_to_double_fn) (json_number_t *this);
 typedef void   (*json_number_set_fn      ) (json_number_t *this, int integral, int decimal, int decimal_exp, int exp);
+typedef int    (*json_number_to_string_fn) (json_number_t *this, char *buffer, size_t buffer_size);
 
 struct json_number {
      json_number_accept_fn    accept   ;
@@ -121,6 +122,7 @@ struct json_number {
      json_number_to_int_fn    to_int   ;
      json_number_to_double_fn to_double;
      json_number_set_fn       set      ;
+     json_number_to_string_fn to_string;
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -150,12 +152,20 @@ struct json_value {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+typedef void (*json_visit_del_fn   ) (json_visitor_t *this);
+typedef void (*json_visit_object_fn) (json_visitor_t *this, json_object_t *visited);
+typedef void (*json_visit_array_fn ) (json_visitor_t *this, json_array_t  *visited);
+typedef void (*json_visit_string_fn) (json_visitor_t *this, json_string_t *visited);
+typedef void (*json_visit_number_fn) (json_visitor_t *this, json_number_t *visited);
+typedef void (*json_visit_const_fn ) (json_visitor_t *this, json_const_t  *visited);
+
 struct json_visitor {
-     void (*visit_object) (json_visitor_t *this, json_object_t *visited);
-     void (*visit_array)  (json_visitor_t *this, json_array_t  *visited);
-     void (*visit_string) (json_visitor_t *this, json_string_t *visited);
-     void (*visit_number) (json_visitor_t *this, json_number_t *visited);
-     void (*visit_const)  (json_visitor_t *this, json_const_t  *visited);
+     json_visit_del_fn    del;
+     json_visit_object_fn visit_object;
+     json_visit_array_fn  visit_array ;
+     json_visit_string_fn visit_string;
+     json_visit_number_fn visit_number;
+     json_visit_const_fn  visit_const ;
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

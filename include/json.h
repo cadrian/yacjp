@@ -26,4 +26,10 @@ typedef void (*json_on_error_fn)(json_input_stream_t *stream, int line, int colu
 __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, json_memory_t memory);
 __PUBLIC__ json_visitor_t *json_kill();
 
+__PUBLIC__ extern short json_compact;
+__PUBLIC__ extern short json_extend_unicode; /* use '\u' sequences instead of raw utf8 */
+__PUBLIC__ extern short json_extend_spaces;  /* pretty print spaces, add newlines when relevant */
+
+__PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, json_memory_t memory, short options);
+
 #endif /* _YACJP_JSON_H_ */
