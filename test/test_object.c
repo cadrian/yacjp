@@ -14,18 +14,8 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "test.h"
 #include "json.h"
-
-static void assert_(int test, const char *message, int line, const char *file) {
-     static int counter = 0;
-     counter++;
-     if (!test) {
-          fprintf(stderr, "Assertion %d (%s:%d) failed: %s\n", counter, file, line, message);
-          exit(counter);
-     }
-}
-
-#define assert(t) assert_((t), #t, __LINE__, __FILE__)
 
 int main() {
      json_object_t *value = json_new_object(stdlib_memory);

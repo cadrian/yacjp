@@ -17,6 +17,8 @@
 #ifndef _YACJP_JSON_VALUE_H_
 #define _YACJP_JSON_VALUE_H_
 
+#include <ctype.h>
+
 #include "json_shared.h"
 
 typedef struct json_value   json_value_t;
@@ -80,16 +82,27 @@ struct json_array {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-typedef void  (*json_string_accept_fn) (json_string_t *this, json_visitor_t *visitor);
-typedef void  (*json_string_free_fn  ) (json_string_t *this);
-typedef char *(*json_string_get_fn   ) (json_string_t *this);
-typedef void  (*json_string_set_fn   ) (json_string_t *this, char *format, ...) __attribute__((format(printf, 2, 3)));
+
+typedef __uint32_t unicode_char_t;
+
+typedef void            (*json_string_accept_fn  ) (json_string_t *this, json_visitor_t *visitor);
+typedef void            (*json_string_free_fn    ) (json_string_t *this);
+typedef int             (*json_string_count_fn   ) (json_string_t *this);
+typedef size_t          (*json_string_utf8_fn    ) (json_string_t *this, char *buffer, size_t buffer_size);
+typedef unicode_char_t  (*json_string_get_fn     ) (json_string_t *this, unsigned int index);
+typedef void            (*json_string_set_fn     ) (json_string_t *this, char *format, ...) __attribute__((format(printf, 2, 3))); /* expects a utf-8 encoded string */
+typedef int             (*json_string_add_utf8_fn) (json_string_t *this, char c); /* returns the number of expected extra chars to read to form a correct unicode character; -1 if error */
+typedef void            (*json_string_add_fn     ) (json_string_t *this, int unicode);
 
 struct json_string {
-     json_string_accept_fn accept;
-     json_string_free_fn   free  ;
-     json_string_get_fn    get   ;
-     json_string_set_fn    set   ;
+     json_string_accept_fn   accept  ;
+     json_string_free_fn     free    ;
+     json_string_count_fn    count   ;
+     json_string_utf8_fn     utf8    ;
+     json_string_get_fn      get     ;
+     json_string_set_fn      set     ;
+     json_string_add_fn      add     ;
+     json_string_add_utf8_fn add_utf8;
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

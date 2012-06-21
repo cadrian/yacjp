@@ -14,35 +14,97 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+#include <stdarg.h>
+
 #include "json_stream.h"
 
-struct json_stream_string {
-     struct json_stream fn;
+struct json_input_stream_string {
+     struct json_input_stream fn;
      json_memory_t memory;
 
      char *string;
      int index;
 };
 
-static int next(struct json_stream_string *this) {
+static int next(struct json_input_stream_string *this) {
      if (this->string[this->index]) {
           this->index++;
      }
      return 0;
 }
 
-static int item(struct json_stream_string *this) {
+static int item(struct json_input_stream_string *this) {
      int result = this->string[this->index];
      return result ? result : EOF;
 }
 
-__PUBLIC__ json_stream_t *new_json_stream_from_string(char *string, json_memory_t memory) {
-     struct json_stream_string *result = (struct json_stream_string *)memory.malloc(sizeof(struct json_stream_string));
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_string(char *string, json_memory_t memory) {
+     struct json_input_stream_string *result = (struct json_input_stream_string *)memory.malloc(sizeof(struct json_input_stream_string));
      if (!result) return NULL;
-     result->fn.next = (next_fn)next;
-     result->fn.item = (item_fn)item;
+     result->fn.next = (json_input_stream_next_fn)next;
+     result->fn.item = (json_input_stream_item_fn)item;
      result->memory  = memory;
      result->string  = string;
      result->index   = 0;
+     return &(result->fn);
+}
+
+
+
+struct json_output_stream_string {
+     struct json_output_stream fn;
+     json_memory_t memory;
+
+     char **string;
+     int capacity;
+     int count;
+};
+
+static void put(struct json_output_stream_string *this, const char *format, ...) {
+     int c;
+     int new_capacity = this->capacity;
+     char *string = *(this->string);
+     char *new_string = string;
+     va_list args;
+
+     va_start(args, format);
+     c = vsnprintf("", 0, format, args);
+     va_end(args);
+
+     if (new_capacity == 0) {
+          new_capacity = 4;
+     }
+     while (c + this->count > new_capacity) {
+          new_capacity *= 2;
+     }
+     if (new_capacity > this->capacity) {
+          new_string = (char *)this->memory.malloc(new_capacity);
+          if (string) {
+               strcpy(new_string, string);
+          }
+          *(this->string) = new_string;
+          this->capacity = new_capacity;
+     }
+
+     va_start(args, format);
+     this->count += vsprintf(new_string + this->count, format, args);
+     va_end(args);
+}
+
+static void flush(struct json_output_stream_string *this) {
+     /* do nothing */
+}
+
+__PUBLIC__ json_output_stream_t *new_json_output_stream_from_string(char **string, json_memory_t memory) {
+     struct json_output_stream_string *result = (struct json_output_stream_string *)memory.malloc(sizeof(struct json_output_stream_string));
+     if (!result) return NULL;
+     result->fn.put   = (json_output_stream_put_fn  )put;
+     result->fn.flush = (json_output_stream_flush_fn)flush;
+     result->memory   = memory;
+     result->string   = string;
+     result->capacity = 0;
+     result->count    = 0;
+     *string = NULL;
      return &(result->fn);
 }
