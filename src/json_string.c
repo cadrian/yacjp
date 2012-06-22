@@ -49,11 +49,11 @@ static void grow_low_surrogates(struct json_string_impl *this) {
           new_capacity = 4;
      }
      else {
-          new_capacity *= 2;
+          new_capacity <<= 1;
      }
      new_low_surrogates = (low_surrogate_t *)this->memory.malloc(new_capacity * sizeof(low_surrogate_t));
      if (this->low_surrogates) {
-          memcpy(new_low_surrogates, this->low_surrogates, this->low_surrogates_capacity);
+          memcpy(new_low_surrogates, this->low_surrogates, this->low_surrogates_capacity * sizeof(low_surrogate_t));
           this->memory.free(this->low_surrogates);
      }
      this->low_surrogates_capacity = new_capacity;
@@ -61,19 +61,10 @@ static void grow_low_surrogates(struct json_string_impl *this) {
 }
 
 static void grow_string(struct json_string_impl *this) {
-     int new_capacity = this->string_capacity;
-     __uint16_t *new_string;
-     if (new_capacity == 0) {
-          new_capacity = 4;
-     }
-     else {
-          new_capacity *= 2;
-     }
-     new_string = (__uint16_t *)this->memory.malloc(new_capacity * sizeof(__uint16_t));
-     if (this->string) {
-          memcpy(new_string, this->string, this->string_capacity);
-          this->memory.free(this->string);
-     }
+     int new_capacity = this->string_capacity << 1;
+     __uint16_t *new_string = (__uint16_t *)this->memory.malloc(new_capacity * sizeof(__uint16_t));
+     memcpy(new_string, this->string, this->string_capacity * sizeof(__uint16_t));
+     this->memory.free(this->string);
      this->string_capacity = new_capacity;
      this->string = new_string;
 }
@@ -167,6 +158,7 @@ static int add(struct json_string_impl *this, char c) {
      int result;
      int k;
      unicode_char_t v = (unicode_char_t)c;
+
      if (this->accu_count == 0) {
           if (v < 128) {
                add_unicode(this, v);
@@ -317,9 +309,9 @@ __PUBLIC__ json_string_t *json_new_string(json_memory_t memory) {
      result->fn.add       = (json_string_add_fn     )add_unicode;
      result->memory       = memory;
 
-     result->string_capacity = 0;
+     result->string_capacity = 4;
      result->string_count    = 0;
-     result->string          = NULL;
+     result->string          = (__uint16_t*)memory.malloc(4 * sizeof(__uint16_t));
 
      result->low_surrogates_capacity = 0;
      result->low_surrogates_count    = 0;

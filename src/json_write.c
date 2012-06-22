@@ -42,12 +42,12 @@ static void del(json_writer_t *this) {
 
 static void newline_and_indent(json_writer_t *this) {
      if (this->options & json_extend_spaces) {
-          this->stream->put(this->stream, "\n%*c", this->depth * 4, ' ');
+          this->stream->put(this->stream, "\n%*s", this->depth * 4, "");
      }
 }
 
 static void write_object(json_writer_t *this, json_object_t *visited) {
-     int i, key_space = 0;
+     int i, key_space = 1;
      int n = visited->count(visited);
      const char **keys = (const char **)alloca(n * sizeof(const char*));
      visited->keys(visited, keys);
@@ -59,7 +59,6 @@ static void write_object(json_writer_t *this, json_object_t *visited) {
      }
      this->stream->put(this->stream, "{");
      this->depth++;
-     newline_and_indent(this);
      for (i = 0; i < n; i++) {
           json_value_t *v = visited->get(visited, keys[i]);
           if (i > 0) {
@@ -68,7 +67,7 @@ static void write_object(json_writer_t *this, json_object_t *visited) {
           newline_and_indent(this);
           this->stream->put(this->stream, "\"%s\":", keys[i]);
           if (this->options & json_extend_spaces) {
-               this->stream->put(this->stream, "%*c", key_space, ' ');
+               this->stream->put(this->stream, "%*s", key_space - strlen(keys[i]) + 1, "");
           }
           v->accept(v, (json_visitor_t*)this);
      }
