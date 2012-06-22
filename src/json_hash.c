@@ -89,7 +89,6 @@ static void grow(struct json_hash_impl *this) {
      }
      else {
           new_capacity = this->capacity * 2;
-          printf("**** grow from [0..%d] to [0..%d]\n", this->capacity, new_capacity);
           new_entries = (json_hash_entry_t *)this->memory.malloc(new_capacity * sizeof(json_hash_entry_t));
           memset(new_entries, 0, new_capacity * sizeof(json_hash_entry_t));
           for (i = 0; i < this->capacity; i++) {
