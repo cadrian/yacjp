@@ -24,9 +24,7 @@ static void on_error(json_input_stream_t *s, int line, int column, const char *f
      assert(0);
 }
 
-static char *source = "{\"foo\":\"data\",\"key\":[1,2],\"bar\":{\"a\":1.4e+9}}";
-/* don't expect the order of keys to be kept... */
-static char *expected = "{\"bar\":{\"a\":1.4e+9},\"foo\":\"data\",\"key\":[1,2]}";
+static char *source = "{\"foo\":\"data\",\"key\":[1,2],\"bat\":{\"a\":1.4e+9}}";
 
 int main() {
      json_value_t *value;
@@ -42,7 +40,7 @@ int main() {
      value->accept(value, writer);
 
      assert(NULL != out_source);
-     assert(0 == strcmp(expected, out_source));
+     assert(0 == strcmp(source, out_source));
 
      return 0;
 }

@@ -63,13 +63,14 @@ static int index_of(json_hash_entry_t *entries, hash_keys_t keys, int capacity, 
      int result = j % capacity;
      const void *k = entries[result].key;
      int found = k ? !cmp(key, k) : 1;
-     do {
+
+     while (!found) {
           j = (5 * j) + 1 + perturb;
           perturb >>= PERTURB_SHIFT;
           result = j % capacity;
           k = entries[result].key;
           found = k ? !cmp(key, k) : 1;
-     } while (!found);
+     }
 
      if (!k) result = -result - 1;
 
@@ -88,6 +89,7 @@ static void grow(struct json_hash_impl *this) {
      }
      else {
           new_capacity = this->capacity * 2;
+          printf("**** grow from [0..%d] to [0..%d]\n", this->capacity, new_capacity);
           new_entries = (json_hash_entry_t *)this->memory.malloc(new_capacity * sizeof(json_hash_entry_t));
           memset(new_entries, 0, new_capacity * sizeof(json_hash_entry_t));
           for (i = 0; i < this->capacity; i++) {
@@ -132,7 +134,11 @@ static void *get(struct json_hash_impl *this, const void *key) {
 
 static void *set(struct json_hash_impl *this, const void *key, void *value) {
      void *result = NULL;
-     int index = this->capacity == 0 ? -1 : index_of(this->entries, this->keys, this->capacity, key);
+     int index;
+     if (this->capacity == 0) {
+          grow(this);
+     }
+     index = index_of(this->entries, this->keys, this->capacity, key);
      if (index >= 0) {
           result = this->entries[index].value;
      }
