@@ -287,7 +287,7 @@ static size_t utf8(struct json_string_impl *this, char *buffer, size_t size) {
                add_to_buffer(v % 64 + 128);
           }
      }
-     add_to_buffer(0);
+     add_to_buffer(0); result--; // don't count \0
      return result;
 }
 

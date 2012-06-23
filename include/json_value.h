@@ -17,6 +17,13 @@
 #ifndef _YACJP_JSON_VALUE_H_
 #define _YACJP_JSON_VALUE_H_
 
+/**
+ * The JSON values tree.
+ *
+ * All value pointers may be cast to/from json_value_t* and provided
+ * the accept() and free() functions.
+ */
+
 #include <ctype.h>
 
 #include "json_shared.h"
@@ -34,12 +41,6 @@ typedef struct json_visitor json_visitor_t;
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-typedef struct json_object_field json_object_field_t;
-struct json_object_field {
-     const char *key;
-     json_value_t *value;
-};
-
 typedef void                 (*json_object_accept_fn) (json_object_t *this, json_visitor_t *visitor);
 typedef void                 (*json_object_free_fn  ) (json_object_t *this);
 typedef unsigned int         (*json_object_count_fn ) (json_object_t *this);
@@ -48,13 +49,47 @@ typedef json_value_t        *(*json_object_get_fn   ) (json_object_t *this, cons
 typedef json_value_t        *(*json_object_set_fn   ) (json_object_t *this, const char *key, json_value_t *value);
 typedef json_value_t        *(*json_object_del_fn   ) (json_object_t *this, const char *key);
 
+/**
+ * The JSON object public interface.
+ */
 struct json_object {
+     /**
+      * Accept a visitor.
+      */
      json_object_accept_fn accept;
+
+     /**
+      * Free the object and all its internal structures (but not its content).
+      */
      json_object_free_fn   free  ;
+
+     /**
+      * @return the number of values in the object.
+      */
      json_object_count_fn  count ;
+
+     /**
+      * Fill the provided keys array, which MUST be large enough (at
+      * least count() locations)
+      */
      json_object_keys_fn   keys  ;
+
+     /**
+      * @return a value, given its key.
+      */
      json_object_get_fn    get   ;
+
+     /**
+      * Set the provided new value to the given key.
+      *
+      * @return the previous value, or NULL if none was set.
+      */
      json_object_set_fn    set   ;
+
+     /**
+      * Remove both the provided key and its associated value from the
+      * object.
+      */
      json_object_del_fn    del   ;
 };
 
@@ -69,14 +104,55 @@ typedef void          (*json_array_ins_fn   ) (json_array_t *this, int index, js
 typedef void          (*json_array_add_fn   ) (json_array_t *this,            json_value_t *value);
 typedef void          (*json_array_del_fn   ) (json_array_t *this, int index);
 
+/**
+ * The JSON array public interface.
+ */
 struct json_array {
+     /**
+      * Accept a visitor.
+      */
      json_array_accept_fn accept;
+
+     /**
+      * Free the array and all its internal structures (but not its content).
+      */
      json_array_free_fn   free  ;
+
+     /**
+      * @return the number of values in the array.
+      */
      json_array_count_fn  count ;
+
+     /**
+      * @return the value at the given index.
+      */
      json_array_get_fn    get   ;
+
+     /**
+      * Set a value at the given index, maybe overwriting an existing
+      * value. The array may be enlarged to accomodate the index.
+      */
      json_array_set_fn    set   ;
+
+     /**
+      * Insert a value at the given index, pushing the subsequent ones
+      * if needed. The array may be enlarged to accomodate the index.
+      */
      json_array_set_fn    ins   ;
+
+     /**
+      * Add a value immediately after all the known ones (count() is
+      * incremented by exactly one).
+      */
      json_array_add_fn    add   ;
+
+     /**
+      * Removes the value at the given index and pulls the subsequent
+      * ones (count() is decremented by exactly one).
+      *
+      * Does nothing if the index is not between 0 included and
+      * count() excluded.
+      */
      json_array_del_fn    del   ;
 };
 
@@ -94,14 +170,61 @@ typedef void            (*json_string_set_fn     ) (json_string_t *this, char *f
 typedef int             (*json_string_add_utf8_fn) (json_string_t *this, char c); /* returns the number of expected extra chars to read to form a correct unicode character; -1 if error */
 typedef void            (*json_string_add_fn     ) (json_string_t *this, int unicode);
 
+/**
+ * The JSON unicode string public interface.
+ */
 struct json_string {
+     /**
+      * Accept a visitor.
+      */
      json_string_accept_fn   accept  ;
+
+     /**
+      * Free the string.
+      */
      json_string_free_fn     free    ;
+
+     /**
+      * Count the unicode characters.
+      */
      json_string_count_fn    count   ;
+
+     /**
+      * Puts the string encoded in utf-8 in the given buffer. The
+      * buffer is guaranteed not to overflow the given size.
+      *
+      * @return the number of characters that are, or should have
+      * been, written. The last '\0' is written (or should be, if the
+      * buffer is not big enough) but NOT counted in the result. Thus
+      * if the result greater than or equal to the given buffer size,
+      * please call again with a greater buffer.
+      */
      json_string_utf8_fn     utf8    ;
+
+     /**
+      * @return the unicode character at the given index.
+      */
      json_string_get_fn      get     ;
+
+     /**
+      * ADD the given string (after eventual formatting) as a utf-8
+      * encoded string.
+      */
      json_string_set_fn      set     ;
+
+     /**
+      * Add the unicode character at the end of the string.
+      */
      json_string_add_fn      add     ;
+
+     /**
+      * Tries to append the given utf-8 character, maybe expecting
+      * more to finally add a full unicode character.
+      *
+      * @return the number of characters still needed to add a valid
+      * unicode character. If 0 then the character was sucessfully
+      * added.
+      */
      json_string_add_utf8_fn add_utf8;
 };
 
@@ -116,6 +239,9 @@ typedef void   (*json_number_set_fn      ) (json_number_t *this, int integral, i
 typedef int    (*json_number_to_string_fn) (json_number_t *this, char *buffer, size_t buffer_size);
 
 struct json_number {
+     /**
+      * Accept a visitor.
+      */
      json_number_accept_fn    accept   ;
      json_number_free_fn      free     ;
      json_number_is_int_fn    is_int   ;
@@ -138,6 +264,9 @@ typedef void         (*json_const_free_fn  ) (json_const_t *this);
 typedef json_const_e (*json_const_value_fn ) (json_const_t *this);
 
 struct json_const {
+     /**
+      * Accept a visitor.
+      */
      json_const_accept_fn accept;
      json_const_free_fn   free  ;
      json_const_value_fn  value ;
