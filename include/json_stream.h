@@ -18,6 +18,7 @@
 #define _YACJP_JSON_STREAM_H_
 
 /**
+ * @file
  * The JSON stream subsystem.
  */
 

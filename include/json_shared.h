@@ -18,6 +18,7 @@
 #define _YACJP_JSON_SHARED_H_
 
 /**
+ * @file
  * A shared header for all JSON subsystems.
  */
 

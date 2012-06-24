@@ -18,6 +18,7 @@
 #define _YACJP_HASH_H_
 
 /**
+ * @file
  *
  * A hash table. Accepts any kinds of pointers (you must provide the
  * functions to hash the keys).

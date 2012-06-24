@@ -18,6 +18,7 @@
 #define _YACJP_JSON_H_
 
 /**
+ * @file
  * The JSON file to include.
  */
 
@@ -51,7 +52,7 @@ __PUBLIC__ json_visitor_t *json_kill();
 __PUBLIC__ extern short json_compact;
 
 /**
- * An argument to write_to() to obtain '\u' sequences instead of raw
+ * An argument to write_to() to obtain '\\u' sequences instead of raw
  * utf-8.
  */
 __PUBLIC__ extern short json_extend_unicode; /* use '\u' sequences instead of raw utf8 */

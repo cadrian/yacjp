@@ -18,6 +18,7 @@
 #define _YACJP_JSON_VALUE_H_
 
 /**
+ * @file
  * The JSON values tree.
  *
  * All value pointers may be cast to/from json_value_t* and provided
