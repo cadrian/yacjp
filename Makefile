@@ -4,7 +4,7 @@ TST=$(shell ls -1 test/test*.c | sed -r 's|^test/|target/test/|g;s|\.c|.run|g')
 CFLAGS ?= -g
 RUN ?=
 
-all: target/libyacjp.so run-test
+all: target/libyacjp.so run-test target/libyacjp.pdf
 	echo "Done."
 
 run-test: $(TST)
@@ -28,6 +28,19 @@ target/libyacjp.so: target $(OBJ)
 	echo "Linking library: $@"
 	$(CC) -shared -o $@ -lm $(OBJ)
 	echo
+
+target/libyacjp.pdf: target/doc/latex/refman.pdf
+	echo "Saving PDF documentation"
+	cp $< $@
+	echo
+
+target/doc/latex/refman.pdf: target/doc/latex/Makefile
+	echo "Building PDF"
+	make -C target/doc/latex
+
+target/doc/latex/Makefile: Doxyfile target $(shell ls -1 src/*.c include/*.h)
+	echo "Generating documentation"
+	doxygen $<
 
 target/out/%.o: src/%.c include/*.h
 	echo "Compiling library object: $<"

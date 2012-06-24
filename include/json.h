@@ -55,18 +55,18 @@ __PUBLIC__ extern short json_compact;
  * An argument to write_to() to obtain '\\u' sequences instead of raw
  * utf-8.
  */
-__PUBLIC__ extern short json_extend_unicode; /* use '\u' sequences instead of raw utf8 */
+__PUBLIC__ extern short json_extend_unicode;
 
 /**
  * An argument to write_to() to obtain a pretty output with spaces and newlines.
  */
-__PUBLIC__ extern short json_extend_spaces;  /* pretty print spaces, add newlines when relevant */
+__PUBLIC__ extern short json_extend_spaces;
 
 /**
  * @return a visitor that is able to write a JSON value to the given stream.
  *
- * Sensible options are json_compact, json_extend_unicode,
- * json_extend_spaces, or json_extend_unicode || json_extend_spaces
+ * @arg options Sensible options are @ref json_compact, @ref json_extend_unicode,
+ * @ref json_extend_spaces, or @ref json_extend_unicode || @ref json_extend_spaces.
  */
 __PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, json_memory_t memory, short options);
 
