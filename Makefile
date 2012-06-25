@@ -4,8 +4,12 @@ TST=$(shell ls -1 test/test*.c | sed -r 's|^test/|target/test/|g;s|\.c|.run|g')
 CFLAGS ?= -g
 RUN ?=
 
-all: target/libyacjp.so run-test target/libyacjp.pdf
+all: lib doc
 	echo "Done."
+
+lib: target/libyacjp.so run-test
+
+doc: target/libyacjp.pdf
 
 run-test: $(TST)
 
@@ -38,7 +42,7 @@ target/doc/latex/refman.pdf: target/doc/latex/Makefile
 	echo "Building PDF"
 	make -C target/doc/latex
 
-target/doc/latex/Makefile: Doxyfile target $(shell ls -1 src/*.c include/*.h)
+target/doc/latex/Makefile: Doxyfile target $(shell ls -1 src/*.c include/*.h doc/*)
 	echo "Generating documentation"
 	doxygen $<
 
