@@ -42,13 +42,15 @@ target/doc/latex/refman.pdf: target/doc/latex/Makefile
 	echo "  Building PDF"
 	make -C target/doc/latex > target/doc/make.log 2>&1
 
-target/doc/latex/Makefile: target/doc/.doc
-
 target/libyacjp-htmldoc.tgz: target/doc/html/index.html
 	echo "  Building HTML archive"
 	(cd target/doc/html; tar cfz - *) > $@
 
+target/doc/latex/Makefile: target/doc/.doc
+	sleep 1; touch $@
+
 target/doc/html/index.html: target/doc/.doc
+	sleep 1; touch $@
 
 target/doc/.doc: Doxyfile target $(shell ls -1 src/*.c include/*.h doc/*)
 	echo "Generating documentation"
