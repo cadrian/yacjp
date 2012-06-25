@@ -15,6 +15,7 @@
 */
 
 #include <stdarg.h>
+#include <string.h>
 
 #include "test.h"
 #include "json.h"
@@ -39,6 +40,44 @@ int main() {
      stream = new_json_input_stream_from_file(file, stdlib_memory);
      value = json_parse(stream, on_error, stdlib_memory);
      fclose(file);
+
+     {
+          json_object_t *object = (json_object_t*)value;
+          json_object_t *main;
+          json_number_t *fullscreen;
+          json_number_t *width;
+          json_number_t *height;
+          json_string_t *profile;
+          char profile_value[8];
+          int count;
+          main = (json_object_t*)object->get(object, "main");
+          assert(main != NULL);
+
+          fullscreen = (json_number_t*)main->get(main, "fullscreen");
+          assert(fullscreen != NULL);
+          assert(fullscreen->is_int(fullscreen));
+          assert(fullscreen->to_int(fullscreen) == 0);
+          assert(fullscreen->to_double(fullscreen) == 0.0);
+
+          width = (json_number_t*)main->get(main, "width");
+          assert(width != NULL);
+          assert(width->is_int(width));
+          assert(width->to_int(width) == 800);
+          assert(width->to_double(width) == 800.0);
+
+          height = (json_number_t*)main->get(main, "height");
+          assert(height != NULL);
+          assert(height->is_int(height));
+          assert(height->to_int(height) == 480);
+          assert(height->to_double(height) == 480.0);
+
+          profile = (json_string_t*)main->get(main, "profile");
+          assert(profile != NULL);
+          memset(profile_value, 1, 8); // not \0 to ensure that the NUL character is correctly written by the utf8 converter
+          count = profile->utf8(profile, profile_value, 8);
+          assert(count == 4);
+          assert(0 == strcmp("test", profile_value));
+     }
 
      return 0;
 }
