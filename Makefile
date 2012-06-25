@@ -34,13 +34,13 @@ target/libyacjp.so: target $(OBJ)
 	echo
 
 target/libyacjp.pdf: target/doc/latex/refman.pdf
-	echo "Saving PDF documentation"
+	echo "    Saving PDF documentation"
 	cp $< $@
 	echo
 
 target/doc/latex/refman.pdf: target/doc/latex/Makefile
-	echo "Building PDF"
-	make -C target/doc/latex
+	echo "  Building PDF"
+	make -C target/doc/latex > target/doc/make.log 2>&1
 
 target/doc/latex/Makefile: Doxyfile target $(shell ls -1 src/*.c include/*.h doc/*)
 	echo "Generating documentation"
