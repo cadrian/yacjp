@@ -54,5 +54,5 @@ target/out/%.exe: test/%.c test/*.h target/libyacjp.so
 	echo "Compiling test: $<"
 	$(CC) $(CFLAGS) -I include -L target -lyacjp $< -o $@
 
-.PHONY: all clean run-test
+.PHONY: all lib doc clean run-test
 .SILENT:
