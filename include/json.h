@@ -29,6 +29,11 @@
 #include "json_value.h"
 
 /**
+ * @ingroup json_parse
+ * @{
+ */
+
+/**
  * This function is called by the JSON parser if an error is met while
  * parsing a JSON stream.
  *
@@ -53,12 +58,30 @@ typedef void (*json_on_error_fn)(json_input_stream_t *stream, int line, int colu
 __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, json_memory_t memory);
 
 /**
+ * @}
+ */
+
+/**
+ * @ingroup json_utils
+ * @{
+ */
+
+/**
  * This visitor kills a JSON value: recursively free()s all the values
  * contained in objects and arrays.
  *
  * @return a singleton object able to recursively kill any JSON value.
  */
 __PUBLIC__ json_visitor_t *json_kill();
+
+/**
+ * @}
+ */
+
+/**
+ * @ingroup json_write
+ * @{
+ */
 
 /**
  * An argument to json_write_to() to obtain a compact JSON output.
@@ -96,5 +119,9 @@ __PUBLIC__ extern short json_extend_spaces;
  * `stream`.
  */
 __PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, json_memory_t memory, short options);
+
+/**
+ * @}
+ */
 
 #endif /* _YACJP_JSON_H_ */

@@ -26,6 +26,10 @@
 
 #include "json_shared.h"
 
+/**
+ * @ingroup json_stream
+ * @{
+ */
 
 typedef struct json_input_stream json_input_stream_t;
 
@@ -104,5 +108,9 @@ __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file           (FIL
  * Note: not implemented.
  */
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd,        json_memory_t memory);
+
+/**
+ * @}
+ */
 
 #endif /* _YACJP_JSON_STREAM_H_ */

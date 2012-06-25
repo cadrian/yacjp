@@ -38,3 +38,38 @@ You should have received a copy of the GNU General Public License
 along with YacJP.  If not, see http://www.gnu.org/licenses/
 
 Copyleft © 2012 Cyril ADRIAN
+
+
+\defgroup json_stream JSON streams
+
+The library proposes several implementations of input and output
+streams.
+
+
+\defgroup json_value JSON values
+
+The library implements all the JSON value types: objects, arrays,
+strings, numbers, and the three constants `true`, `false`, and `null`.
+
+\defgroup json_parse Parsing from a JSON stream
+
+The library provides a function that drives the JSON parsing, while
+using callbacks for both memory management and error management.
+
+The parsing function uses the \ref json_stream "JSON input streams" as
+byte providers.
+
+
+\defgroup json_write Writing to a JSON stream
+
+Writing to a \ref json_stream "JSON output stream" is only a matter of
+using a writer object.
+
+
+\defgroup json_utils JSON tools
+
+The library also provides a fez tools, oriented to the management of
+the JSON values.
+
+Currently there is only one such tool: the JSON values killer that
+correctly (recursively) frees all the memory allocated by JSON values.

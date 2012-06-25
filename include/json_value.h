@@ -29,6 +29,11 @@
 
 #include "json_shared.h"
 
+/**
+ * @ingroup json_value
+ * @{
+ */
+
 typedef struct json_value   json_value_t;
 
 typedef struct json_object  json_object_t;
@@ -305,5 +310,9 @@ __PUBLIC__ json_array_t  *json_new_array (json_memory_t memory);
 __PUBLIC__ json_string_t *json_new_string(json_memory_t memory);
 __PUBLIC__ json_number_t *json_new_number(json_memory_t memory);
 __PUBLIC__ json_const_t  *json_const(json_const_e value);
+
+/**
+ * @}
+ */
 
 #endif /* _YACJP_JSON_VALUE_H_ */
