@@ -150,7 +150,7 @@ struct hash {
  *
  * @return the hash value of a key
  */
-typedef unsigned int (*hash_key_hash_fn)   (const void *key);
+typedef unsigned int (*hash_keys_hash_fn)   (const void *key);
 
 /**
  * A function that compares both keys
@@ -162,19 +162,19 @@ typedef unsigned int (*hash_key_hash_fn)   (const void *key);
  *
  * @return 0 if both keys are equal, non-zero otherwise.
  */
-typedef int          (*hash_key_compare_fn)(const void *key1, const void *key2);
+typedef int          (*hash_keys_compare_fn)(const void *key1, const void *key2);
 
 /**
  * @return a newly allocated key (to be kept in the hash table);
  * the result must be equal to the provided key (compare()==0)
  */
-typedef const void  *(*hash_key_clone_fn)  (const void *key);
+typedef const void  *(*hash_keys_clone_fn)  (const void *key);
 
 /**
  * Free the given key which is guaranteed to have been clone()d
  * by the hash table. Used at del() time.
  */
-typedef void         (*hash_key_free_fn)   (const void *key);
+typedef void         (*hash_keys_free_fn)   (const void *key);
 
 /**
  * Public interface of the functions to provide that will manage the
@@ -182,21 +182,21 @@ typedef void         (*hash_key_free_fn)   (const void *key);
  */
 typedef struct hash_keys {
      /**
-      * @see hash_key_hash_fn
+      * @see hash_keys_hash_fn
       */
-     hash_key_hash_fn    hash;
+     hash_keys_hash_fn    hash;
      /**
-      * @see hash_key_compare_fn
+      * @see hash_keys_compare_fn
       */
-     hash_key_compare_fn compare;
+     hash_keys_compare_fn compare;
      /**
-      * @see hash_key_clone_fn
+      * @see hash_keys_clone_fn
       */
-     hash_key_clone_fn   clone;
+     hash_keys_clone_fn   clone;
      /**
-      * @see hash_key_free_fn
+      * @see hash_keys_free_fn
       */
-     hash_key_free_fn    free;
+     hash_keys_free_fn    free;
 } hash_keys_t;
 
 /**

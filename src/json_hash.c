@@ -47,14 +47,14 @@ static unsigned int string_hash(const char *key) {
 }
 
 __PUBLIC__ hash_keys_t hash_strings = {
-     (hash_key_hash_fn)string_hash,
-     (hash_key_compare_fn)strcmp,
-     (hash_key_clone_fn)strdup,
-     (hash_key_free_fn)free,
+     (hash_keys_hash_fn)string_hash,
+     (hash_keys_compare_fn)strcmp,
+     (hash_keys_clone_fn)strdup,
+     (hash_keys_free_fn)free,
 };
 
 static int index_of(json_hash_entry_t *entries, hash_keys_t keys, int capacity, const void *key) {
-     hash_key_compare_fn cmp = keys.compare;
+     hash_keys_compare_fn cmp = keys.compare;
 
      unsigned int h = keys.hash(key);
      unsigned int j = h;
