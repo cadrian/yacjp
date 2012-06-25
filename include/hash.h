@@ -34,6 +34,12 @@ typedef struct hash hash_t;
 /**
  * Provide a function of this type to iterate through all the keys of
  * a hash table.
+ *
+ * @arg hash the hash table onto which the iterator is iterating
+ * @arg index the current index; the function is called once for each [0..count[
+ * @arg key the current key
+ * @arg value the current value
+ * @arg data user data
  */
 typedef void (*hash_iterator_fn)(void *hash, int index, const void *key, void *value, void *data);
 
