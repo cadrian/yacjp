@@ -20,6 +20,8 @@
 /**
  * @file
  * The JSON file to include.
+ *
+ * This header provides all the necessary definitions to use the library.
  */
 
 #include "json_shared.h"
@@ -29,11 +31,21 @@
 /**
  * This function is called by the JSON parser if an error is met while
  * parsing a JSON stream.
+ *
+ * @param[in] stream the input stream that was parsed when the error occurred
+ * @param[in] line the line number of the error
+ * @param[in] column the column number of the error
+ * @param[in] format the format of the error message, printf()-compliant
+ * @param[in] ... the arguments of the format
  */
 typedef void (*json_on_error_fn)(json_input_stream_t *stream, int line, int column, const char *format, ...);
 
 /**
  * Parse a JSON stream.
+ *
+ * @param[in] stream the stream that contains the JSON data to parse
+ * @param[in] on_error the function to call if a parse error occurs
+ * @param[in] memory the memory manager that will allocate memory for the parsed JSON objects
  *
  * @return the parsed JSON value, or NULL if an error occured (in the
  * latter case, the on_error function was also called).
@@ -41,32 +53,47 @@ typedef void (*json_on_error_fn)(json_input_stream_t *stream, int line, int colu
 __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, json_memory_t memory);
 
 /**
- * Kill a JSON value: recursively free()s all the values contained in
- * objects and arrays.
+ * This visitor kills a JSON value: recursively free()s all the values
+ * contained in objects and arrays.
+ *
+ * @return a singleton object able to recursively kill any JSON value.
  */
 __PUBLIC__ json_visitor_t *json_kill();
 
 /**
- * An argument to write_to() to obtain a compact JSON output.
+ * An argument to json_write_to() to obtain a compact JSON output.
+ *
+ * @see json_write_to
  */
 __PUBLIC__ extern short json_compact;
 
 /**
- * An argument to write_to() to obtain '\\u' sequences instead of raw
- * utf-8.
+ * An argument to json_write_to() to obtain '\\u' sequences instead of
+ * raw utf-8.
+ *
+ * @see json_write_to
  */
 __PUBLIC__ extern short json_extend_unicode;
 
 /**
- * An argument to write_to() to obtain a pretty output with spaces and newlines.
+ * An argument to json_write_to() to obtain a pretty output with
+ * spaces and newlines.
+ *
+ * @see json_write_to
  */
 __PUBLIC__ extern short json_extend_spaces;
 
 /**
- * @return a visitor that is able to write a JSON value to the given stream.
+ * Builds a visitor that can write any given JSON data to the `stream`.
  *
- * @arg options Sensible options are @ref json_compact, @ref json_extend_unicode,
- * @ref json_extend_spaces, or @ref json_extend_unicode || @ref json_extend_spaces.
+ * @param[in] stream the stream onto which the JSON data will be written
+ * @param[in] memory the memory manager that will allocate memory if needed
+ * @param[in] options Sensible options are @ref json_compact, @ref
+ * json_extend_unicode, @ref json_extend_spaces, or the combined @ref
+ * json_extend_unicode || @ref json_extend_spaces.
+ *
+ * @return a visitor that is able to write a JSON value to the given
+ * `stream`.
  */
 __PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, json_memory_t memory, short options);
 
