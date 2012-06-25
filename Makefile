@@ -9,9 +9,11 @@ all: lib doc
 
 lib: target/libyacjp.so run-test
 
-doc: target/libyacjp.pdf
+doc: target/libyacjp.pdf target/libyacjp-htmldoc.tgz
+	echo
 
 run-test: $(TST)
+	echo
 
 clean:
 	echo "Cleaning"
@@ -21,7 +23,6 @@ clean:
 target/test/%.run: target/out/%.exe
 	echo "  Running test: $<"
 	LD_LIBRARY_PATH=target $(RUN) $< && touch $@
-	echo
 
 target:
 	mkdir -p target/out/data
@@ -36,15 +37,22 @@ target/libyacjp.so: target $(OBJ)
 target/libyacjp.pdf: target/doc/latex/refman.pdf
 	echo "    Saving PDF documentation"
 	cp $< $@
-	echo
 
 target/doc/latex/refman.pdf: target/doc/latex/Makefile
 	echo "  Building PDF"
 	make -C target/doc/latex > target/doc/make.log 2>&1
 
-target/doc/latex/Makefile: Doxyfile target $(shell ls -1 src/*.c include/*.h doc/*)
+target/doc/latex/Makefile: target/doc/.doc
+
+target/libyacjp-htmldoc.tgz: target/doc/html/index.html
+	echo "  Building HTML archive"
+	(cd target/doc/html; tar cfz - *) > $@
+
+target/doc/html/index.html: target/doc/.doc
+
+target/doc/.doc: Doxyfile target $(shell ls -1 src/*.c include/*.h doc/*)
 	echo "Generating documentation"
-	doxygen $<
+	doxygen $< && touch $@
 
 target/out/%.o: src/%.c include/*.h
 	echo "Compiling library object: $<"
