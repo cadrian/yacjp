@@ -27,14 +27,14 @@
 #include "json_shared.h"
 
 /**
- * @ingroup json_stream
+ * @addtogroup json_stream
  * @{
  */
 
-typedef struct json_input_stream json_input_stream_t;
-
-typedef int (*json_input_stream_next_fn)(json_input_stream_t *this);
-typedef int (*json_input_stream_item_fn)(json_input_stream_t *this);
+/**
+ * @addtogroup json_in_stream
+ * @{
+ */
 
 /**
  * The JSON input stream public interface.
@@ -42,72 +42,155 @@ typedef int (*json_input_stream_item_fn)(json_input_stream_t *this);
  * The abstraction is a data cursor: the "current" byte is always
  * available via item(); use next() to advance the cursor.
  */
+typedef struct json_input_stream json_input_stream_t;
+
+/**
+ * Ask the JSON stream to read the next byte.
+ *
+ * @param[in] this the target JSON input stream
+ *
+ * @return 0 if OK, -1 if error
+ */
+typedef int (*json_input_stream_next_fn)(json_input_stream_t *this);
+
+/**
+ * Ask the JSON input stream the last read byte.
+ *
+ * @param[in] this the target JSON input stream
+ *
+ * @return the current byte in the stream.
+ */
+typedef int (*json_input_stream_item_fn)(json_input_stream_t *this);
+
 struct json_input_stream {
      /**
-      * Advances one byte in the stream.
-      *
-      * @return 0 when ok, -1 if an error occurred.
+      * @see json_input_stream_next_fn
       */
      json_input_stream_next_fn next;
 
      /**
-      * @return the current byte in the stream.
+      * @see json_input_stream_item_fn
       */
      json_input_stream_item_fn item;
 };
 
 /**
+ * Create a new JSON input stream that reads bytes from the given C
+ * string (will stop at '\\0'), using the given memory manager and
+ * returns it.
+ *
+ * @param[in] string the C string to read bytes from
+ * @param[in] memory the memory manager
+ *
  * @return a stream that reads bytes from the given string.
  */
 __PUBLIC__ json_input_stream_t *new_json_input_stream_from_string         (char *string, json_memory_t memory);
 
 /**
+ * Create a new JSON input stream that reads bytes from the given
+ * file, using the given memory manager and returns it.
+ *
+ * @param[in] file the file to read from (must be open for reading)
+ * @param[in] memory the memory manager
+ *
  * @return a stream that reads bytes from the given file.
  */
 __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file           (FILE *file,   json_memory_t memory);
 
 /**
+ * Create a new JSON input stream that reads bytes from the given
+ * file descriptor, using the given memory manager and returns it.
+ *
+ * @param[in] fd the file descriptor to read from (must be open for reading)
+ * @param[in] memory the memory manager
+ *
  * @return a stream that reads bytes from the given file descriptor.
  */
 __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int fd,       json_memory_t memory);
 
+/**
+ * @}
+ */
 
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-
-typedef struct json_output_stream json_output_stream_t;
-
-typedef void (*json_output_stream_put_fn  )(json_output_stream_t *this, const char *format, ...) __attribute__((format(printf, 2, 3)));
-typedef void (*json_output_stream_flush_fn)(json_output_stream_t *this);
+/**
+ * @addtogroup json_out_stream
+ * @{
+ */
 
 /**
  * The JSON output stream interface.
  *
  * The abstraction is a byte bucket.
  */
+typedef struct json_output_stream json_output_stream_t;
+
+/**
+ * Put bytes to the output stream
+ *
+ * @param[in] this the target JSON output stream
+ * @param[in] format the format of the bytes to put, compatible with printf()
+ * @param[in] ... the arguments of the format
+ */
+typedef void (*json_output_stream_put_fn  )(json_output_stream_t *this, const char *format, ...) __PRINTF__;
+
+/**
+ * Flush bytes to the underlying stream
+ *
+ * @param[in] this the target JSON output stream
+ */
+typedef void (*json_output_stream_flush_fn)(json_output_stream_t *this);
+
 struct json_output_stream {
+     /**
+      * @see json_output_stream_put_fn
+      */
      json_output_stream_put_fn   put;
+     /**
+      * @see json_output_stream_flush_fn
+      */
      json_output_stream_flush_fn flush;
 };
 
 /**
- * @return a stream that writes bytes to a string. That string is
- * allocated as needed (and may be allocated more than once); the
- * address of the string is always stored at the provided location.
+ * Create a new JSON output stream using the memory manager and
+ * returns it. That string is allocated as needed (and may be
+ * allocated more than once); the address of the string is always
+ * stored at the provided `string` location.
+ *
+ * @param[in,out] string the address of the string
+ * @param[in] memory the memory manager
+ *
+ * @return a stream that writes bytes to a string.
  */
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_string         (char **string, json_memory_t memory);
 
 /**
+ * Create a new JSON output stream using the memory manager and
+ * returns it.
+ *
+ * @param[in] file the file to write bytes to (must be open for writing or appending)
+ * @param[in] memory the memory manager
+ *
  * @return a stream that writes bytes into the given file.
  */
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file           (FILE *file,    json_memory_t memory);
 
 /**
+ * Create a new JSON output stream using the memory manager and
+ * returns it.
+ *
+ * @param[in] fd the file descriptor to write bytes to (must be open for writing or appending)
+ * @param[in] memory the memory manager
+ *
  * @return a stream that writes bytes into the given file descriptor.
  *
- * Note: not implemented.
+ * @todo not implemented.
  */
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd,        json_memory_t memory);
+
+/**
+ * @}
+ */
 
 /**
  * @}

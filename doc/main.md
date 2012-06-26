@@ -40,16 +40,56 @@ along with YacJP.  If not, see http://www.gnu.org/licenses/
 Copyleft © 2012 Cyril ADRIAN
 
 
-\defgroup json_stream JSON streams
+\defgroup json_stream Byte streams
 
 The library proposes several implementations of input and output
 streams.
+
+\{
+\defgroup json_in_stream Input streams
+
+Input streams act as byte cursors: their state is the current byte,
+change it by reading yet another byte.
+\{
+\}
+
+\defgroup json_out_stream Output streams
+
+Output streams act as byte buckets: fill them and flush them.
+\{
+\}
+
+\}
 
 
 \defgroup json_value JSON values
 
 The library implements all the JSON value types: objects, arrays,
 strings, numbers, and the three constants `true`, `false`, and `null`.
+
+\{
+
+\defgroup json_object Objects
+\{
+\}
+
+\defgroup json_array Arrays
+\{
+\}
+
+\defgroup json_string Strings
+\{
+\}
+
+\defgroup json_number Numbers
+\{
+\}
+
+\defgroup json_const Constants
+\{
+\}
+
+\}
 
 \defgroup json_parse Parsing from a JSON stream
 
@@ -59,17 +99,24 @@ using callbacks for both memory management and error management.
 The parsing function uses the \ref json_stream "JSON input streams" as
 byte providers.
 
-
-\defgroup json_write Writing to a JSON stream
+\defgroup json_write Writing to an output stream
 
 Writing to a \ref json_stream "JSON output stream" is only a matter of
 using a writer object.
 
 
-\defgroup json_utils JSON tools
+\defgroup json_utils Tools
 
-The library also provides a fez tools, oriented to the management of
+The library also provides a few tools, oriented to the management of
 the JSON values.
 
-Currently there is only one such tool: the JSON values killer that
-correctly (recursively) frees all the memory allocated by JSON values.
+The first tool is the JSON values killer that correctly (recursively)
+frees all the memory allocated by JSON values.
+
+The second tool is used virtually everywhere: the memory manager. The
+library uses a pair of functions similar to `malloc(3)` and `free(3)`
+to handle memory chunks allocation and deallocation. Those functions
+are available through a structure `json_memory_t` passed to most YacJP
+functions. The library provides a standard ("stdlib") \ref
+stdlib_memory "memory manager" but the user is free to provide her
+own.

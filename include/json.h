@@ -29,7 +29,7 @@
 #include "json_value.h"
 
 /**
- * @ingroup json_parse
+ * @addtogroup json_parse
  * @{
  */
 
@@ -62,7 +62,7 @@ __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_f
  */
 
 /**
- * @ingroup json_utils
+ * @addtogroup json_utils
  * @{
  */
 
@@ -79,7 +79,7 @@ __PUBLIC__ json_visitor_t *json_kill();
  */
 
 /**
- * @ingroup json_write
+ * @addtogroup json_write
  * @{
  */
 

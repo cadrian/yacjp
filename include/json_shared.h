@@ -25,6 +25,12 @@
 #include <stdlib.h>
 
 #define __PUBLIC__ __attribute__((__visibility__("default")))
+#define __PRINTF__ __attribute__((format(printf, 2, 3)))
+
+/**
+ * @addtogroup json_utils
+ * @{
+ */
 
 /**
  * The memory allocator.
@@ -61,9 +67,13 @@ typedef struct json_memory {
 } json_memory_t;
 
 /**
- * Certainly the most used memory manager: the raw glibc `malloc(3)`
+ * Certainly the most used memory manager: the raw libc `malloc(3)`
  * and `free(3)` functions.
  */
 __PUBLIC__ extern json_memory_t stdlib_memory;
+
+/**
+ * @}
+ */
 
 #endif /* _YACJP_JSON_SHARED_H_ */
