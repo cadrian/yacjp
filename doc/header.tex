@@ -1,0 +1,82 @@
+\batchmode
+\documentclass[a4paper,twoside,10pt]{book}
+\usepackage{makeidx}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{ifthen}
+\usepackage[table]{xcolor}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{ifpdf}
+\ifpdf
+\usepackage[pdftex,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            unicode
+           ]{hyperref}
+\else
+\usepackage[ps2pdf,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            unicode
+           ]{hyperref}
+\usepackage{pspicture}
+\fi
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+\usepackage{sectsty}
+\usepackage[titles]{tocloft}
+\usepackage{doxygen}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\lstset{language=C++,inputencoding=utf8,basicstyle=\footnotesize,breaklines=true,breakatwhitespace=true,tabsize=8,numbers=left }
+\usepackage{inconsolata}
+\usepackage[osfss]{libertine}
+\allsectionsfont{\usefont{T1}{fxb}{bc}{n}\selectfont\color{darkgray}} % force again to override Doxygen defaults
+\renewcommand*\familydefault{\rmdefault}
+\usepackage{libertinelogo}
+\makeindex
+\setcounter{tocdepth}{3}
+
+\begin{document}
+\hypersetup{pageanchor=false,citecolor=blue}
+\begin{titlepage}
+  \vspace*{3cm}
+  \begin{center}
+    \begin{tabular}{p{10cm}}
+      \hline
+      \begin{minipage}[t]{10cm}
+        \begin{center}
+          \vspace*{2ex}
+          {\Huge\textsc{YacJP}}
+
+          \vspace*{1ex}
+          {\Large\textsc{Yet another C-JSON parser}}
+        \end{center}
+      \end{minipage}
+      \vspace{1ex}\\
+      \hline
+    \end{tabular}
+
+    \vspace*{8em}
+    {Cyril~{\sc Adrian} \\ \texttt{cyril.adrian@gmail.com}}
+
+    \vspace*{2cm}
+    \today
+
+    \vfill
+    \emph{\small Composed using Libertine fonts, Doxygen, and~\LaTeX~} \libertinelogo
+  \end{center}
+\end{titlepage}
+\clearemptydoublepage
+\pagenumbering{roman}
+\tableofcontents
+\clearemptydoublepage
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true,citecolor=blue}

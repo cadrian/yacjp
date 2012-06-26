@@ -732,7 +732,7 @@ RECURSIVE              = NO
 # Note that relative paths are relative to the directory from which doxygen is 
 # run.
 
-EXCLUDE                = 
+EXCLUDE                = *.tex
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or 
 # directories that are symbolic links (a Unix file system feature) are excluded 
@@ -1300,7 +1300,7 @@ EXTRA_PACKAGES         =
 # the first chapter. If it is left blank doxygen will generate a 
 # standard header. Notice: only use this tag if you know what you are doing!
 
-LATEX_HEADER           = 
+LATEX_HEADER           = doc/header.tex
 
 # The LATEX_FOOTER tag can be used to specify a personal LaTeX footer for 
 # the generated latex document. The footer should contain everything after 
