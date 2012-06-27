@@ -126,6 +126,8 @@ functions. The library provides a standard ("stdlib") \ref
 stdlib_memory "memory manager" but the user is free to provide her
 own.
 
+The third tool is a lookup function.
+
 
 \defgroup json_hash Hash tables
 
