@@ -23,6 +23,10 @@ __PUBLIC__ json_memory_t stdlib_memory = {
      malloc, free
 };
 
+static void dont_free_visitor(json_visitor_t *this) {
+     /* nothing */
+}
+
 static void kill_object(json_visitor_t *this, json_object_t *visited) {
      int i;
      int n = visited->count(visited);
@@ -59,7 +63,7 @@ static void kill_const(json_visitor_t *this, json_const_t  *visited) {
 }
 
 json_visitor_t json_killer = {
-     0, /* don't del this singleton */
+     (json_visit_free_fn  )&dont_free_visitor,
      (json_visit_object_fn)&kill_object,
      (json_visit_array_fn )&kill_array ,
      (json_visit_string_fn)&kill_string,
@@ -123,7 +127,7 @@ static void lookup_const(lookup_visitor_t *this, json_const_t  *visited) {
 __PUBLIC__ json_value_t *json_lookup(json_value_t *value, ...) {
      lookup_visitor_t visitor = {
           {
-               0, /* internal use, don't del */
+               (json_visit_free_fn  )&dont_free_visitor,
                (json_visit_object_fn)&lookup_object,
                (json_visit_array_fn )&lookup_array ,
                (json_visit_string_fn)&lookup_string,

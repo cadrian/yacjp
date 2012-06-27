@@ -628,18 +628,58 @@ struct json_value {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-typedef void (*json_visit_del_fn   ) (json_visitor_t *this);
+/**
+ * Free the visitor.
+ *
+ * @param[in] this the target visitor
+ */
+typedef void (*json_visit_free_fn  ) (json_visitor_t *this);
+
+/**
+ * Visit an object.
+ *
+ * @param[in] this the target visitor
+ * @param[in] visited the visited object
+ */
 typedef void (*json_visit_object_fn) (json_visitor_t *this, json_object_t *visited);
+
+/**
+ * Visit an array.
+ *
+ * @param[in] this the target visitor
+ * @param[in] visited the visited array
+ */
 typedef void (*json_visit_array_fn ) (json_visitor_t *this, json_array_t  *visited);
+
+/**
+ * Visit a string.
+ *
+ * @param[in] this the target visitor
+ * @param[in] visited the visited string
+ */
 typedef void (*json_visit_string_fn) (json_visitor_t *this, json_string_t *visited);
+
+/**
+ * Visit a number.
+ *
+ * @param[in] this the target visitor
+ * @param[in] visited the visited number
+ */
 typedef void (*json_visit_number_fn) (json_visitor_t *this, json_number_t *visited);
+
+/**
+ * Visit a const.
+ *
+ * @param[in] this the target visitor
+ * @param[in] visited the visited const
+ */
 typedef void (*json_visit_const_fn ) (json_visitor_t *this, json_const_t  *visited);
 
 struct json_visitor {
      /**
-      * @see json_visit_del_fn
+      * @see json_visit_free_fn
       */
-     json_visit_del_fn    del;
+     json_visit_free_fn   free;
      /**
       * @see json_visit_object_fn
       */
@@ -665,22 +705,47 @@ struct json_visitor {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /**
+ * Create a new object and returns it.
+ *
+ * @param[in] memory the memory manager
+ *
+ * @return the new object
  */
 __PUBLIC__ json_object_t *json_new_object(json_memory_t memory);
 
 /**
+ * Create a new array and returns it.
+ *
+ * @param[in] memory the memory manager
+ *
+ * @return the new array
  */
 __PUBLIC__ json_array_t  *json_new_array (json_memory_t memory);
 
 /**
+ * Create a new string and returns it.
+ *
+ * @param[in] memory the memory manager
+ *
+ * @return the new string
  */
 __PUBLIC__ json_string_t *json_new_string(json_memory_t memory);
 
 /**
+ * Create a new number and returns it.
+ *
+ * @param[in] memory the memory manager
+ *
+ * @return the new number
  */
 __PUBLIC__ json_number_t *json_new_number(json_memory_t memory);
 
 /**
+ * Get the JSON const value associated with the given const.
+ *
+ * @param[in] value the value to return
+ *
+ * @return the unique (shared) value associated with the given const
  */
 __PUBLIC__ json_const_t  *json_const(json_const_e value);
 
