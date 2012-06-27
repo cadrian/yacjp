@@ -303,14 +303,14 @@ typedef __uint32_t unicode_char_t;
  * @param[in] this the target JSON string
  * @param[in] visitor the visitor
  */
-typedef void            (*json_string_accept_fn  ) (json_string_t *this, json_visitor_t *visitor);
+typedef void            (*json_string_accept_fn   ) (json_string_t *this, json_visitor_t *visitor);
 
 /**
  * Free the string.
  *
  * @param[in] this the target JSON string
  */
-typedef void            (*json_string_free_fn    ) (json_string_t *this);
+typedef void            (*json_string_free_fn     ) (json_string_t *this);
 
 /**
  * Count the unicode characters.
@@ -319,7 +319,7 @@ typedef void            (*json_string_free_fn    ) (json_string_t *this);
  *
  * @return the number of unicode characters in the string
  */
-typedef int             (*json_string_count_fn   ) (json_string_t *this);
+typedef int             (*json_string_count_fn    ) (json_string_t *this);
 
 /**
  * Puts the string encoded in utf-8 in the given buffer. The
@@ -335,7 +335,7 @@ typedef int             (*json_string_count_fn   ) (json_string_t *this);
  * if the result greater than or equal to the given buffer size,
  * please call again with a greater buffer.
  */
-typedef size_t          (*json_string_utf8_fn    ) (json_string_t *this, char *buffer, size_t buffer_size);
+typedef size_t          (*json_string_utf8_fn     ) (json_string_t *this, char *buffer, size_t buffer_size);
 
 /**
  * Get the index-th unicode character in the string
@@ -345,19 +345,17 @@ typedef size_t          (*json_string_utf8_fn    ) (json_string_t *this, char *b
  *
  * @return the unicode character at the given index.
  */
-typedef unicode_char_t  (*json_string_get_fn     ) (json_string_t *this, unsigned int index);
+typedef unicode_char_t  (*json_string_get_fn      ) (json_string_t *this, unsigned int index);
 
 /**
- * __Add__ the given string (after eventual formatting) as a utf-8
- * encoded string.
+ * Add the given string (after eventual formatting) as a utf-8 encoded
+ * string.
  *
  * @param[in] this the target unicode string
  * @param[in] format the format of the bytes to put, compatible with printf()
  * @param[in] ... the arguments of the format
- *
- * @todo rename that function
  */
-typedef void            (*json_string_set_fn     ) (json_string_t *this, char *format, ...) __PRINTF__; /* expects a utf-8 encoded string */
+typedef void            (*json_string_add_string_fn) (json_string_t *this, char *format, ...) __PRINTF__; /* expects a utf-8 encoded string */
 
 /**
  * Tries to append the given utf-8 byte, maybe expecting
@@ -370,7 +368,7 @@ typedef void            (*json_string_set_fn     ) (json_string_t *this, char *f
  * unicode character. If 0 then the character was sucessfully
  * added. If -1 there was an encoding error.
  */
-typedef int             (*json_string_add_utf8_fn) (json_string_t *this, char c);
+typedef int             (*json_string_add_utf8_fn ) (json_string_t *this, char c);
 
 /**
  * Add the unicode character at the end of the string.
@@ -378,7 +376,7 @@ typedef int             (*json_string_add_utf8_fn) (json_string_t *this, char c)
  * @param[in] this the target JSON string
  * @param[in] unicode the unicode character to add
  */
-typedef void            (*json_string_add_fn     ) (json_string_t *this, int unicode);
+typedef void            (*json_string_add_fn      ) (json_string_t *this, int unicode);
 
 /**
  * The JSON unicode string public interface.
@@ -387,35 +385,35 @@ struct json_string {
      /**
       * @see json_string_accept_fn
       */
-     json_string_accept_fn   accept  ;
+     json_string_accept_fn     accept    ;
      /**
       * @see json_string_free_fn
       */
-     json_string_free_fn     free    ;
+     json_string_free_fn       free      ;
      /**
       * @see json_string_count_fn
       */
-     json_string_count_fn    count   ;
+     json_string_count_fn      count     ;
      /**
       * @see json_string_utf8_fn
       */
-     json_string_utf8_fn     utf8    ;
+     json_string_utf8_fn       utf8      ;
      /**
       * @see json_string_get_fn
       */
-     json_string_get_fn      get     ;
+     json_string_get_fn        get       ;
      /**
-      * @see json_string_set_fn
+      * @see json_string_add_string_fn
       */
-     json_string_set_fn      set     ;
+     json_string_add_string_fn add_string;
      /**
       * @see json_string_add_fn
       */
-     json_string_add_fn      add     ;
+     json_string_add_fn        add       ;
      /**
       * @see json_string_add_utf8_fn
       */
-     json_string_add_utf8_fn add_utf8;
+     json_string_add_utf8_fn   add_utf8  ;
 };
 
 /**
