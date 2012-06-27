@@ -5,7 +5,11 @@ CFLAGS ?= -g
 RUN ?=
 
 all: lib doc run-test
-	echo "Done."
+	echo
+
+release: all target/version
+	echo Releasing version $(shell cat target/version)
+	cd target && tar cfz yacjp_$(shell cat target/version)_$(shell gcc -v 2>&1 | grep '^Target:' | sed 's/^Target: //').tgz libyacjp.so libyacjp.pdf libyacjp-htmldoc.tgz
 
 lib: target/libyacjp.so
 
@@ -35,16 +39,22 @@ target/libyacjp.so: target $(OBJ)
 	echo
 
 target/libyacjp.pdf: target/doc/latex/refman.pdf
-	echo "    Saving PDF documentation"
+	echo "    Saving PDF"
 	cp $< $@
 
-target/doc/latex/refman.pdf: target/doc/latex/Makefile
+target/doc/latex/refman.pdf: target/doc/latex/Makefile target/doc/latex/version.tex
 	echo "  Building PDF"
 	make -C target/doc/latex > target/doc/make.log 2>&1
 
 target/libyacjp-htmldoc.tgz: target/doc/html/index.html
 	echo "  Building HTML archive"
 	(cd target/doc/html; tar cfz - *) > $@
+
+target/doc/latex/version.tex: target/version
+	cp $< $@
+
+target/version: Changelog
+	head -n 1 $< | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' > $@
 
 target/doc/latex/Makefile: target/doc/.doc
 	sleep 1; touch $@
@@ -64,5 +74,5 @@ target/out/%.exe: test/%.c test/*.h target/libyacjp.so
 	echo "Compiling test: $<"
 	$(CC) $(CFLAGS) -I include -L target -lyacjp $< -o $@
 
-.PHONY: all lib doc clean run-test
+.PHONY: all lib doc clean run-test release
 .SILENT:
