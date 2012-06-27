@@ -15,8 +15,9 @@
 */
 
 #include <alloca.h>
+#include <stdarg.h>
 
-#include "json_value.h"
+#include "json.h"
 
 __PUBLIC__ json_memory_t stdlib_memory = {
      malloc, free
@@ -68,4 +69,71 @@ json_visitor_t json_killer = {
 
 __PUBLIC__ json_visitor_t *json_kill() {
      return &json_killer;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+__PUBLIC__ json_stop_t json_stop() {
+     json_stop_t result = {
+          .index = -1,
+     };
+     return result;
+}
+
+typedef struct lookup_visitor {
+     json_visitor_t fn;
+     json_value_t *result;
+     va_list arg;
+} lookup_visitor_t;
+
+static void lookup_object(lookup_visitor_t *this, json_object_t *visited) {
+     char *key = va_arg(this->arg, char*);
+     if (key == JSON_STOP.key) {
+          this->result = (json_value_t*)visited;
+     }
+     else {
+          json_value_t *value = visited->get(visited, key);
+          value->accept(value, (json_visitor_t*)this);
+     }
+}
+
+static void lookup_array(lookup_visitor_t *this, json_array_t  *visited) {
+     int index = va_arg(this->arg, int);
+     if (index == JSON_STOP.index) {
+          this->result = (json_value_t*)visited;
+     }
+     else {
+          json_value_t *value = visited->get(visited, index);
+          value->accept(value, (json_visitor_t*)this);
+     }
+}
+
+static void lookup_string(lookup_visitor_t *this, json_string_t *visited) {
+     this->result = (json_value_t*)visited;
+}
+
+static void lookup_number(lookup_visitor_t *this, json_number_t *visited) {
+     this->result = (json_value_t*)visited;
+}
+
+static void lookup_const(lookup_visitor_t *this, json_const_t  *visited) {
+     this->result = (json_value_t*)visited;
+}
+
+__PUBLIC__ json_value_t *json_lookup(json_value_t *value, ...) {
+     lookup_visitor_t visitor = {
+          {
+               0, /* internal use, don't del */
+               (json_visit_object_fn)&lookup_object,
+               (json_visit_array_fn )&lookup_array ,
+               (json_visit_string_fn)&lookup_string,
+               (json_visit_number_fn)&lookup_number,
+               (json_visit_const_fn )&lookup_const ,
+          },
+          NULL,
+     };
+     va_start(visitor.arg, value);
+     value->accept(value, &(visitor.fn));
+     va_end(visitor.arg);
+     return visitor.result;
 }

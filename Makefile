@@ -4,10 +4,10 @@ TST=$(shell ls -1 test/test*.c | sed -r 's|^test/|target/test/|g;s|\.c|.run|g')
 CFLAGS ?= -g
 RUN ?=
 
-all: lib doc
+all: lib doc run-test
 	echo "Done."
 
-lib: target/libyacjp.so run-test
+lib: target/libyacjp.so
 
 doc: target/libyacjp.pdf target/libyacjp-htmldoc.tgz
 	echo
@@ -22,7 +22,7 @@ clean:
 
 target/test/%.run: target/out/%.exe
 	echo "  Running test: $<"
-	LD_LIBRARY_PATH=target $(RUN) $< && touch $@
+	LD_LIBRARY_PATH=target $< && touch $@ || LD_LIBRARY_PATH=target $(RUN) $<
 
 target:
 	mkdir -p target/out/data

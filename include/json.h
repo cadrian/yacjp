@@ -120,6 +120,34 @@ __PUBLIC__ extern short json_extend_spaces;
  */
 __PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, json_memory_t memory, short options);
 
+typedef union json_stop {
+     char *key;
+     int   index;
+} json_stop_t;
+
+__PUBLIC__ json_stop_t json_stop();
+
+/**
+ * A path marker that represents the end of a lookup
+ *
+ * @see json_lookup()
+ */
+#define JSON_STOP (json_stop())
+
+/**
+ * Returns a value represented by the path given as arguments. Each
+ * argument may be a string (to lookup in an object), an int (to
+ * lookup in an array), @ref JSON_STOP (to stop the lookup). The
+ * lookup stops if a string, a number, or a const is found, or if an
+ * argument is @ref JSON_STOP.
+ *
+ * @param[in] value the value to lookup into
+ * @param[in] ... the path of the value to find
+ *
+ * @return the found value, or NULL if not found
+ */
+__PUBLIC__ json_value_t *json_lookup(json_value_t *value, ...);
+
 /**
  * @}
  */
