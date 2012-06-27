@@ -70,24 +70,29 @@ strings, numbers, and the three constants `true`, `false`, and `null`.
 \{
 
 \defgroup json_object Objects
-\{
-\}
+
+The JSON objects are in fact associative arrays. Keys are unicode
+strings (utf-8 encoded); values are \ref json_value "JSON values".
 
 \defgroup json_array Arrays
-\{
-\}
+
+The JSON arrays are listes of \ref json_value "JSON values" laid out
+one after the other, indexed starting at 0.
 
 \defgroup json_string Strings
-\{
-\}
+
+The JSON strings are unicode strings.
 
 \defgroup json_number Numbers
-\{
-\}
+
+The JSON numbers are infinite-precision numbers with some accessors
+that get the value as either int or double.
 
 \defgroup json_const Constants
-\{
-\}
+
+The JSON constants are shared pointers to unique data. There is one
+such pointer for each known JSON constant: `false`, `true`, and
+`null`.
 
 \}
 
@@ -120,3 +125,10 @@ are available through a structure `json_memory_t` passed to most YacJP
 functions. The library provides a standard ("stdlib") \ref
 stdlib_memory "memory manager" but the user is free to provide her
 own.
+
+
+\defgroup json_hash Hash tables
+
+The library provides a general-purpose hash table. It is internally
+used by \ref json_object "JSON objects" but it may be used anywhere
+associative tables are needed.

@@ -18,6 +18,7 @@
 #define _YACJP_HASH_H_
 
 /**
+ * @ingroup json_hash
  * @file
  *
  * A hash table. Accepts any kinds of pointers (you must provide the
@@ -27,6 +28,11 @@
  */
 
 #include "json_shared.h"
+
+/**
+ * @addtogroup json_hash
+ * @{
+ */
 
 /**
  * The hash table public interface.
@@ -208,5 +214,9 @@ __PUBLIC__ extern hash_keys_t hash_strings;
  * @return a newly allocated hash table.
  */
 __PUBLIC__ hash_t *new_hash(json_memory_t memory, hash_keys_t keys);
+
+/**
+ * @}
+ */
 
 #endif /* _YACJP_HASH_H_ */

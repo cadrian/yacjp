@@ -14,6 +14,13 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @ingroup json_write
+ * @file
+ *
+ * This file contains the implementation of the JSON pretty printer.
+ */
+
 #include <alloca.h>
 #include <string.h>
 

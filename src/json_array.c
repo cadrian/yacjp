@@ -14,6 +14,13 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @ingroup json_array
+ * @file
+ *
+ * This file contains the implementation of JSON arrays.
+ */
+
 #include <string.h>
 
 #include "json_value.h"

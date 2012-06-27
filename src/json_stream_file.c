@@ -14,6 +14,13 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @ingroup json_stream
+ * @file
+ *
+ * This file contains the implementation of the JSON file streams.
+ */
+
 #include <stdarg.h>
 
 #include "json_stream.h"

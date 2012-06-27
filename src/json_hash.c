@@ -14,11 +14,21 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @ingroup json_hash
+ * @file
+ *
+ * This file contains the implementation of hash tables. That
+ * implementation is a general-purpose hashing table independant of
+ * any JSON consideration.
+ *
+ * The original hashing algorithm comes from Python; implementation
+ * and bugs are mine.
+ */
+
 #include <string.h>
 
 #include "hash.h"
-
-/* original hashing algorithm from Python, implementation and bugs are mine */
 
 #define PERTURB_SHIFT 5
 
