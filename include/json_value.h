@@ -299,22 +299,35 @@ typedef __uint32_t unicode_char_t;
 
 /**
  * Accept a visitor.
+ *
+ * @param[in] this the target JSON string
+ * @param[in] visitor the visitor
  */
 typedef void            (*json_string_accept_fn  ) (json_string_t *this, json_visitor_t *visitor);
 
 /**
  * Free the string.
+ *
+ * @param[in] this the target JSON string
  */
 typedef void            (*json_string_free_fn    ) (json_string_t *this);
 
 /**
  * Count the unicode characters.
+ *
+ * @param[in] this the target JSON string
+ *
+ * @return the number of unicode characters in the string
  */
 typedef int             (*json_string_count_fn   ) (json_string_t *this);
 
 /**
  * Puts the string encoded in utf-8 in the given buffer. The
  * buffer is guaranteed not to overflow the given size.
+ *
+ * @param[in] this the target JSON string
+ * @param[in] buffer the buffer to fill
+ * @param[in] buffer_size the size of the buffer
  *
  * @return the number of characters that are, or should have
  * been, written. The last '\0' is written (or should be, if the
@@ -325,28 +338,45 @@ typedef int             (*json_string_count_fn   ) (json_string_t *this);
 typedef size_t          (*json_string_utf8_fn    ) (json_string_t *this, char *buffer, size_t buffer_size);
 
 /**
+ * Get the index-th unicode character in the string
+ *
+ * @param[in] this the target JSON string
+ * @param[in] index the index of the unicode character to get
+ *
  * @return the unicode character at the given index.
  */
 typedef unicode_char_t  (*json_string_get_fn     ) (json_string_t *this, unsigned int index);
 
 /**
- * ADD the given string (after eventual formatting) as a utf-8
+ * __Add__ the given string (after eventual formatting) as a utf-8
  * encoded string.
+ *
+ * @param[in] this the target unicode string
+ * @param[in] format the format of the bytes to put, compatible with printf()
+ * @param[in] ... the arguments of the format
+ *
+ * @todo rename that function
  */
 typedef void            (*json_string_set_fn     ) (json_string_t *this, char *format, ...) __PRINTF__; /* expects a utf-8 encoded string */
 
 /**
- * Add the unicode character at the end of the string.
- */
-typedef int             (*json_string_add_utf8_fn) (json_string_t *this, char c); /* returns the number of expected extra chars to read to form a correct unicode character; -1 if error */
-
-/**
- * Tries to append the given utf-8 character, maybe expecting
+ * Tries to append the given utf-8 byte, maybe expecting
  * more to finally add a full unicode character.
+ *
+ * @param[in] this the target JSON string
+ * @param[in] c a utf-8 byte
  *
  * @return the number of characters still needed to add a valid
  * unicode character. If 0 then the character was sucessfully
- * added.
+ * added. If -1 there was an encoding error.
+ */
+typedef int             (*json_string_add_utf8_fn) (json_string_t *this, char c);
+
+/**
+ * Add the unicode character at the end of the string.
+ *
+ * @param[in] this the target JSON string
+ * @param[in] unicode the unicode character to add
  */
 typedef void            (*json_string_add_fn     ) (json_string_t *this, int unicode);
 
@@ -401,13 +431,73 @@ struct json_string {
 
 /**
  * Accept a visitor.
+ *
+ * @param[in] this the target JSON number
+ * @param[in] visitor the visitor
  */
 typedef void   (*json_number_accept_fn   ) (json_number_t *this, json_visitor_t *visitor);
+
+/**
+ * Free the number.
+ *
+ * @param[in] this the target JSON number
+ */
 typedef void   (*json_number_free_fn     ) (json_number_t *this);
+
+/**
+ * Check if the number can be represented as an int value
+ *
+ * @param[in] this the target JSON number
+ *
+ * @return 0 if the number cannot be represented as an int value, non-zero otherwise
+ */
 typedef int    (*json_number_is_int_fn   ) (json_number_t *this);
+
+/**
+ * Get the number as an int
+ *
+ * @pre this->is_int(this)
+ *
+ * @param[in] this the target JSON number
+ *
+ * @return the number as an int value, not specified if `!this->is_int(this)`
+ */
 typedef int    (*json_number_to_int_fn   ) (json_number_t *this);
+
+/**
+ * Get the number as the nearest double value
+ *
+ * @param[in] this the target JSON number
+ *
+ * @return the double value nearest to the number
+ */
 typedef double (*json_number_to_double_fn) (json_number_t *this);
+
+/**
+ * Set the number
+ *
+ * @param[in] this the target JSON number
+ * @param[in] integral the integral part
+ * @param[in] decimal the decimal int part
+ * @param[in] decimal_exp the decimal exponent; the actual decimal part is `decimal * 10^-decimal_exp`
+ * @param[in] exp the exponent
+ */
 typedef void   (*json_number_set_fn      ) (json_number_t *this, int integral, int decimal, int decimal_exp, int exp);
+
+/**
+ * Fills the string buffer with the exact representation of the JSON
+ * number. The buffer is guaranteed not to overflow the given size.
+ *
+ * @param[in] this the target JSON number
+ * @param[in] buffer the buffer to fill
+ * @param[in] buffer_size the size of `buffer`
+ *
+ * @return the number of characters that are, or should have been,
+ * written. The last '\0' is written (or should be, if the buffer is
+ * not big enough) but NOT counted in the result. Thus if the result
+ * greater than or equal to the given buffer size, please call again
+ * with a greater buffer.
+ */
 typedef int    (*json_number_to_string_fn) (json_number_t *this, char *buffer, size_t buffer_size);
 
 struct json_number {
@@ -452,17 +542,41 @@ struct json_number {
  * @{
  */
 
+/**
+ * The know JSON constants
+ */
 typedef enum {
+     /** true */
      json_false=0,
+     /** false */
      json_true,
+     /** null */
      json_null,
 } json_const_e;
 
 /**
  * Accept a visitor.
+ *
+ * @param[in] this the target JSON const
+ * @param[in] visitor the visitor
  */
 typedef void         (*json_const_accept_fn) (json_const_t *this, json_visitor_t *visitor);
+
+/**
+ * Free the object. In reality, each const is a singleton and that
+ * function does nothing.
+ *
+ * @param[in] this the target JSON const
+ */
 typedef void         (*json_const_free_fn  ) (json_const_t *this);
+
+/**
+ * Get the JSON const value.
+ *
+ * @param[in] this the target JSON const
+ *
+ * @return the JSON const value
+ */
 typedef json_const_e (*json_const_value_fn ) (json_const_t *this);
 
 struct json_const {
@@ -486,9 +600,30 @@ struct json_const {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+/**
+ * Accept a visitor.
+ *
+ * @param[in] this the target JSON value
+ * @param[in] visitor the visitor
+ */
+typedef void (*json_value_accept_fn) (json_value_t *this, json_visitor_t *visitor);
+
+/**
+ * Free the JSON value.
+ *
+ * @param[in] this the target JSON value
+ */
+typedef void (*json_value_free_fn  ) (json_value_t *this);
+
 struct json_value {
-     void (*accept) (json_value_t *this, json_visitor_t *visitor);
-     void (*free)   (json_value_t *this);
+     /**
+      * @see json_value_accept_fn
+      */
+     json_value_accept_fn accept;
+     /**
+      * @see json_value_free_fn
+      */
+     json_value_free_fn   free  ;
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
