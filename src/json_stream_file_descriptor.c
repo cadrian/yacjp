@@ -21,6 +21,10 @@
  * This file contains the implementation of the JSON file descriptor streams.
  */
 
+#include <stdarg.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "json_stream.h"
 
 #define BUFFER_SIZE 4096
@@ -34,6 +38,10 @@ struct json_input_stream_file_descriptor {
      int max;
      int index;
 };
+
+static void free_input(struct json_input_stream_file_descriptor *this) {
+     this->memory.free(this);
+}
 
 static int next(struct json_input_stream_file_descriptor *this) {
      int result = 0;
@@ -60,6 +68,7 @@ static int item(struct json_input_stream_file_descriptor *this) {
 __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int fd, json_memory_t memory) {
      struct json_input_stream_file_descriptor *result = (struct json_input_stream_file_descriptor *)memory.malloc(sizeof(struct json_input_stream_file_descriptor));
      if (!result) return NULL;
+     result->fn.free = (json_input_stream_free_fn)free_input;
      result->fn.next = (json_input_stream_next_fn)next;
      result->fn.item = (json_input_stream_item_fn)item;
      result->memory  = memory;
@@ -72,14 +81,56 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int f
 
 
 
-struct json_output_stream_file {
+struct json_output_stream_file_descriptor {
      struct json_output_stream fn;
      json_memory_t memory;
 
-     int fd;
+     int   fd;
+     char *buffer;
+     int   capacity;
 };
 
+static void free_output(struct json_input_stream_file_descriptor *this) {
+     this->memory.free(this->buffer);
+     this->memory.free(this);
+}
+
+static void put(struct json_output_stream_file_descriptor *this, const char *format, ...) {
+     va_list args;
+     int n;
+     va_start(args, format);
+     n = vsnprintf(this->buffer, this->capacity, format, args);
+     va_end(args);
+
+     if (n >= this->capacity) {
+          this->memory.free(this->buffer);
+          do {
+               this->capacity <<= 1;
+          } while (n >= this->capacity);
+          this->buffer = this->memory.malloc(this->capacity);
+
+          va_start(args, format);
+          n = vsnprintf(this->buffer, this->capacity, format, args);
+          va_end(args);
+     }
+
+     write(this->fd, this->buffer, n);
+}
+
+static void flush(struct json_output_stream_file_descriptor *this) {
+     fsync(this->fd);
+}
+
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd, json_memory_t memory) {
-     /* not (yet) supported */
-     return NULL;
+     struct json_output_stream_file_descriptor *result = (struct json_output_stream_file_descriptor*)memory.malloc(sizeof(struct json_output_stream_file_descriptor));
+     result->fn.free  = (json_output_stream_free_fn )free_output;
+     result->fn.put   = (json_output_stream_put_fn  )put  ;
+     result->fn.flush = (json_output_stream_flush_fn)flush;
+     result->memory   = memory;
+
+     result->fd = fd;
+     result->buffer = (char*)memory.malloc(128);
+     result->capacity = 128;
+
+     return &(result->fn);
 }

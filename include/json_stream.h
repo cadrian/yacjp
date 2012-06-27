@@ -45,6 +45,13 @@
 typedef struct json_input_stream json_input_stream_t;
 
 /**
+ * Free the input stream
+ *
+ * @param[in] this the target input stream
+ */
+typedef void (*json_input_stream_free_fn)(json_input_stream_t *this);
+
+/**
  * Ask the JSON stream to read the next byte.
  *
  * @param[in] this the target JSON input stream
@@ -63,6 +70,10 @@ typedef int (*json_input_stream_next_fn)(json_input_stream_t *this);
 typedef int (*json_input_stream_item_fn)(json_input_stream_t *this);
 
 struct json_input_stream {
+     /**
+      * @see json_input_stream_free_fn
+      */
+     json_input_stream_free_fn free;
      /**
       * @see json_input_stream_next_fn
       */
@@ -125,6 +136,13 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int f
 typedef struct json_output_stream json_output_stream_t;
 
 /**
+ * Free the output stream
+ *
+ * @param[in] this the target output stream
+ */
+typedef void (*json_output_stream_free_fn)(json_output_stream_t *this);
+
+/**
  * Put bytes to the output stream
  *
  * @param[in] this the target JSON output stream
@@ -142,9 +160,13 @@ typedef void (*json_output_stream_flush_fn)(json_output_stream_t *this);
 
 struct json_output_stream {
      /**
+      * @see json_output_stream_free_fn
+      */
+     json_output_stream_free_fn  free ;
+     /**
       * @see json_output_stream_put_fn
       */
-     json_output_stream_put_fn   put;
+     json_output_stream_put_fn   put  ;
      /**
       * @see json_output_stream_flush_fn
       */
@@ -183,8 +205,6 @@ __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file           (FIL
  * @param[in] memory the memory manager
  *
  * @return a stream that writes bytes into the given file descriptor.
- *
- * @todo not implemented.
  */
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd,        json_memory_t memory);
 

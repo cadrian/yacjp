@@ -34,6 +34,10 @@ struct json_input_stream_string {
      int index;
 };
 
+static void free_input(struct json_input_stream_string *this) {
+     this->memory.free(this);
+}
+
 static int next(struct json_input_stream_string *this) {
      if (this->string[this->index]) {
           this->index++;
@@ -49,6 +53,7 @@ static int item(struct json_input_stream_string *this) {
 __PUBLIC__ json_input_stream_t *new_json_input_stream_from_string(char *string, json_memory_t memory) {
      struct json_input_stream_string *result = (struct json_input_stream_string *)memory.malloc(sizeof(struct json_input_stream_string));
      if (!result) return NULL;
+     result->fn.free = (json_input_stream_free_fn)free_input;
      result->fn.next = (json_input_stream_next_fn)next;
      result->fn.item = (json_input_stream_item_fn)item;
      result->memory  = memory;
@@ -67,6 +72,10 @@ struct json_output_stream_string {
      int capacity;
      int count;
 };
+
+static void free_output(struct json_input_stream_string *this) {
+     this->memory.free(this);
+}
 
 static void put(struct json_output_stream_string *this, const char *format, ...) {
      int c;
@@ -106,6 +115,7 @@ static void flush(struct json_output_stream_string *this) {
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_string(char **string, json_memory_t memory) {
      struct json_output_stream_string *result = (struct json_output_stream_string *)memory.malloc(sizeof(struct json_output_stream_string));
      if (!result) return NULL;
+     result->fn.free  = (json_output_stream_free_fn )free_output;
      result->fn.put   = (json_output_stream_put_fn  )put;
      result->fn.flush = (json_output_stream_flush_fn)flush;
      result->memory   = memory;
