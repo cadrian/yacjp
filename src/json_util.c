@@ -104,7 +104,12 @@ static void lookup_object(lookup_visitor_t *this, json_object_t *visited) {
      }
      else {
           json_value_t *value = visited->get(visited, key);
-          value->accept(value, (json_visitor_t*)this);
+          if (value == NULL) {
+             this->result = NULL;
+          }
+          else {
+             value->accept(value, (json_visitor_t*)this);
+          }
      }
 }
 
@@ -115,7 +120,12 @@ static void lookup_array(lookup_visitor_t *this, json_array_t  *visited) {
      }
      else {
           json_value_t *value = visited->get(visited, index);
-          value->accept(value, (json_visitor_t*)this);
+          if (value == NULL) {
+             this->result = NULL;
+          }
+          else {
+             value->accept(value, (json_visitor_t*)this);
+          }
      }
 }
 
