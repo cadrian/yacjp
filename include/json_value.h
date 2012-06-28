@@ -77,11 +77,11 @@ typedef void                 (*json_object_accept_fn) (json_object_t *this, json
 typedef void                 (*json_object_free_fn  ) (json_object_t *this);
 
 /**
- * Count the number of vields in this object
+ * Count the number of fields in this object
  *
  * @param[in] this the target JSON object
  *
- * @return the number of values in the object.
+ * @return the number of fields in the object.
  */
 typedef unsigned int         (*json_object_count_fn ) (json_object_t *this);
 

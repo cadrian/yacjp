@@ -76,7 +76,7 @@ strings (utf-8 encoded); values are \ref json_value "JSON values".
 
 \defgroup json_array Arrays
 
-The JSON arrays are listes of \ref json_value "JSON values" laid out
+The JSON arrays are lists of \ref json_value "JSON values" laid out
 one after the other, indexed starting at 0.
 
 \defgroup json_string Strings
