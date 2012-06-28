@@ -1,2 +1,5 @@
-0.0.1 (not yet released)
-        * initial release
+0.0.2 (not yet released)
+        * Unicode encodings according to RFC4627
+
+0.0.1 (released on June 27, 2012)
+        * Initial release

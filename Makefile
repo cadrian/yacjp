@@ -26,7 +26,7 @@ clean:
 
 target/test/%.run: target/out/%.exe
 	echo "  Running test: $<"
-	LD_LIBRARY_PATH=target $< && touch $@ || LD_LIBRARY_PATH=target $(RUN) $<
+	LD_LIBRARY_PATH=target $< && touch $@ || ( LD_LIBRARY_PATH=target $(RUN) $<; exit 1 )
 
 target:
 	mkdir -p target/out/data
