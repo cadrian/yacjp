@@ -45,6 +45,7 @@ struct json_parse_context {
      json_memory_t memory;
 
      // the input stream
+     json_input_stream_t *raw_stream;
      json_input_stream_t *stream;
 
      // parser info
@@ -79,7 +80,7 @@ static json_const_t  *parse_null  (json_parse_context_t *context);
 /* Parsing utilities                                                      */
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#define error(context, message, ...) (context)->on_error((context)->stream, (context)->line, (context)->column, message, __VA_ARGS__)
+#define error(context, message, ...) (context)->on_error((context)->raw_stream, (context)->line, (context)->column, message, __VA_ARGS__)
 #define item(context) ((context)->stream->item((context)->stream))
 #define next(context) ((context)->stream->next((context)->stream))
 
@@ -125,6 +126,7 @@ static char *utf8(json_parse_context_t *context, json_string_t *string) {
 __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, json_memory_t memory) {
      json_parse_context_t _context = {
           .on_error      = on_error ? on_error : &default_on_error,
+          .raw_stream    = stream,
           .stream        = new_json_utf8_stream(stream, memory),
           .memory        = memory,
           .line          = 1,
@@ -186,7 +188,7 @@ static json_value_t *parse_value(json_parse_context_t *context) {
           /* end of stream */
           break;
      default:
-          error(context, "Invalid character '%c'", item(context));
+          error(context, "Invalid character '%c' (%d)", item(context), item(context));
      }
      return result;
 }

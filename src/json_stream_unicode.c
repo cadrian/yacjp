@@ -114,6 +114,7 @@ static void unicode_to_utf8(json_utf8_header_t *header, int *max_index, int unic
           i--;
      }
      header->byte_item[0] |= (unsigned char)(unicode & mask);
+     header->byte_index = 0;
 }
 
 typedef int (*read_short_fn)(json_input_stream_t *);
@@ -138,9 +139,8 @@ static int utf16_next(json_utf16_input_stream_t *this) {
      }
      else {
           int w1 = this->read_short(this->nested);
-          if (w1 < 0x80) {
-               this->header.byte_item[0] = (unsigned char)w1;
-               this->max_index = 0;
+          if (w1 == -1) {
+               this->header.eof_index = 0;
           }
           else if (w1 < 0xD800 || w1 > 0xDFFF) {
                unicode_to_utf8(&(this->header), &(this->max_index), w1);
@@ -155,7 +155,7 @@ static int utf16_next(json_utf16_input_stream_t *this) {
                }
                else {
                     int unicode = ((w1 & 0x3FF) << 10) | (w2 & 0x3FF) + 0x10000;
-                    unicode_to_utf8(&(this->header), &(this->max_index), w1);
+                    unicode_to_utf8(&(this->header), &(this->max_index), unicode);
                }
           }
      }
@@ -163,7 +163,8 @@ static int utf16_next(json_utf16_input_stream_t *this) {
 }
 
 static int utf16_item(json_utf16_input_stream_t *this) {
-     return this->header.byte_item[this->header.byte_index];
+     int result = this->header.byte_index == this->header.eof_index ? -1 : this->header.byte_item[this->header.byte_index];
+     return result;
 }
 
 static int utf16be_read_short(json_input_stream_t *stream) {
@@ -173,8 +174,8 @@ static int utf16be_read_short(json_input_stream_t *stream) {
           return -1;
      }
 
-     h = stream->item(stream);
-     if (h == -1) {
+     l = stream->item(stream);
+     if (l == -1) {
           return -1;
      }
 
@@ -183,12 +184,12 @@ static int utf16be_read_short(json_input_stream_t *stream) {
           return -1;
      }
 
-     l = stream->item(stream);
-     if (l == -1) {
+     h = stream->item(stream);
+     if (h == -1) {
           return -1;
      }
 
-     return (h << 8) | l;
+     return ((h << 8) | l) & 0xFFFF;
 }
 
 static int utf16le_read_short(json_input_stream_t *stream) {
@@ -198,7 +199,7 @@ static int utf16le_read_short(json_input_stream_t *stream) {
           return -1;
      }
 
-     l = stream->item(stream);
+     h = stream->item(stream);
      if (h == -1) {
           return -1;
      }
@@ -208,12 +209,12 @@ static int utf16le_read_short(json_input_stream_t *stream) {
           return -1;
      }
 
-     h = stream->item(stream);
+     l = stream->item(stream);
      if (l == -1) {
           return -1;
      }
 
-     return (h << 8) | l;
+     return ((h << 8) | l) & 0xFFFF;
 }
 
 static json_utf16_input_stream_t *new_utf16_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
@@ -224,19 +225,23 @@ static json_utf16_input_stream_t *new_utf16_stream(json_utf8_header_t header, js
      result->memory = memory;
      result->nested = raw;
      result->header = header;
-     result->max_index = header.eof_index - 1;
      return result;
 }
 
 static json_input_stream_t *new_utf16be_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
      json_utf16_input_stream_t *result = new_utf16_stream(header, raw, memory);
      result->read_short = utf16be_read_short;
+     result->header.byte_item[0] = result->header.byte_item[1];
+     result->header.byte_item[1] = result->header.byte_item[3];
+     result->max_index = 1;
      return &(result->fn);
 }
 
 static json_input_stream_t *new_utf16le_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
      json_utf16_input_stream_t *result = new_utf16_stream(header, raw, memory);
      result->read_short = utf16le_read_short;
+     result->header.byte_item[1] = result->header.byte_item[2];
+     result->max_index = 1;
      return &(result->fn);
 }
 
