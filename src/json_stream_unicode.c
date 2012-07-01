@@ -167,12 +167,8 @@ static int utf16_item(json_utf16_input_stream_t *this) {
      return result;
 }
 
-static int utf16be_read_short(json_input_stream_t *stream) {
+static int utf16le_read_short(json_input_stream_t *stream) {
      int r, h, l;
-     r = stream->next(stream);
-     if (r) {
-          return -1;
-     }
 
      l = stream->item(stream);
      if (l == -1) {
@@ -186,18 +182,19 @@ static int utf16be_read_short(json_input_stream_t *stream) {
 
      h = stream->item(stream);
      if (h == -1) {
+          return l;
+     }
+
+     r = stream->next(stream);
+     if (r) {
           return -1;
      }
 
      return ((h << 8) | l) & 0xFFFF;
 }
 
-static int utf16le_read_short(json_input_stream_t *stream) {
+static int utf16be_read_short(json_input_stream_t *stream) {
      int r, h, l;
-     r = stream->next(stream);
-     if (r) {
-          return -1;
-     }
 
      h = stream->item(stream);
      if (h == -1) {
@@ -211,6 +208,11 @@ static int utf16le_read_short(json_input_stream_t *stream) {
 
      l = stream->item(stream);
      if (l == -1) {
+          return -1;
+     }
+
+     r = stream->next(stream);
+     if (r) {
           return -1;
      }
 
@@ -287,12 +289,8 @@ static int utf32_item(json_utf32_input_stream_t *this) {
      return result;
 }
 
-static int utf32be_read_int(json_input_stream_t *stream) {
+static int utf32le_read_int(json_input_stream_t *stream) {
      int r, hh, h, l, ll;
-     r = stream->next(stream);
-     if (r) {
-          return -1;
-     }
 
      ll = stream->item(stream);
      if (ll == -1) {
@@ -325,19 +323,20 @@ static int utf32be_read_int(json_input_stream_t *stream) {
      }
 
      hh = stream->item(stream);
-     if (h == -1) {
+     if (hh == -1) {
+          return -1;
+     }
+
+     r = stream->next(stream);
+     if (r) {
           return -1;
      }
 
      return ((hh << 24) | (h << 16) | (l << 8) | (ll));
 }
 
-static int utf32le_read_int(json_input_stream_t *stream) {
+static int utf32be_read_int(json_input_stream_t *stream) {
      int r, hh, h, l, ll;
-     r = stream->next(stream);
-     if (r) {
-          return -1;
-     }
 
      hh = stream->item(stream);
      if (hh == -1) {
@@ -374,6 +373,10 @@ static int utf32le_read_int(json_input_stream_t *stream) {
           return -1;
      }
 
+     r = stream->next(stream);
+     if (r) {
+          return -1;
+     }
      return ((hh << 24) | (h << 16) | (l << 8) | (ll));
 }
 
