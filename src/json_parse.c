@@ -36,24 +36,13 @@ static void default_on_error(json_input_stream_t *stream, int line, int column, 
 }
 
 typedef struct json_parse_context json_parse_context_t;
-typedef void (*read_unicode_fn)(json_parse_context_t *this);
 
 struct json_parse_context {
      // functions
-     read_unicode_fn  read_unicode;
      json_on_error_fn on_error;
 
      // the memory manager
      json_memory_t memory;
-
-     // byte reading: input is converted to utf8
-     /**
-      * @todo check the number of needed bytes to encode the longest
-      * unicode sequence (I think 4 is not enough)
-      */
-     unsigned char byte_item[4];
-     int           byte_index;
-     int           eof_index;
 
      // the input stream
      json_input_stream_t *stream;
@@ -73,85 +62,6 @@ struct json_parse_context {
 
 #define TODO(s) do {int *a = 0; fprintf(stderr, "%s: not yet implemented (%s)\n", __FUNCTION__, (s)); *a = 0;} while(0)
 
-static void read_bytes(json_parse_context_t *context) {
-     int i;
-     context->eof_index = 4;
-     for (i = 0; i < 4; i++) {
-          int item = context->stream->item(context->stream);;
-          if (item == -1) {
-               context->eof_index = i;
-               i = 4;
-          }
-          else {
-               context->byte_item[i] = (unsigned char)item;
-               context->stream->next(context->stream);
-          }
-     }
-     context->byte_index = 0;
-}
-
-static void read_utf8(json_parse_context_t *this) {
-     if (this->byte_index == 3) {
-          read_bytes(this);
-     }
-     else {
-          this->byte_index++;
-     }
-}
-
-static void read_utf16le(json_parse_context_t *this) {
-     char l, h;
-     if (this->byte_index == 4) {
-          read_bytes(this);
-     }
-     l = this->byte_item[this->byte_index++];
-     h = this->byte_item[this->byte_index++];
-     TODO("use glib? g_utf16_to_utf8()");
-}
-
-static void read_utf16be(json_parse_context_t *this) {
-     char l, h;
-     if (this->byte_index == 4) {
-          read_bytes(this);
-     }
-     h = this->byte_item[this->byte_index++];
-     l = this->byte_item[this->byte_index++];
-     TODO("use glib? g_utf16_to_utf8()");
-}
-
-static void read_utf32le(json_parse_context_t *this) {
-     read_bytes(this);
-     TODO("use glib?");
-}
-
-static void read_utf32be(json_parse_context_t *this) {
-     read_bytes(this);
-     TODO("use glib?");
-}
-
-static void set_read_unicode(json_parse_context_t *context) {
-     read_bytes(context);
-     if (context->byte_item[0] == 0) {
-          if (context->byte_item[1] == 0) {
-               context->read_unicode = read_utf32be;
-          }
-          else {
-               context->read_unicode = read_utf16be;
-          }
-     }
-     else if (context->byte_item[1] == 0) {
-          if (context->byte_item[2] == 0) {
-               context->read_unicode = read_utf32le;
-          }
-          else {
-               context->read_unicode = read_utf16le;
-          }
-     }
-     else {
-          context->read_unicode = read_utf8;
-     }
-}
-
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* Forward references to parsing functions                                */
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -170,8 +80,8 @@ static json_const_t  *parse_null  (json_parse_context_t *context);
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #define error(context, message, ...) (context)->on_error((context)->stream, (context)->line, (context)->column, message, __VA_ARGS__)
-#define item(context) ((context)->eof_index > (context->byte_index) ? (int)((context)->byte_item[(context)->byte_index]) : -1)
-#define next(context) ((context)->read_unicode(context))
+#define item(context) ((context)->stream->item((context)->stream))
+#define next(context) ((context)->stream->next((context)->stream))
 
 static void skip_blanks(json_parse_context_t *context) {
      int c = item(context);
@@ -215,7 +125,7 @@ static char *utf8(json_parse_context_t *context, json_string_t *string) {
 __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, json_memory_t memory) {
      json_parse_context_t _context = {
           .on_error      = on_error ? on_error : &default_on_error,
-          .stream        = stream,
+          .stream        = new_json_utf8_stream(stream, memory),
           .memory        = memory,
           .line          = 1,
           .column        = 1,
@@ -224,7 +134,6 @@ __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_f
      };
      json_parse_context_t *context = &_context;
      json_value_t *result;
-     set_read_unicode(context);
      result = parse_value(context);
      skip_blanks(context);
      if (item(context) != -1) {

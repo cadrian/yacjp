@@ -4,7 +4,7 @@ TST=$(shell ls -1 test/test*.c | sed -r 's|^test/|target/test/|g;s|\.c|.run|g')
 CFLAGS ?= -g
 RUN ?=
 
-all: lib doc run-test
+all: lib run-test doc
 	echo
 
 release: all target/version

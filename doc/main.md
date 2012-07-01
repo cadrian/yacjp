@@ -59,6 +59,12 @@ Output streams act as byte buckets: fill them and flush them.
 \{
 \}
 
+\defgroup json_unicode_stream Output streams
+
+Specific unicode input streams that provide utf8 data.
+\{
+\}
+
 \}
 
 

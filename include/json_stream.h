@@ -78,7 +78,6 @@ struct json_input_stream {
       * @see json_input_stream_next_fn
       */
      json_input_stream_next_fn next;
-
      /**
       * @see json_input_stream_item_fn
       */
@@ -207,6 +206,24 @@ __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file           (FIL
  * @return a stream that writes bytes into the given file descriptor.
  */
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd,        json_memory_t memory);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup json_unicode_stream
+ * @{
+ */
+
+/**
+ * Create and return a stream that provides utf8-encoded data based on
+ * the actual encoding type (determined by reading the first raw bytes
+ * as per RFC4627)
+ *
+ * @return the UTF-8 input stream
+ */
+__PUBLIC__ json_input_stream_t *new_json_utf8_stream(json_input_stream_t *raw, json_memory_t memory);
 
 /**
  * @}
