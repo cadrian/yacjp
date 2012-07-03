@@ -32,9 +32,14 @@
 
 #define PERTURB_SHIFT 5
 
-typedef struct json_hash_entry {
+typedef struct json_hash_key {
      const void *key;
-     void *value;
+     unsigned int hash;
+} json_hash_key_t;
+
+typedef struct json_hash_entry {
+     json_hash_key_t  key;
+     void            *value;
 } json_hash_entry_t;
 
 struct json_hash_impl {
@@ -63,23 +68,28 @@ __PUBLIC__ hash_keys_t hash_strings = {
      (hash_keys_free_fn)free,
 };
 
-static int index_of(json_hash_entry_t *entries, hash_keys_t keys, int capacity, const void *key) {
+static json_hash_key_t hash(const char *key, hash_keys_t keys) {
+     json_hash_key_t result = { key, keys.hash(key) };
+     return result;
+}
+
+static int index_of(json_hash_entry_t *entries, hash_keys_t keys, int capacity, json_hash_key_t key) {
      hash_keys_compare_fn cmp = keys.compare;
 
-     unsigned int h = keys.hash(key);
+     unsigned int h = key.hash;
      unsigned int j = h;
      unsigned int perturb = h;
 
      int result = j % capacity;
-     const void *k = entries[result].key;
-     int found = k ? !cmp(key, k) : 1;
+     const void *k = entries[result].key.key;
+     int found = k ? !cmp(key.key, k) : 1;
 
      while (!found) {
           j = (5 * j) + 1 + perturb;
           perturb >>= PERTURB_SHIFT;
           result = j % capacity;
-          k = entries[result].key;
-          found = k ? !cmp(key, k) : 1;
+          k = entries[result].key.key;
+          found = k ? !cmp(key.key, k) : 1;
      }
 
      if (!k) result = -result - 1;
@@ -103,7 +113,7 @@ static void grow(struct json_hash_impl *this) {
           memset(new_entries, 0, new_capacity * sizeof(json_hash_entry_t));
           for (i = 0; i < this->capacity; i++) {
                field = this->entries[i];
-               if (field.key) {
+               if (field.key.key) {
                     index = -index_of(new_entries, this->keys, new_capacity, field.key) - 1;
                     new_entries[index] = field;
                }
@@ -123,8 +133,8 @@ static void iterate(struct json_hash_impl *this, hash_iterator_fn iterator, void
      json_hash_entry_t entry;
      for (i = 0; index < this->count; i++) {
           entry = this->entries[i];
-          if (entry.key) {
-               iterator(this, index++, entry.key, entry.value, data);
+          if (entry.key.key) {
+               iterator(this, index++, entry.key.key, entry.value, data);
           }
      }
 }
@@ -133,7 +143,7 @@ static void *get(struct json_hash_impl *this, const void *key) {
      void *result = NULL;
      int index;
      if (this->capacity) {
-          index = index_of(this->entries, this->keys, this->capacity, key);
+          index = index_of(this->entries, this->keys, this->capacity, hash(key, this->keys));
           if (index >= 0) {
                result = this->entries[index].value;
           }
@@ -144,20 +154,22 @@ static void *get(struct json_hash_impl *this, const void *key) {
 static void *set(struct json_hash_impl *this, const void *key, void *value) {
      void *result = NULL;
      int index;
+     json_hash_key_t hkey = hash(key, this->keys);
      if (this->capacity == 0) {
           grow(this);
      }
-     index = index_of(this->entries, this->keys, this->capacity, key);
+     index = index_of(this->entries, this->keys, this->capacity, hkey);
      if (index >= 0) {
           result = this->entries[index].value;
      }
      else {
           if (this->count * 3 >= this->capacity * 2) {
                grow(this);
-               index = index_of(this->entries, this->keys, this->capacity, key);
+               index = index_of(this->entries, this->keys, this->capacity, hkey);
           }
           index = -index - 1;
-          this->entries[index].key = this->keys.clone(key);
+          hkey.key = this->keys.clone(key);
+          this->entries[index].key = hkey;
           this->count++;
      }
      this->entries[index].value = value;
@@ -166,12 +178,12 @@ static void *set(struct json_hash_impl *this, const void *key, void *value) {
 
 static void *del(struct json_hash_impl *this, const void *key) {
      void *result = NULL;
-     int index = index_of(this->entries, this->keys, this->capacity, key);
+     int index = index_of(this->entries, this->keys, this->capacity, hash(key, this->keys));
      if (index >= 0) {
           result = this->entries[index].value;
-          this->keys.free(this->entries[index].key);
-          this->entries[index].key   = NULL;
-          this->entries[index].value = NULL;
+          this->keys.free(this->entries[index].key.key);
+          this->entries[index].key.key = NULL;
+          this->entries[index].value   = NULL;
           this->count--;
      }
      return result;
