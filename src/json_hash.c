@@ -73,31 +73,46 @@ static json_hash_key_t hash(const char *key, hash_keys_t keys) {
      return result;
 }
 
-static int index_of(json_hash_entry_t *entries, hash_keys_t keys, int capacity, json_hash_key_t key) {
+typedef struct index_context {
+     unsigned int index;
+     unsigned int perturb;
+} index_context_t;
+
+static void next_index_of(index_context_t *context) {
+     context->index = (5 * context->index) + 1 + context->perturb;
+     context->perturb >>= PERTURB_SHIFT;
+}
+
+static int index_of(json_hash_entry_t *entries, hash_keys_t keys, int capacity, json_hash_key_t key, index_context_t *save_context) {
+     int result;
+     const void *k;
+     int found;
      hash_keys_compare_fn cmp = keys.compare;
 
-     unsigned int h = key.hash;
-     unsigned int j = h;
-     unsigned int perturb = h;
+     index_context_t context = {
+          key.hash,
+          key.hash,
+     };
 
-     int result = j % capacity;
-     const void *k = entries[result].key.key;
-     int found = k ? !cmp(key.key, k) : 1;
+     result = context.index % capacity;
+     k = entries[result].key.key;
+     found = k ? !cmp(key.key, k) : 1;
 
      while (!found) {
-          j = (5 * j) + 1 + perturb;
-          perturb >>= PERTURB_SHIFT;
-          result = j % capacity;
+          next_index_of(&context);
+          result = context.index % capacity;
           k = entries[result].key.key;
           found = k ? !cmp(key.key, k) : 1;
      }
 
      if (!k) result = -result - 1;
 
+     if (save_context) *save_context = context;
+
      return result;
 }
 
-static void grow(struct json_hash_impl *this) {
+static void grow(struct json_hash_impl *this, int grow_factor) {
      json_hash_entry_t *new_entries;
      int new_capacity;
      json_hash_entry_t field;
@@ -108,13 +123,13 @@ static void grow(struct json_hash_impl *this) {
           memset(new_entries, 0, new_capacity * sizeof(json_hash_entry_t));
      }
      else {
-          new_capacity = this->capacity * 2;
+          new_capacity = this->capacity * grow_factor;
           new_entries = (json_hash_entry_t *)this->memory.malloc(new_capacity * sizeof(json_hash_entry_t));
           memset(new_entries, 0, new_capacity * sizeof(json_hash_entry_t));
           for (i = 0; i < this->capacity; i++) {
                field = this->entries[i];
                if (field.key.key) {
-                    index = -index_of(new_entries, this->keys, new_capacity, field.key) - 1;
+                    index = -index_of(new_entries, this->keys, new_capacity, field.key, NULL) - 1;
                     new_entries[index] = field;
                }
           }
@@ -143,7 +158,7 @@ static void *get(struct json_hash_impl *this, const void *key) {
      void *result = NULL;
      int index;
      if (this->capacity) {
-          index = index_of(this->entries, this->keys, this->capacity, hash(key, this->keys));
+          index = index_of(this->entries, this->keys, this->capacity, hash(key, this->keys), NULL);
           if (index >= 0) {
                result = this->entries[index].value;
           }
@@ -156,16 +171,16 @@ static void *set(struct json_hash_impl *this, const void *key, void *value) {
      int index;
      json_hash_key_t hkey = hash(key, this->keys);
      if (this->capacity == 0) {
-          grow(this);
+          grow(this, 2);
      }
-     index = index_of(this->entries, this->keys, this->capacity, hkey);
+     index = index_of(this->entries, this->keys, this->capacity, hkey, NULL);
      if (index >= 0) {
           result = this->entries[index].value;
      }
      else {
           if (this->count * 3 >= this->capacity * 2) {
-               grow(this);
-               index = index_of(this->entries, this->keys, this->capacity, hkey);
+               grow(this, 2);
+               index = index_of(this->entries, this->keys, this->capacity, hkey, NULL);
           }
           index = -index - 1;
           hkey.key = this->keys.clone(key);
@@ -178,13 +193,16 @@ static void *set(struct json_hash_impl *this, const void *key, void *value) {
 
 static void *del(struct json_hash_impl *this, const void *key) {
      void *result = NULL;
-     int index = index_of(this->entries, this->keys, this->capacity, hash(key, this->keys));
+     json_hash_key_t hkey = hash(key, this->keys);
+     int index = index_of(this->entries, this->keys, this->capacity, hkey, NULL);
+
      if (index >= 0) {
           result = this->entries[index].value;
           this->keys.free(this->entries[index].key.key);
           this->entries[index].key.key = NULL;
           this->entries[index].value   = NULL;
           this->count--;
+          grow(this, 1);
      }
      return result;
 }
