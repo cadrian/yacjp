@@ -1,0 +1,49 @@
+Source: libyacjp
+Priority: extra
+Maintainer: Cyril ADRIAN <cyril.adrian@gmail.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Section: libs
+Homepage: http://www.github.com/cadrian/yacjp
+#Vcs-Git: git://git.debian.org/collab-maint/yacjp.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/yacjp.git;a=summary
+
+Package: libyacjp-dev
+Section: libdevel
+Architecture: any
+Depends: libyacjp (= ${binary:Version})
+Description: Yet Another C-JSON Parser
+ A JSON parser and pretty printer written in C, with a modular
+ structure.
+ Also provides an all-purpose hash table, utf-8 input/output streams,
+ and utf-16/32 to utf-8 input streams.
+
+Package: libyacjp-dbg
+Section: libdevel
+Architecture: any
+Depends: libyacjp (= ${binary:Version})
+Description: Yet Another C-JSON Parser
+ A JSON parser and pretty printer written in C, with a modular
+ structure.
+ Also provides an all-purpose hash table, utf-8 input/output streams,
+ and utf-16/32 to utf-8 input streams.
+
+Package: libyacjp
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Yet Another C-JSON Parser
+ A JSON parser and pretty printer written in C, with a modular
+ structure.
+ Also provides an all-purpose hash table, utf-8 input/output streams,
+ and utf-16/32 to utf-8 input streams.
+
+Package: libyacjp-doc
+Section: doc
+Architecture: any
+Recommends: libyacjp (= ${binary:Version})
+Description: Yet Another C-JSON Parser
+ A JSON parser and pretty printer written in C, with a modular
+ structure.
+ Also provides an all-purpose hash table, utf-8 input/output streams,
+ and utf-16/32 to utf-8 input streams.
