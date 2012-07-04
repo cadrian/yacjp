@@ -112,6 +112,27 @@ static int index_of(json_hash_entry_t *entries, hash_keys_t keys, int capacity, 
      return result;
 }
 
+static void rehash(struct json_hash_impl *this) {
+     index_context_t context;
+     int i, index;
+     json_hash_key_t key;
+
+     for (i = 0; i < this->capacity; i++) {
+          key = this->entries[i].key;
+          if (key.key) {
+               index = index_of(this->entries, this->keys, this->capacity, key, &context);
+               if (index < 0) {
+                    // broken collision cycle, fix it
+                    index = -index - 1;
+                    this->entries[index].key   = key;
+                    this->entries[index].value = this->entries[i].value;
+                    this->entries[i].key.key = NULL;
+                    this->entries[i].value   = NULL;
+               }
+          }
+     }
+}
+
 static void grow(struct json_hash_impl *this, int grow_factor) {
      json_hash_entry_t *new_entries;
      int new_capacity;
@@ -202,7 +223,7 @@ static void *del(struct json_hash_impl *this, const void *key) {
           this->entries[index].key.key = NULL;
           this->entries[index].value   = NULL;
           this->count--;
-          grow(this, 1);
+          rehash(this);
      }
      return result;
 }
