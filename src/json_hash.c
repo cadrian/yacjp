@@ -113,14 +113,13 @@ static int index_of(json_hash_entry_t *entries, hash_keys_t keys, int capacity, 
 }
 
 static void rehash(struct json_hash_impl *this) {
-     index_context_t context;
      int i, index;
      json_hash_key_t key;
 
      for (i = 0; i < this->capacity; i++) {
           key = this->entries[i].key;
           if (key.key) {
-               index = index_of(this->entries, this->keys, this->capacity, key, &context);
+               index = index_of(this->entries, this->keys, this->capacity, key, NULL);
                if (index < 0) {
                     // broken collision cycle, fix it
                     index = -index - 1;
