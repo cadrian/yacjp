@@ -7,11 +7,27 @@ RUN ?=
 all: lib run-test doc
 	echo
 
-release: all target/version
+install: lib doc
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	env | grep yacjp
+	echo
+	if [ -d $(DESTDIR) ]; then find $(DESTDIR) -name libyacjp -exec echo {} : \; -exec ls {} \; ; fi
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	mkdir -p $(DESTDIR)/usr/lib/libyacjp
+	mkdir -p $(DESTDIR)/usr/include/libyacjp
+	mkdir -p $(DESTDIR)/usr/share/doc/libyacjp
+	cp target/libyacjp.so $(DESTDIR)/usr/lib/libyacjp/libyacjp.so.1
+	ln -sf libyacjp.so.1 $(DESTDIR)/usr/lib/libyacjp/libyacjp.so
+	cp target/libyacjp.a $(DESTDIR)/usr/lib/libyacjp/libyacjp.a.1
+	ln -sf libyacjp.a.1 $(DESTDIR)/usr/lib/libyacjp/libyacjp.a
+	cp include/*.h $(DESTDIR)/usr/include/libyacjp/
+	cp -a target/*.pdf target/doc/html $(DESTDIR)/usr/share/doc/libyacjp/
+
+release: lib doc
 	echo Releasing version $(shell cat target/version)
 	cd target && tar cfz yacjp_$(shell cat target/version)_$(shell gcc -v 2>&1 | grep '^Target:' | sed 's/^Target: //').tgz libyacjp.so libyacjp.pdf libyacjp-htmldoc.tgz
 
-lib: target/libyacjp.so
+lib: target/libyacjp.so target/libyacjp.a
 
 doc: target/libyacjp.pdf target/libyacjp-htmldoc.tgz
 	echo
@@ -22,20 +38,29 @@ run-test: $(TST)
 clean:
 	echo "Cleaning"
 	rm -rf target
+	grep ^Package: debian/control | awk -F: '{print $$2}' | while read pkg; do rm -rf debian/$$pkg; done
+	rm -rf debian/tmp
 	echo "Done."
 
-target/test/%.run: target/out/%.exe
+target/test/%.run: target/out/%.exe target/test
 	echo "  Running test: $<"
 	LD_LIBRARY_PATH=target $< && touch $@ || ( LD_LIBRARY_PATH=target $(RUN) $<; exit 1 )
 
 target:
 	mkdir -p target/out/data
+
+target/test: $(shell find test/data -type f)
 	mkdir -p target/test
 	cp -a test/data/* target/out/data/
 
 target/libyacjp.so: target $(OBJ)
-	echo "Linking library: $@"
+	echo "Linking shared library: $@"
 	$(CC) -shared -o $@ -lm $(OBJ)
+	echo
+
+target/libyacjp.a: target $(OBJ)
+	echo "Linking static library: $@"
+	ar rcs $@ $(OBJ)
 	echo
 
 target/libyacjp.pdf: target/doc/latex/refman.pdf

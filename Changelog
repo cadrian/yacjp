@@ -1,4 +1,8 @@
-0.0.2 (not yet released)
+0.0.3 (not yet released)
+        * bug fix on hash del()
+        * debian packaging
+
+0.0.2 (released on July 1, 2012)
         * Unicode encodings according to RFC4627
 
 0.0.1 (released on June 27, 2012)
