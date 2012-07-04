@@ -235,6 +235,11 @@ static json_object_t *parse_object(json_parse_context_t *context) {
                                    break;
                               case ',':
                                    next(context);
+                                   skip_blanks(context);
+                                   if (item(context) == '}') {
+                                        next(context);
+                                        done = 1;
+                                   }
                                    break;
                               default:
                                    err = 1;
@@ -270,6 +275,11 @@ static json_array_t *parse_array(json_parse_context_t *context) {
                     break;
                case ',':
                     next(context);
+                    skip_blanks(context);
+                    if (item(context) == ']') {
+                         next(context);
+                         done = 1;
+                    }
                     break;
                default:
                     err = 1;
