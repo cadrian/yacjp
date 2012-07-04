@@ -127,6 +127,7 @@ static void rehash(struct json_hash_impl *this) {
                     this->entries[index].value = this->entries[i].value;
                     this->entries[i].key.key = NULL;
                     this->entries[i].value   = NULL;
+                    i = -1; // restart
                }
           }
      }
