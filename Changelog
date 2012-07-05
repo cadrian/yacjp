@@ -1,6 +1,9 @@
 0.0.3 (not yet released)
-        * bug fix on hash del()
+        * bug fix on hash del() (keys were lost)
         * debian packaging
+        * #3 - ability to read comments
+        * #4 - handle trailing comma in objects and arrays
+        * #5 - fix line/column handling for error messages
 
 0.0.2 (released on July 1, 2012)
         * Unicode encodings according to RFC4627

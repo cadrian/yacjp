@@ -110,6 +110,14 @@ using callbacks for both memory management and error management.
 The parsing function uses the \ref json_stream "JSON input streams" as
 byte providers.
 
+The JSON parser has two not normed extensions:
+
+ * a trailing comma is allowed before the closing '}' or ']' of
+   objects and arrays respectively (C-like behaviour)
+ * comments are allowed in three forms: C forms (`//...` and
+   `/*...*/`) and script forms (`#...`) — a bastard form (`/#...`) is
+   also understood as a line comment
+
 \defgroup json_write Writing to an output stream
 
 Writing to a \ref json_stream "JSON output stream" is only a matter of
