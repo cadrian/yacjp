@@ -93,11 +93,103 @@ static void next(json_parse_context_t *context) {
      }
 }
 
+#define BLK_STATE_ERROR           -2
+#define BLK_STATE_DONE            -1
+#define BLK_STATE_SKIP_BLANKS      0
+#define BLK_STATE_AFTER_SLASH      1
+#define BLK_STATE_IN_LINE_COMMENT  2
+#define BLK_STATE_IN_BLOCK_COMMENT 3
+#define BLK_STATE_AFTER_STAR       4
+
 static void skip_blanks(json_parse_context_t *context) {
-     int c = item(context);
-     while (c == ' ' || c == '\f' || c == '\t' || c == '\n' || c == '\r') {
-          next(context);
-          c = item(context);
+     int state = BLK_STATE_SKIP_BLANKS;
+
+     while (state >= 0) {
+          int c = item(context);
+          if (c < 0) {
+               state = BLK_STATE_DONE;
+          }
+          else {
+               switch(state) {
+
+               case BLK_STATE_SKIP_BLANKS     :
+                    switch(item(context)) {
+                    case ' ':
+                    case '\f':
+                    case '\t':
+                    case '\n':
+                    case '\r':
+                         next(context);
+                         break;
+                    case '/':
+                         state = BLK_STATE_AFTER_SLASH;
+                         next(context);
+                         break;
+                    case '#':
+                         state = BLK_STATE_IN_LINE_COMMENT;
+                         next(context);
+                         break;
+                    default:
+                         state = BLK_STATE_DONE;
+                    }
+                    break;
+
+               case BLK_STATE_AFTER_SLASH     :
+                    switch(item(context)) {
+                    case '/':
+                         state = BLK_STATE_IN_LINE_COMMENT;
+                         next(context);
+                         break;
+                    case '*':
+                         state = BLK_STATE_IN_BLOCK_COMMENT;
+                         next(context);
+                         break;
+                    case '#':
+                         state = BLK_STATE_IN_LINE_COMMENT;
+                         next(context);
+                         break;
+                    default:
+                         error(context, "Syntax error: unexpected character '%c'", item(context));
+                         state = BLK_STATE_ERROR;
+                    }
+                    break;
+
+               case BLK_STATE_IN_LINE_COMMENT :
+                    switch(item(context)) {
+                    case '\n':
+                         state = BLK_STATE_SKIP_BLANKS;
+                         next(context);
+                         break;
+                    default:
+                         next(context);
+                    }
+                    break;
+
+               case BLK_STATE_IN_BLOCK_COMMENT:
+                    switch(item(context)) {
+                    case '*':
+                         state = BLK_STATE_AFTER_STAR;
+                         next(context);
+                         break;
+                    default:
+                         next(context);
+                    }
+                    break;
+
+               case BLK_STATE_AFTER_STAR      :
+                    switch(item(context)) {
+                    case '/':
+                         state = BLK_STATE_DONE;
+                         next(context);
+                         break;
+                    default:
+                         state = BLK_STATE_IN_BLOCK_COMMENT;
+                         next(context);
+                    }
+                    break;
+
+               }
+          }
      }
 }
 
