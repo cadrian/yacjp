@@ -82,7 +82,7 @@ static json_const_t  *parse_null  (json_parse_context_t *context);
 
 #define error(context, message, ...) (context)->on_error((context)->raw_stream, (context)->line, (context)->column, message, __VA_ARGS__)
 #define item(context) ((context)->stream->item((context)->stream))
-#define next(context) do { (context)->stream->next((context)->stream); if (item(context) == '\n') {(context)->line++; (context)->column = 1;} else (context)->column++; } while(0)
+#define next(context) do { (context)->stream->next((context)->stream); if (item(context) == '\n') {(context)->line++; (context)->column = 0;} else (context)->column++; } while(0)
 
 static void skip_blanks(json_parse_context_t *context) {
      int c = item(context);
@@ -130,7 +130,7 @@ __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_f
           .stream        = new_json_utf8_stream(stream, memory),
           .memory        = memory,
           .line          = 1,
-          .column        = 1,
+          .column        = 0,
           .utf8_buffer   = memory.malloc(128),
           .utf8_capacity = 128,
      };
