@@ -4,10 +4,10 @@ TST=$(shell ls -1 test/test*.c | sed -r 's|^test/|target/test/|g;s|\.c|.run|g')
 CFLAGS ?= -g
 RUN ?=
 
-all: lib run-test doc
+all: run-test doc
 	echo
 
-install: lib doc
+install: run-test doc
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	env | grep yacjp
 	echo
@@ -23,16 +23,26 @@ install: lib doc
 	cp include/*.h $(DESTDIR)/usr/include/libyacjp/
 	cp -a target/*.pdf target/doc/html $(DESTDIR)/usr/share/doc/libyacjp/
 
-release: lib doc
+release: debuild
 	echo Releasing version $(shell cat target/version)
-	cd target && tar cfz yacjp_$(shell cat target/version)_$(shell gcc -v 2>&1 | grep '^Target:' | sed 's/^Target: //').tgz libyacjp.so libyacjp.pdf libyacjp-htmldoc.tgz
+	mkdir target/dpkg
+	mv ../libyacjp*_$(shell cat target/version)-1_*.deb    target/dpkg/
+	mv ../libyacjp_$(shell cat target/version).orig.*      target/dpkg/
+	mv ../libyacjp_$(shell cat target/version)-1.debian.*  target/dpkg/
+	mv ../libyacjp_$(shell cat target/version)-1.dsc       target/dpkg/
+	mv ../libyacjp_$(shell cat target/version)-1_*.build   target/dpkg/
+	mv ../libyacjp_$(shell cat target/version)-1_*.changes target/dpkg/
+	cd target && tar cfz yacjp_$(shell cat target/version)_$(shell gcc -v 2>&1 | grep '^Target:' | sed 's/^Target: //').tgz libyacjp.so libyacjp.pdf libyacjp-htmldoc.tgz dpkg
+
+debuild: run-test doc
+	debuild -us -uc -v$(shell cat target/version)
 
 lib: target/libyacjp.so target/libyacjp.a
 
 doc: target/libyacjp.pdf target/libyacjp-htmldoc.tgz
 	echo
 
-run-test: $(TST)
+run-test: lib $(TST)
 	echo
 
 clean:
@@ -44,7 +54,7 @@ clean:
 
 target/test/%.run: target/out/%.exe target/test
 	echo "  Running test: $<"
-	LD_LIBRARY_PATH=target $< 2>&1 >$(@:.run=.log) && touch $@ || ( LD_LIBRARY_PATH=target $(RUN) $<; exit 1 )
+	LD_LIBRARY_PATH=target:$(LD_LIBRARY_PATH) $< 2>&1 >$(@:.run=.log) && touch $@ || ( LD_LIBRARY_PATH=target $(RUN) $<; exit 1 )
 
 target:
 	mkdir -p target/out/data
@@ -99,5 +109,5 @@ target/out/%.exe: test/%.c test/*.h target/libyacjp.so
 	echo "Compiling test: $<"
 	$(CC) $(CFLAGS) -I include -L target -lyacjp $< -o $@
 
-.PHONY: all lib doc clean run-test release
+.PHONY: all lib doc clean run-test release debuild
 .SILENT:

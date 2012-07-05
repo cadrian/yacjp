@@ -1,4 +1,4 @@
-0.0.3 (not yet released)
+0.0.3 (released on July 5, 2012)
         * bug fix on hash del() (keys were lost)
         * debian packaging
         * #3 - ability to read comments

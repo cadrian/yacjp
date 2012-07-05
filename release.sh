@@ -12,8 +12,8 @@ echo "Saving orig."
 (
     cd ..
     tar=libyacjp_${version}.orig.tar.bz2
-    exec tar cfj $tar $(basename $dir)
+    exec tar cfj $tar --exclude-vcs $(basename $dir)
 )
 
-echo "Starting build."
-exec debuild -us -uc -v${version} "$@"
+echo "Starting release."
+exec make release
