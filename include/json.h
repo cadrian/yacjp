@@ -17,6 +17,8 @@
 #ifndef _YACJP_JSON_H_
 #define _YACJP_JSON_H_
 
+#include <stdarg.h>
+
 /**
  * @file
  * The JSON file to include.

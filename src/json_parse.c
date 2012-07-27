@@ -409,8 +409,19 @@ static json_number_t *parse_number(json_parse_context_t *context) {
      }
      switch(item(context)) {
      case '0':
-          state = NUM_STATE_DONE;
           next(context);
+          switch(item(context)) {
+          case '.':
+             state = NUM_STATE_DECIMAL_FIRST;
+             next(context);
+             break;
+          case 'e': case 'E':
+             state = NUM_STATE_EXP_SIGN_OR_FIRST;
+             next(context);
+             break;
+          default:
+             state = NUM_STATE_DONE;
+          }
           break;
      case '1': case '2': case '3':
      case '4': case '5': case '6':

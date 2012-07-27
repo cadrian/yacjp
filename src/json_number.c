@@ -45,15 +45,13 @@ static int is_int(struct json_number_impl *this) {
 }
 
 static int to_int(struct json_number_impl *this) {
-     int sign = this->integral;
-     if (sign) sign = sign > 0 ? 1 : -1;
+     int sign = this->integral >= 0 ? 1 : -1;
      return this->integral * pow(10, this->exponent)
           + sign * this->decimal * pow(10, (this->exponent - this->decimal_exp));
 }
 
 static double to_double(struct json_number_impl *this) {
-     int sign = this->integral;
-     if (sign) sign = sign > 0 ? 1 : -1;
+     int sign = this->integral >= 0 ? 1 : -1;
      return (double)this->integral * pow(10, this->exponent)
           + sign * (double)this->decimal / pow(10, (this->decimal_exp - this->exponent));
 }
