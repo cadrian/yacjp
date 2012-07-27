@@ -1,3 +1,9 @@
+libyacjp (0.0.4-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Cyril ADRIAN <cyril.adrian@gmail.com>  Fri, 27 Jul 2012 20:39:39 +0200
+
 libyacjp (0.0.3-1) unstable; urgency=low
 
   * Initial release
