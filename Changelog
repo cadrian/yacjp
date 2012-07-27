@@ -1,3 +1,6 @@
+0.0.4 (not yet released)
+        * #7 - decimal value not parseable
+
 0.0.3 (released on July 5, 2012)
         * bug fix on hash del() (keys were lost)
         * debian packaging
