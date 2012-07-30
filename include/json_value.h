@@ -475,12 +475,13 @@ typedef double (*json_number_to_double_fn) (json_number_t *this);
  * Set the number
  *
  * @param[in] this the target JSON number
+ * @param[in] sign the sign of the number (1 or -1)
  * @param[in] integral the integral part
  * @param[in] decimal the decimal int part
  * @param[in] decimal_exp the decimal exponent; the actual decimal part is `decimal * 10^-decimal_exp`
  * @param[in] exp the exponent
  */
-typedef void   (*json_number_set_fn      ) (json_number_t *this, int integral, int decimal, int decimal_exp, int exp);
+typedef void   (*json_number_set_fn      ) (json_number_t *this, int sign, int integral, int decimal, int decimal_exp, int exp);
 
 /**
  * Fills the string buffer with the exact representation of the JSON
@@ -498,6 +499,9 @@ typedef void   (*json_number_set_fn      ) (json_number_t *this, int integral, i
  */
 typedef int    (*json_number_to_string_fn) (json_number_t *this, char *buffer, size_t buffer_size);
 
+/**
+ * The JSON number public interface.
+ */
 struct json_number {
      /**
       * @see json_number_accept_fn
@@ -541,7 +545,7 @@ struct json_number {
  */
 
 /**
- * The know JSON constants
+ * The known JSON constants
  */
 typedef enum {
      /** true */
@@ -577,6 +581,9 @@ typedef void         (*json_const_free_fn  ) (json_const_t *this);
  */
 typedef json_const_e (*json_const_value_fn ) (json_const_t *this);
 
+/**
+ * The JSON constants public interface.
+ */
 struct json_const {
      /**
       * @see json_const_accept_fn
@@ -613,6 +620,11 @@ typedef void (*json_value_accept_fn) (json_value_t *this, json_visitor_t *visito
  */
 typedef void (*json_value_free_fn  ) (json_value_t *this);
 
+/**
+ * The JSON values public interface. This interface is common to @ref
+ * json_object, @ref json_array, @ref json_string, @ref
+ * json_number, and @ref json_const.
+ */
 struct json_value {
      /**
       * @see json_value_accept_fn
@@ -673,6 +685,10 @@ typedef void (*json_visit_number_fn) (json_visitor_t *this, json_number_t *visit
  */
 typedef void (*json_visit_const_fn ) (json_visitor_t *this, json_const_t  *visited);
 
+/**
+ * The visitor pattern in action: the structure has a function pointer
+ * for each type of @ref json_value.
+ */
 struct json_visitor {
      /**
       * @see json_visit_free_fn
