@@ -44,6 +44,10 @@
 \makeindex
 \setcounter{tocdepth}{3}
 
+\renewcommand{\entrylabel}[1]{
+   {\parbox[b]{\labelwidth-4pt}{\makebox[0pt][l]{%
+   \usefont{T1}{fxb}{bc}{n}\color{darkgray}#1}\vspace{1.5\baselineskip}}}}
+
 \begin{document}
 \hypersetup{pageanchor=false,citecolor=blue}
 \begin{titlepage}
