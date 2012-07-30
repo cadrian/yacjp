@@ -108,11 +108,11 @@ __PUBLIC__ json_value_t *json_lookup(json_value_t *value, ...);
  * va_list version of json_lookup
  *
  * @param[in] value the value to lookup into
- * @param[in] args the path of the value to find in a form of a va_list
+ * @param[in] args the path of the value to find in the form of a va_list
  *
  * @return the found value, or NULL if not found
  */
-__PUBLIC__ json_value_t *vjson_lookup(json_value_t *value, va_list args);
+__PUBLIC__ json_value_t *json_vlookup(json_value_t *value, va_list args);
 
 /**
  * @}

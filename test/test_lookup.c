@@ -32,10 +32,10 @@ static void on_error(json_input_stream_t *s, int line, int column, const char *f
      *a=0;
 }
 
-json_value_t *json_lookup_wrapper(json_value_t *value, ...) {
+json_value_t *json_vlookup_wrapper(json_value_t *value, ...) {
     va_list args;
     va_start(args, value);
-    return vjson_lookup(value, args);
+    return json_vlookup(value, args);
     va_end(args);
 }
 
@@ -87,28 +87,28 @@ int main() {
           assert(0 == strcmp("test", profile_value));
 
           // variadic version
-          main = (json_object_t*)json_lookup_wrapper(value, "main", JSON_STOP);
+          main = (json_object_t*)json_vlookup_wrapper(value, "main", JSON_STOP);
           assert(main == (json_object_t*)object->get(object, "main"));
 
-          fullscreen = (json_number_t*)json_lookup_wrapper(value, "main", "fullscreen");
+          fullscreen = (json_number_t*)json_vlookup_wrapper(value, "main", "fullscreen");
           assert(fullscreen == (json_number_t*)main->get(main, "fullscreen"));
           assert(fullscreen->is_int(fullscreen));
           assert(fullscreen->to_int(fullscreen) == 0);
           assert(fullscreen->to_double(fullscreen) == 0.0);
 
-          width = (json_number_t*)json_lookup_wrapper(value, "main", "width");
+          width = (json_number_t*)json_vlookup_wrapper(value, "main", "width");
           assert(width == (json_number_t*)main->get(main, "width"));
           assert(width->is_int(width));
           assert(width->to_int(width) == 800);
           assert(width->to_double(width) == 800.0);
 
-          height = (json_number_t*)json_lookup_wrapper(value, "main", "height");
+          height = (json_number_t*)json_vlookup_wrapper(value, "main", "height");
           assert(height == (json_number_t*)main->get(main, "height"));
           assert(height->is_int(height));
           assert(height->to_int(height) == 480);
           assert(height->to_double(height) == 480.0);
           
-          profile = (json_string_t*)json_lookup_wrapper(value, "main", "profile");
+          profile = (json_string_t*)json_vlookup_wrapper(value, "main", "profile");
           assert(profile == (json_string_t*)main->get(main, "profile"));
           memset(profile_value, 1, 8); // not \0 to ensure that the NUL character is correctly written by the utf8 converter
           count = profile->utf8(profile, profile_value, 8);
