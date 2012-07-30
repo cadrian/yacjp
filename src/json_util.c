@@ -141,7 +141,7 @@ static void lookup_const(lookup_visitor_t *this, json_const_t  *visited) {
      this->result = (json_value_t*)visited;
 }
 
-__PUBLIC__ json_value_t *vjson_lookup(json_value_t *value, va_list args) {
+__PUBLIC__ json_value_t *json_vlookup(json_value_t *value, va_list args) {
      lookup_visitor_t visitor = {
           {
                (json_visit_free_fn  )&dont_free_visitor,
@@ -153,8 +153,9 @@ __PUBLIC__ json_value_t *vjson_lookup(json_value_t *value, va_list args) {
           },
           NULL,
      };
-     visitor.arg = args;
+     va_copy(visitor.arg, args);
      value->accept(value, &(visitor.fn));
+     va_end(visitor.arg);
      return visitor.result;
 }
 
@@ -162,7 +163,7 @@ __PUBLIC__ json_value_t *json_lookup(json_value_t *value, ...) {
      va_list args;
      json_value_t* result = NULL;
      va_start(args, value);
-     result = vjson_lookup(value, args);
+     result = json_vlookup(value, args);
      va_end(args);
      return result;
 }
