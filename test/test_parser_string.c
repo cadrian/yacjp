@@ -23,20 +23,25 @@ static void on_error(json_input_stream_t *s, int line, int column, const char *f
      assert(0);
 }
 
-static char *source = "{\"key\":[1, 2], \"foo\": \"data\", \"bar\": {\"a\": 1.4e9}, \"zero_dot_four\": 0.4}";
+static char *source = "{\"key\":[1, 2], \"foo\": \"data\", \"bar\": {\"a\": 1.4e9}, \"zero_dot_four\": 0.4, \"negative_zero_dot_four\": -0.4}";
 
 int main() {
      json_value_t *value;
      json_object_t *root;
-     json_number_t *zero_dot_four;
+     json_number_t *zero_dot_four, *negative_zero_dot_four;
      stream = new_json_input_stream_from_string(source, stdlib_memory);
      value = json_parse(stream, on_error, stdlib_memory);
 
      root = (json_object_t*)value;
      zero_dot_four = (json_number_t*)(root->get(root, "zero_dot_four"));
+     negative_zero_dot_four = (json_number_t*)(root->get(root, "negative_zero_dot_four"));
 
      assert(!zero_dot_four->is_int(zero_dot_four));
      assert(abs(zero_dot_four->to_double(zero_dot_four) - (double)0.4) < 1e-9); // 0.4 cannot be reliably coded on a binary system, expect a small deviance
+
+     assert(!negative_zero_dot_four->is_int(negative_zero_dot_four));
+     assert(negative_zero_dot_four->to_double(negative_zero_dot_four) < 0);
+     assert(abs(negative_zero_dot_four->to_double(negative_zero_dot_four) - (double)-0.4) < 1e-9); // -0.4 cannot be reliably coded on a binary system, expect a small deviance
 
      return 0;
 }

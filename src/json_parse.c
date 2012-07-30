@@ -565,7 +565,7 @@ static json_number_t *parse_number(json_parse_context_t *context) {
 
      if (state == NUM_STATE_DONE) {
           result = json_new_number(context->memory);
-          result->set(result, n*i, d, dx, nx*x);
+          result->set(result, n, i, d, dx, nx*x);
      }
      return result;
 }

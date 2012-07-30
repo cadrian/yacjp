@@ -34,7 +34,7 @@ static void fill_object(json_object_t *object, unsigned int depth) {
 
      count++;
      string->add_string(string, "string #%lu at depth %u", count, depth);
-     number->set(number, (int)count, 0, 0, 0);
+     number->set(number, 1, (int)count, 0, 0, 0);
 
      if (depth > 0) {
           json_object_t *more = json_new_object(stdlib_memory);

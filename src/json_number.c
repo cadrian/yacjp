@@ -30,6 +30,7 @@ struct json_number_impl {
      struct json_number fn;
      json_memory_t memory;
 
+     int sign;
      int integral;
      int decimal;
      int decimal_exp;
@@ -45,18 +46,18 @@ static int is_int(struct json_number_impl *this) {
 }
 
 static int to_int(struct json_number_impl *this) {
-     int sign = this->integral >= 0 ? 1 : -1;
-     return this->integral * pow(10, this->exponent)
-          + sign * this->decimal * pow(10, (this->exponent - this->decimal_exp));
+     return this->sign * this->integral * pow(10, this->exponent)
+          + this->sign * this->decimal * pow(10, (this->exponent - this->decimal_exp));
 }
 
 static double to_double(struct json_number_impl *this) {
      int sign = this->integral >= 0 ? 1 : -1;
-     return (double)this->integral * pow(10, this->exponent)
-          + sign * (double)this->decimal / pow(10, (this->decimal_exp - this->exponent));
+     return this->sign * (double)this->integral * pow(10, this->exponent)
+          + this->sign * (double)this->decimal / pow(10, (this->decimal_exp - this->exponent));
 }
 
-static void set(struct json_number_impl *this, int i, int d, int dx, int x) {
+static void set(struct json_number_impl *this, int s, int i, int d, int dx, int x) {
+     this->sign = s;
      this->integral = i;
      this->decimal = d;
      this->decimal_exp = dx;
@@ -64,21 +65,28 @@ static void set(struct json_number_impl *this, int i, int d, int dx, int x) {
 }
 
 static int to_string(struct json_number_impl *this, char *buffer, size_t size) {
+     char *sign;
+     if (this->sign < 0) {
+          sign = "-";
+     }
+     else {
+          sign = "";
+     }
      if (this->decimal_exp == 0) {
           if (this->exponent == 0) {
-               return snprintf(buffer, size, "%01d", this->integral);
+               return snprintf(buffer, size, "%s%01d", sign, this->integral);
           }
           else {
-               return snprintf(buffer, size, "%01de%+d", this->integral, this->exponent);
+               return snprintf(buffer, size, "%s%01de%+d", sign, this->integral, this->exponent);
           }
      }
      else {
           int n = this->decimal_exp - snprintf("", 0, "%d", this->decimal);
           if (this->exponent == 0) {
-               return snprintf(buffer, size, "%d.%0*d", this->integral, n, this->decimal);
+               return snprintf(buffer, size, "%s%d.%0*d", sign, this->integral, n, this->decimal);
           }
           else {
-               return snprintf(buffer, size, "%d.%0*de%+d", this->integral, n, this->decimal, this->exponent);
+               return snprintf(buffer, size, "%s%d.%0*de%+d", sign, this->integral, n, this->decimal, this->exponent);
           }
      }
 }
@@ -98,6 +106,6 @@ __PUBLIC__ json_number_t *json_new_number(json_memory_t memory) {
      result->fn.set       = (json_number_set_fn      )set;
      result->fn.to_string = (json_number_to_string_fn)to_string;
      result->memory       = memory;
-     set(result, 0, 0, 0, 0);
+     set(result, 0, 0, 0, 0, 0);
      return &(result->fn);
 }
