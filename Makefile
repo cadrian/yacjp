@@ -79,6 +79,9 @@ target/libyacjp.pdf: target/doc/latex/refman.pdf
 
 target/doc/latex/refman.pdf: target/doc/latex/Makefile target/doc/latex/version.tex
 	echo "  Building PDF"
+	find target/doc/latex -name \*.tex -exec sed 's!\\-\\_\\-\\-\\_\\-\\-P\\-U\\-B\\-L\\-I\\-C\\-\\_\\-\\-\\_\\- !!g' -i {} \;
+	sed -r 's!^(\\fancyfoot\[(RE|LO)\]\{\\fancyplain\{\}\{).*$$!\1\\scriptsize Yac\\-J\\-P '$(shell cat target/version)'}}!' -i target/doc/latex/doxygen.sty
+	echo '\\renewcommand{\\footrulewidth}{0.4pt}' >> target/doc/latex/doxygen.sty
 	make -C target/doc/latex > target/doc/make.log 2>&1
 
 target/libyacjp-htmldoc.tgz: target/doc/html/index.html
