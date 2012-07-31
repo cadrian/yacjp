@@ -36,8 +36,8 @@
  */
 
 /**
- * This function is called by the JSON parser if an error is met while
- * parsing a JSON stream.
+ * The user must provide a function of this type, to be called by the
+ * JSON parser if an error is met while parsing a JSON stream.
  *
  * @param[in] stream the input stream that was parsed when the error occurred
  * @param[in] line the line number of the error
@@ -48,7 +48,7 @@
 typedef void (*json_on_error_fn)(json_input_stream_t *stream, int line, int column, const char *format, ...);
 
 /**
- * Parse a JSON stream.
+ * Parses a JSON stream.
  *
  * @param[in] stream the stream that contains the JSON data to parse
  * @param[in] on_error the function to call if a parse error occurs
@@ -69,8 +69,8 @@ __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_f
  */
 
 /**
- * This visitor kills a JSON value: recursively free()s all the values
- * contained in objects and arrays.
+ * This visitor kills a JSON value by recursively free()ing all the
+ * values contained in objects and arrays.
  *
  * @return a singleton object able to recursively kill any JSON value.
  */
@@ -101,11 +101,13 @@ __PUBLIC__ json_stop_t json_stop();
  * @param[in] ... the path of the value to find
  *
  * @return the found value, or NULL if not found
+ *
+ * @see json_vlookup
  */
 __PUBLIC__ json_value_t *json_lookup(json_value_t *value, ...);
 
 /**
- * va_list version of json_lookup
+ * The va_list version of json_lookup().
  *
  * @param[in] value the value to lookup into
  * @param[in] args the path of the value to find in the form of a va_list
@@ -125,24 +127,18 @@ __PUBLIC__ json_value_t *json_vlookup(json_value_t *value, va_list args);
 
 /**
  * An argument to json_write_to() to obtain a compact JSON output.
- *
- * @see json_write_to
  */
 __PUBLIC__ extern short json_compact;
 
 /**
  * An argument to json_write_to() to obtain '\\u' sequences instead of
  * raw utf-8.
- *
- * @see json_write_to
  */
 __PUBLIC__ extern short json_extend_unicode;
 
 /**
  * An argument to json_write_to() to obtain a pretty output with
  * spaces and newlines.
- *
- * @see json_write_to
  */
 __PUBLIC__ extern short json_extend_spaces;
 

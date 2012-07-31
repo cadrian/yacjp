@@ -21,8 +21,8 @@
  * @ingroup json_hash
  * @file
  *
- * A hash table. Accepts any kinds of pointers (you must provide the
- * functions to hash the keys).
+ * A hash table. Accepts any kinds of pointers as keys and values (you
+ * must provide the functions to hash the keys).
  *
  * The implementation is based on Python's.
  */
@@ -40,8 +40,8 @@
 typedef struct hash hash_t;
 
 /**
- * Provide a function of this type to iterate through all the keys of
- * a hash table.
+ * The user must provide a function of this type to iterate through
+ * all the keys of a hash table.
  *
  * @param[in] hash the hash table onto which the iterator is iterating
  * @param[in] index the current index; the function is called once for each [0..count[
@@ -53,7 +53,7 @@ typedef struct hash hash_t;
 typedef void (*hash_iterator_fn)(void *hash, int index, const void *key, void *value, void *data);
 
 /**
- * Free the hash table.
+ * Frees the hash table.
  *
  * \a Note: does not free its content!
  *
@@ -63,7 +63,7 @@ typedef void (*hash_iterator_fn)(void *hash, int index, const void *key, void *v
 typedef void         (*hash_free_fn)   (hash_t *this);
 
 /**
- * Count the number of elements in the hash table.
+ * Counts the number of elements in the hash table.
  *
  * @param[in] this the target hash table
  *
@@ -150,7 +150,8 @@ struct hash {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /**
- * A function to hash the given `key`
+ * The user must provide a function of this type to hash the given
+ * `key`.
  *
  * @param[in] key the key to hash
  *
@@ -159,32 +160,38 @@ struct hash {
 typedef unsigned int (*hash_keys_hash_fn)   (const void *key);
 
 /**
- * A function that compares both keys
+ * The user must provide a function that compares both given keys.
  *
  * @param[in] key1 the first key
  * @param[in] key2 the second key
  *
- * @post (result == 0) => (hash(key1) == hash(key2))
+ * @post given `hash` as a @ref hash_keys_hash_fn, `(result == 0) => (hash(key1) == hash(key2))`
  *
  * @return 0 if both keys are equal, non-zero otherwise.
  */
 typedef int          (*hash_keys_compare_fn)(const void *key1, const void *key2);
 
 /**
+ * Clone the key to keep an private one in the hash table.
+ *
  * @return a newly allocated key (to be kept in the hash table);
- * the result must be equal to the provided key (compare()==0)
+ * the result must be equal to the provided key.
+ *
+ * @post given `compare` as a @ref hash_keys_compare_fn, `compare(result, key) == 0`
+ *
  */
 typedef const void  *(*hash_keys_clone_fn)  (const void *key);
 
 /**
- * Free the given key which is guaranteed to have been clone()d
+ * Frees the given `key` which is guaranteed to have been clone()d
  * by the hash table. Used at del() time.
  */
 typedef void         (*hash_keys_free_fn)   (const void *key);
 
 /**
- * Public interface of the functions to provide that will manage the
- * keys.
+ * The user must provide an object with this public interface of the
+ * functions to the hash table creator (new_hash()). The hash table
+ * will use it to manage its internal keys.
  */
 typedef struct hash_keys {
      /**
@@ -206,12 +213,14 @@ typedef struct hash_keys {
 } hash_keys_t;
 
 /**
- * A classic keys manager when keys are C strings (char*).
+ * A classic keys manager when keys are C strings (`char*`).
  */
 __PUBLIC__ extern hash_keys_t hash_strings;
 
 /**
- * @return a newly allocated hash table.
+ * Allocates and returns a new hash table.
+ *
+ * @return the newly allocated hash table.
  */
 __PUBLIC__ hash_t *new_hash(json_memory_t memory, hash_keys_t keys);
 

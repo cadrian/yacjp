@@ -51,8 +51,9 @@ typedef void *(*json_malloc_fn)(size_t size);
 typedef void  (*json_free_fn)(void *ptr);
 
 /**
- * A memory manager interface to be provided to any function that may
- * need to grab some memory.
+ * The user must provide an object providing this memory manager
+ * interface to any function that may need to allocate and free chunks
+ * of memory.
  */
 typedef struct json_memory {
      /**

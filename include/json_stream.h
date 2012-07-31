@@ -45,14 +45,14 @@
 typedef struct json_input_stream json_input_stream_t;
 
 /**
- * Free the input stream
+ * Frees the input stream
  *
  * @param[in] this the target input stream
  */
 typedef void (*json_input_stream_free_fn)(json_input_stream_t *this);
 
 /**
- * Ask the JSON stream to read the next byte.
+ * Asks the JSON stream to read the next byte.
  *
  * @param[in] this the target JSON input stream
  *
@@ -61,7 +61,7 @@ typedef void (*json_input_stream_free_fn)(json_input_stream_t *this);
 typedef int (*json_input_stream_next_fn)(json_input_stream_t *this);
 
 /**
- * Ask the JSON input stream the last read byte.
+ * Asks the JSON input stream the last read byte.
  *
  * @param[in] this the target JSON input stream
  *
@@ -85,7 +85,7 @@ struct json_input_stream {
 };
 
 /**
- * Create a new JSON input stream that reads bytes from the given C
+ * Creates a new JSON input stream that reads bytes from the given C
  * string (will stop at '\\0'), using the given memory manager and
  * returns it.
  *
@@ -97,7 +97,7 @@ struct json_input_stream {
 __PUBLIC__ json_input_stream_t *new_json_input_stream_from_string         (char *string, json_memory_t memory);
 
 /**
- * Create a new JSON input stream that reads bytes from the given
+ * Creates a new JSON input stream that reads bytes from the given
  * file, using the given memory manager and returns it.
  *
  * @param[in] file the file to read from (must be open for reading)
@@ -108,7 +108,7 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_string         (char 
 __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file           (FILE *file,   json_memory_t memory);
 
 /**
- * Create a new JSON input stream that reads bytes from the given
+ * Creates a new JSON input stream that reads bytes from the given
  * file descriptor, using the given memory manager and returns it.
  *
  * @param[in] fd the file descriptor to read from (must be open for reading)
@@ -135,14 +135,14 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int f
 typedef struct json_output_stream json_output_stream_t;
 
 /**
- * Free the output stream
+ * Frees the output stream
  *
  * @param[in] this the target output stream
  */
 typedef void (*json_output_stream_free_fn)(json_output_stream_t *this);
 
 /**
- * Put bytes to the output stream
+ * Puts bytes to the output stream
  *
  * @param[in] this the target JSON output stream
  * @param[in] format the format of the bytes to put, compatible with printf()
@@ -151,7 +151,7 @@ typedef void (*json_output_stream_free_fn)(json_output_stream_t *this);
 typedef void (*json_output_stream_put_fn  )(json_output_stream_t *this, const char *format, ...) __PRINTF__;
 
 /**
- * Flush bytes to the underlying stream
+ * Flushes bytes to the underlying stream
  *
  * @param[in] this the target JSON output stream
  */
@@ -173,7 +173,7 @@ struct json_output_stream {
 };
 
 /**
- * Create a new JSON output stream using the memory manager and
+ * Creates a new JSON output stream using the memory manager and
  * returns it. That string is allocated as needed (and may be
  * allocated more than once); the address of the string is always
  * stored at the provided `string` location.
@@ -186,7 +186,7 @@ struct json_output_stream {
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_string         (char **string, json_memory_t memory);
 
 /**
- * Create a new JSON output stream using the memory manager and
+ * Creates a new JSON output stream using the memory manager and
  * returns it.
  *
  * @param[in] file the file to write bytes to (must be open for writing or appending)
@@ -197,7 +197,7 @@ __PUBLIC__ json_output_stream_t *new_json_output_stream_from_string         (cha
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file           (FILE *file,    json_memory_t memory);
 
 /**
- * Create a new JSON output stream using the memory manager and
+ * Creates a new JSON output stream using the memory manager and
  * returns it.
  *
  * @param[in] fd the file descriptor to write bytes to (must be open for writing or appending)
@@ -217,9 +217,9 @@ __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int
  */
 
 /**
- * Create and return a stream that provides utf8-encoded data based on
- * the actual encoding type (determined by reading the first raw bytes
- * as per RFC4627)
+ * Creates and returns a stream that provides utf8-encoded data based
+ * on the actual encoding type (determined by reading the first raw
+ * bytes as per RFC4627)
  *
  * @return the UTF-8 input stream
  */

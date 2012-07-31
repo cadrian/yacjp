@@ -3,14 +3,14 @@
 ## Why yet another library
 
 The incentive is always the same: existing ones don't suit me. I found
-some flaws in the better known cJSON library:
+some flaws in the better known _cJSON_ library:
 
  * no way to directly read a file; one must first put it fully in a
    string, then call the parser, thus maybe consuming a lot of memory
  * a one-size-fits-all structure, with fields for all types of JSON
    values (mixed fields include next/previous links, children,
    strings, and numbers)
- * no way to output JSON
+ * no way to _output_ JSON
 
 To fix those flaws, YacJP provides the following features:
 
@@ -21,6 +21,25 @@ To fix those flaws, YacJP provides the following features:
  * an object-oriented approach, with well separated data structures,
    and actual encapsulation
  * AFAICS a better number support
+
+On the other hand cJSON is small; YacJP is bigger (approx. 4000 lines,
+not counting tests).
+
+## The YacJP philosophy
+
+C does not mean "not object". Actually the whole YacJP library is
+built using object-oriented techniques: one may find encapsulation,
+polymorphism, and even some design patterns (composites, factories,
+visitors).
+
+YacJP is compact, but not at the price of extensibility.
+
+YacJP is customizable: the user may provide specific hooks such as
+their own implementation of `malloc(3)` and `free(3)`, a custom parse
+error handler, and so on.
+
+
+
 
 
 \mainpage YacJP

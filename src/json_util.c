@@ -167,4 +167,3 @@ __PUBLIC__ json_value_t *json_lookup(json_value_t *value, ...) {
      va_end(args);
      return result;
 }
-
