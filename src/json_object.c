@@ -66,17 +66,21 @@ static void free_(struct json_object_impl *this) {
      this->memory.free(this);
 }
 
+static json_object_t fn = {
+     (json_object_accept_fn)accept ,
+     (json_object_free_fn  )free_  ,
+     (json_object_count_fn )count  ,
+     (json_object_keys_fn  )keys   ,
+     (json_object_get_fn   )get    ,
+     (json_object_set_fn   )set    ,
+     (json_object_del_fn   )del    ,
+};
+
 __PUBLIC__ json_object_t *json_new_object(json_memory_t memory) {
      struct json_object_impl *result = (struct json_object_impl *)memory.malloc(sizeof(struct json_object_impl));
      if (!result) return NULL;
-     result->fn.accept = (json_object_accept_fn)accept ;
-     result->fn.free   = (json_object_free_fn  )free_  ;
-     result->fn.count  = (json_object_count_fn )count  ;
-     result->fn.keys   = (json_object_keys_fn  )keys   ;
-     result->fn.get    = (json_object_get_fn   )get    ;
-     result->fn.set    = (json_object_set_fn   )set    ;
-     result->fn.del    = (json_object_del_fn   )del    ;
-     result->memory    = memory                        ;
-     result->hash      = new_hash(memory, hash_strings);
+     result->fn     = fn;
+     result->memory = memory;
+     result->hash   = new_hash(memory, hash_strings);
      return &(result->fn);
 }

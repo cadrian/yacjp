@@ -233,19 +233,23 @@ static void free_(struct json_hash_impl *this) {
      this->memory.free(this);
 }
 
+static hash_t fn = {
+     (hash_free_fn   )free_  ,
+     (hash_count_fn  )count  ,
+     (hash_iterate_fn)iterate,
+     (hash_get_fn    )get    ,
+     (hash_set_fn    )set    ,
+     (hash_del_fn    )del    ,
+};
+
 __PUBLIC__ hash_t *new_hash(json_memory_t memory, hash_keys_t keys) {
      struct json_hash_impl *result = (struct json_hash_impl *)memory.malloc(sizeof(struct json_hash_impl));
      if (!result) return NULL;
-     result->fn.free      = (hash_free_fn   )free_  ;
-     result->fn.count     = (hash_count_fn  )count  ;
-     result->fn.iterate   = (hash_iterate_fn)iterate;
-     result->fn.get       = (hash_get_fn    )get    ;
-     result->fn.set       = (hash_set_fn    )set    ;
-     result->fn.del       = (hash_del_fn    )del    ;
-     result->memory       = memory;
-     result->keys         = keys;
-     result->capacity     = 0;
-     result->count        = 0;
-     result->entries       = NULL;
+     result->fn      = fn;
+     result->memory  = memory;
+     result->keys    = keys;
+     result->capacity= 0;
+     result->count   = 0;
+     result->entries = NULL;
      return (hash_t*)result;
 }

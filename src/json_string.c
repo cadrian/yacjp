@@ -303,18 +303,22 @@ static void free_(struct json_string_impl *this) {
      this->memory.free(this);
 }
 
+static json_string_t fn = {
+     (json_string_accept_fn    )accept     ,
+     (json_string_free_fn      )free_      ,
+     (json_string_count_fn     )count      ,
+     (json_string_utf8_fn      )utf8       ,
+     (json_string_get_fn       )get        ,
+     (json_string_add_string_fn)add_string ,
+     (json_string_add_utf8_fn  )add        ,
+     (json_string_add_fn       )add_unicode,
+};
+
 __PUBLIC__ json_string_t *json_new_string(json_memory_t memory) {
      struct json_string_impl *result = (struct json_string_impl *)memory.malloc(sizeof(struct json_string_impl));
      if (!result) return NULL;
-     result->fn.accept     = (json_string_accept_fn    )accept     ;
-     result->fn.free       = (json_string_free_fn      )free_      ;
-     result->fn.count      = (json_string_count_fn     )count      ;
-     result->fn.utf8       = (json_string_utf8_fn      )utf8       ;
-     result->fn.get        = (json_string_get_fn       )get        ;
-     result->fn.add_string = (json_string_add_string_fn)add_string ;
-     result->fn.add_utf8   = (json_string_add_utf8_fn  )add        ;
-     result->fn.add        = (json_string_add_fn       )add_unicode;
-     result->memory        = memory;
+     result->fn              = fn;
+     result->memory          = memory;
 
      result->string_capacity = 4;
      result->string_count    = 0;

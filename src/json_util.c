@@ -141,18 +141,18 @@ static void lookup_const(lookup_visitor_t *this, json_const_t  *visited) {
      this->result = (json_value_t*)visited;
 }
 
+static json_visitor_t lookup_fn = {
+     (json_visit_free_fn  )&dont_free_visitor,
+     (json_visit_object_fn)&lookup_object    ,
+     (json_visit_array_fn )&lookup_array     ,
+     (json_visit_string_fn)&lookup_string    ,
+     (json_visit_number_fn)&lookup_number    ,
+     (json_visit_const_fn )&lookup_const     ,
+};
+
 __PUBLIC__ json_value_t *json_vlookup(json_value_t *value, va_list args) {
-     lookup_visitor_t visitor = {
-          {
-               (json_visit_free_fn  )&dont_free_visitor,
-               (json_visit_object_fn)&lookup_object,
-               (json_visit_array_fn )&lookup_array ,
-               (json_visit_string_fn)&lookup_string,
-               (json_visit_number_fn)&lookup_number,
-               (json_visit_const_fn )&lookup_const ,
-          },
-          NULL,
-     };
+     lookup_visitor_t visitor;
+     visitor.fn = lookup_fn;
      va_copy(visitor.arg, args);
      value->accept(value, &(visitor.fn));
      va_end(visitor.arg);
@@ -167,4 +167,3 @@ __PUBLIC__ json_value_t *json_lookup(json_value_t *value, ...) {
      va_end(args);
      return result;
 }
-

@@ -95,17 +95,21 @@ static void free_(struct json_number_impl *this) {
      this->memory.free(this);
 }
 
+static json_number_t fn = {
+     (json_number_accept_fn   )accept   ,
+     (json_number_free_fn     )free_    ,
+     (json_number_is_int_fn   )is_int   ,
+     (json_number_to_int_fn   )to_int   ,
+     (json_number_to_double_fn)to_double,
+     (json_number_set_fn      )set      ,
+     (json_number_to_string_fn)to_string,
+};
+
 __PUBLIC__ json_number_t *json_new_number(json_memory_t memory) {
      struct json_number_impl *result = (struct json_number_impl *)memory.malloc(sizeof(struct json_number_impl));
      if (!result) return NULL;
-     result->fn.accept    = (json_number_accept_fn   )accept;
-     result->fn.free      = (json_number_free_fn     )free_ ;
-     result->fn.is_int    = (json_number_is_int_fn   )is_int;
-     result->fn.to_int    = (json_number_to_int_fn   )to_int;
-     result->fn.to_double = (json_number_to_double_fn)to_double;
-     result->fn.set       = (json_number_set_fn      )set;
-     result->fn.to_string = (json_number_to_string_fn)to_string;
-     result->memory       = memory;
+     result->fn     = fn;
+     result->memory = memory;
      set(result, 0, 0, 0, 0, 0);
      return &(result->fn);
 }

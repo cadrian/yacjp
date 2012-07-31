@@ -104,11 +104,15 @@ static int utf8_item(json_utf8_input_stream_t *this) {
      return result;
 }
 
+static json_input_stream_t utf8_fn = {
+     (json_input_stream_free_fn)utf8_free,
+     (json_input_stream_next_fn)utf8_next,
+     (json_input_stream_item_fn)utf8_item,
+};
+
 static json_input_stream_t *new_utf8_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
      json_utf8_input_stream_t *result = (json_utf8_input_stream_t*)memory.malloc(sizeof(json_utf8_input_stream_t));
-     result->fn.free = (json_input_stream_free_fn)utf8_free;
-     result->fn.next = (json_input_stream_next_fn)utf8_next;
-     result->fn.item = (json_input_stream_item_fn)utf8_item;
+     result->fn     = utf8_fn;
      result->memory = memory;
      result->nested = raw;
      result->header = header;
@@ -219,11 +223,15 @@ static int utf16be_read_short(json_input_stream_t *stream) {
      return ((h << 8) | l) & 0xFFFF;
 }
 
+static json_input_stream_t utf16_fn = {
+     (json_input_stream_free_fn)utf16_free,
+     (json_input_stream_next_fn)utf16_next,
+     (json_input_stream_item_fn)utf16_item,
+};
+
 static json_utf16_input_stream_t *new_utf16_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
      json_utf16_input_stream_t *result = (json_utf16_input_stream_t*)memory.malloc(sizeof(json_utf16_input_stream_t));
-     result->fn.free = (json_input_stream_free_fn)utf16_free;
-     result->fn.next = (json_input_stream_next_fn)utf16_next;
-     result->fn.item = (json_input_stream_item_fn)utf16_item;
+     result->fn     = utf16_fn;
      result->memory = memory;
      result->nested = raw;
      result->header = header;
@@ -380,11 +388,15 @@ static int utf32be_read_int(json_input_stream_t *stream) {
      return ((hh << 24) | (h << 16) | (l << 8) | (ll));
 }
 
+static json_input_stream_t utf32_fn = {
+     (json_input_stream_free_fn)utf32_free,
+     (json_input_stream_next_fn)utf32_next,
+     (json_input_stream_item_fn)utf32_item,
+};
+
 static json_utf32_input_stream_t *new_utf32_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
      json_utf32_input_stream_t *result = (json_utf32_input_stream_t*)memory.malloc(sizeof(json_utf32_input_stream_t));
-     result->fn.free = (json_input_stream_free_fn)utf32_free;
-     result->fn.next = (json_input_stream_next_fn)utf32_next;
-     result->fn.item = (json_input_stream_item_fn)utf32_item;
+     result->fn     = utf32_fn;
      result->memory = memory;
      result->nested = raw;
      result->header = header;
