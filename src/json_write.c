@@ -196,17 +196,22 @@ static void write_const(json_writer_t *this, json_const_t  *visited) {
      }
 }
 
+static json_visitor_t fn = {
+     (json_visit_free_fn  )del         ,
+     (json_visit_object_fn)write_object,
+     (json_visit_array_fn )write_array ,
+     (json_visit_string_fn)write_string,
+     (json_visit_number_fn)write_number,
+     (json_visit_const_fn )write_const ,
+};
+
 __PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, json_memory_t memory, short options) {
      json_writer_t *result = (json_writer_t*)memory.malloc(sizeof(json_writer_t));
-     result->fn.visit_object = (json_visit_object_fn)write_object;
-     result->fn.visit_array  = (json_visit_array_fn )write_array ;
-     result->fn.visit_string = (json_visit_string_fn)write_string;
-     result->fn.visit_number = (json_visit_number_fn)write_number;
-     result->fn.visit_const  = (json_visit_const_fn )write_const ;
-     result->memory  = memory;
-     result->stream  = stream;
-     result->options = options;
-     result->depth   = 0;
+     result->fn       = fn;
+     result->memory   = memory;
+     result->stream   = stream;
+     result->options  = options;
+     result->depth    = 0;
      result->buffer   = (char*)memory.malloc(1024);
      result->capacity = 1024;
      return &(result->fn);

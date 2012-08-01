@@ -65,16 +65,20 @@ static int item(struct json_input_stream_file_descriptor *this) {
      return this->buffer[this->index];
 }
 
+static json_input_stream_t input_fn = {
+     (json_input_stream_free_fn)free_input,
+     (json_input_stream_next_fn)next      ,
+     (json_input_stream_item_fn)item      ,
+};
+
 __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int fd, json_memory_t memory) {
      struct json_input_stream_file_descriptor *result = (struct json_input_stream_file_descriptor *)memory.malloc(sizeof(struct json_input_stream_file_descriptor));
      if (!result) return NULL;
-     result->fn.free = (json_input_stream_free_fn)free_input;
-     result->fn.next = (json_input_stream_next_fn)next;
-     result->fn.item = (json_input_stream_item_fn)item;
-     result->memory  = memory;
-     result->fd      = fd;
-     result->max     = -1;
-     result->index   = 0;
+     result->fn     = input_fn;
+     result->memory = memory;
+     result->fd     = fd;
+     result->max    = -1;
+     result->index  = 0;
      next(result);
      return &(result->fn);
 }
@@ -121,15 +125,18 @@ static void flush(struct json_output_stream_file_descriptor *this) {
      fsync(this->fd);
 }
 
+static json_output_stream_t output_fn = {
+     (json_output_stream_free_fn )free_output,
+     (json_output_stream_put_fn  )put        ,
+     (json_output_stream_flush_fn)flush      ,
+};
+
 __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd, json_memory_t memory) {
      struct json_output_stream_file_descriptor *result = (struct json_output_stream_file_descriptor*)memory.malloc(sizeof(struct json_output_stream_file_descriptor));
-     result->fn.free  = (json_output_stream_free_fn )free_output;
-     result->fn.put   = (json_output_stream_put_fn  )put  ;
-     result->fn.flush = (json_output_stream_flush_fn)flush;
+     result->fn       = output_fn;
      result->memory   = memory;
-
-     result->fd = fd;
-     result->buffer = (char*)memory.malloc(128);
+     result->fd       = fd;
+     result->buffer   = (char*)memory.malloc(128);
      result->capacity = 128;
 
      return &(result->fn);

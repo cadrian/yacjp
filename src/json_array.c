@@ -114,20 +114,24 @@ static void free_(struct json_array_impl *this) {
      this->memory.free(this);
 }
 
+static json_array_t fn = {
+     (json_array_accept_fn)accept,
+     (json_array_free_fn  )free_ ,
+     (json_array_count_fn )count ,
+     (json_array_get_fn   )get   ,
+     (json_array_set_fn   )set   ,
+     (json_array_set_fn   )ins   ,
+     (json_array_add_fn   )add   ,
+     (json_array_del_fn   )del   ,
+};
+
 __PUBLIC__ json_array_t *json_new_array(json_memory_t memory) {
      struct json_array_impl *result = (struct json_array_impl *)memory.malloc(sizeof(struct json_array_impl));
      if (!result) return NULL;
-     result->fn.accept    = (json_array_accept_fn)accept;
-     result->fn.free      = (json_array_free_fn  )free_ ;
-     result->fn.count     = (json_array_count_fn )count ;
-     result->fn.get       = (json_array_get_fn   )get   ;
-     result->fn.set       = (json_array_set_fn   )set   ;
-     result->fn.ins       = (json_array_set_fn   )ins   ;
-     result->fn.add       = (json_array_add_fn   )add   ;
-     result->fn.del       = (json_array_del_fn   )del   ;
-     result->memory       = memory;
-     result->capacity     = 0;
-     result->count        = 0;
-     result->values       = NULL;
+     result->fn       = fn;
+     result->memory   = memory;
+     result->capacity = 0;
+     result->count    = 0;
+     result->values   = NULL;
      return &(result->fn);
 }
