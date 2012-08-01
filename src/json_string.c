@@ -310,8 +310,8 @@ static json_string_t fn = {
      (json_string_utf8_fn      )utf8       ,
      (json_string_get_fn       )get        ,
      (json_string_add_string_fn)add_string ,
-     (json_string_add_utf8_fn  )add        ,
      (json_string_add_fn       )add_unicode,
+     (json_string_add_utf8_fn  )add        ,
 };
 
 __PUBLIC__ json_string_t *json_new_string(json_memory_t memory) {
