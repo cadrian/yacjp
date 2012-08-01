@@ -23,7 +23,7 @@ To fix those flaws, YacJP provides the following features:
  * AFAICS a better number support
 
 On the other hand cJSON is small; YacJP is bigger (approx. 4000 lines,
-not counting tests).
+not counting tests; see the Statistics chapter).
 
 ## The YacJP philosophy
 
@@ -32,15 +32,30 @@ built using object-oriented techniques: one may find encapsulation,
 polymorphism, and even some design patterns (composites, factories,
 visitors).
 
-YacJP is compact, but not at the price of extensibility.
+YacJP is _compact_, but not at the price of extensibility and
+legibility.
 
-YacJP is customizable: the user may provide specific hooks such as
-their own implementation of `malloc(3)` and `free(3)`, a custom parse
-error handler, and so on.
+YacJP is _customizable_: the user may provide specific hooks such as
+their own \ref json_memory_t "implementation" of `malloc(3)` and
+`free(3)`, a \ref json_on_error_fn "custom parse error handler", and
+so on.
 
+YacJP is _extendable_: the user may provide their own implementation
+of \ref json_stream "input/output streams", as long as they provide
+the right interface they will be used correctly. Indeed, there is
+polymorphism in C.
 
+YacJP is _user-friendly_: to implement actions on the JSON values
+tree, one just need to provide a \ref json_visitor "visitor" structure
+which is a list of functions, one for each data type (objects, arrays,
+and so on). Implementing such a structure is straightforward; there
+are examples of such implementations in YacJP itself:
 
-
+ * the \ref json_kill "kill" visitor allows to correctly (recursively)
+   free a whole JSON value tree;
+ * the \ref json_write_to "write_to" visitor allows to write a JSON
+   value tree to an output stream, with a few options such as the
+   level of prettiness.
 
 \mainpage YacJP
 

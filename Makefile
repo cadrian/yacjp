@@ -101,8 +101,9 @@ target/doc/latex/Makefile: target/doc/.doc
 target/doc/html/index.html: target/doc/.doc
 	sleep 1; touch $@
 
-target/doc/.doc: Doxyfile target $(shell ls -1 src/*.c include/*.h doc/*)
+target/doc/.doc: Doxyfile gendoc.sh target $(shell ls -1 src/*.c include/*.h doc/*)
 	echo "Generating documentation"
+	./gendoc.sh
 	doxygen $< && touch $@
 
 target/out/%.o: src/%.c include/*.h
