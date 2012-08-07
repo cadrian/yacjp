@@ -33,7 +33,7 @@ __PUBLIC__ short json_extend_spaces  = 0x02;
 
 typedef struct json_writer {
      json_visitor_t fn;
-     json_memory_t memory;
+     cad_memory_t memory;
 
      json_output_stream_t *stream;
      short options;
@@ -205,7 +205,7 @@ static json_visitor_t fn = {
      (json_visit_const_fn )write_const ,
 };
 
-__PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, json_memory_t memory, short options) {
+__PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, cad_memory_t memory, short options) {
      json_writer_t *result = (json_writer_t*)memory.malloc(sizeof(json_writer_t));
      result->fn       = fn;
      result->memory   = memory;

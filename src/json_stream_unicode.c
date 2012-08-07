@@ -73,7 +73,7 @@ static void unicode_to_utf8(json_utf8_header_t *header, int *max_index, int unic
 
 typedef struct json_utf8_input_stream {
      json_input_stream_t fn;
-     json_memory_t memory;
+     cad_memory_t memory;
      json_input_stream_t *nested;
      json_utf8_header_t header;
 } json_utf8_input_stream_t;
@@ -110,7 +110,7 @@ static json_input_stream_t utf8_fn = {
      (json_input_stream_item_fn)utf8_item,
 };
 
-static json_input_stream_t *new_utf8_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
+static json_input_stream_t *new_utf8_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
      json_utf8_input_stream_t *result = (json_utf8_input_stream_t*)memory.malloc(sizeof(json_utf8_input_stream_t));
      result->fn     = utf8_fn;
      result->memory = memory;
@@ -126,7 +126,7 @@ typedef int (*read_short_fn)(json_input_stream_t *);
 typedef struct json_utf16_input_stream {
      json_input_stream_t fn;
      read_short_fn read_short;
-     json_memory_t memory;
+     cad_memory_t memory;
      json_input_stream_t *nested;
      json_utf8_header_t header;
      int max_index;
@@ -229,7 +229,7 @@ static json_input_stream_t utf16_fn = {
      (json_input_stream_item_fn)utf16_item,
 };
 
-static json_utf16_input_stream_t *new_utf16_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
+static json_utf16_input_stream_t *new_utf16_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
      json_utf16_input_stream_t *result = (json_utf16_input_stream_t*)memory.malloc(sizeof(json_utf16_input_stream_t));
      result->fn     = utf16_fn;
      result->memory = memory;
@@ -238,7 +238,7 @@ static json_utf16_input_stream_t *new_utf16_stream(json_utf8_header_t header, js
      return result;
 }
 
-static json_input_stream_t *new_utf16be_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
+static json_input_stream_t *new_utf16be_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
      json_utf16_input_stream_t *result = new_utf16_stream(header, raw, memory);
      result->read_short = utf16be_read_short;
      result->header.byte_item[0] = result->header.byte_item[1];
@@ -247,7 +247,7 @@ static json_input_stream_t *new_utf16be_stream(json_utf8_header_t header, json_i
      return &(result->fn);
 }
 
-static json_input_stream_t *new_utf16le_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
+static json_input_stream_t *new_utf16le_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
      json_utf16_input_stream_t *result = new_utf16_stream(header, raw, memory);
      result->read_short = utf16le_read_short;
      result->header.byte_item[1] = result->header.byte_item[2];
@@ -262,7 +262,7 @@ typedef int (*read_int_fn)(json_input_stream_t *);
 typedef struct json_utf32_input_stream {
      json_input_stream_t fn;
      read_int_fn read_int;
-     json_memory_t memory;
+     cad_memory_t memory;
      json_input_stream_t *nested;
      json_utf8_header_t header;
      int max_index;
@@ -394,7 +394,7 @@ static json_input_stream_t utf32_fn = {
      (json_input_stream_item_fn)utf32_item,
 };
 
-static json_utf32_input_stream_t *new_utf32_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
+static json_utf32_input_stream_t *new_utf32_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
      json_utf32_input_stream_t *result = (json_utf32_input_stream_t*)memory.malloc(sizeof(json_utf32_input_stream_t));
      result->fn     = utf32_fn;
      result->memory = memory;
@@ -403,7 +403,7 @@ static json_utf32_input_stream_t *new_utf32_stream(json_utf8_header_t header, js
      return result;
 }
 
-static json_input_stream_t *new_utf32be_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
+static json_input_stream_t *new_utf32be_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
      json_utf32_input_stream_t *result = new_utf32_stream(header, raw, memory);
      result->read_int = utf32be_read_int;
      result->header.byte_item[0] = result->header.byte_item[3];
@@ -411,7 +411,7 @@ static json_input_stream_t *new_utf32be_stream(json_utf8_header_t header, json_i
      return &(result->fn);
 }
 
-static json_input_stream_t *new_utf32le_stream(json_utf8_header_t header, json_input_stream_t *raw, json_memory_t memory) {
+static json_input_stream_t *new_utf32le_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
      json_utf32_input_stream_t *result = new_utf32_stream(header, raw, memory);
      result->read_int = utf32le_read_int;
      result->max_index = 0;
@@ -441,7 +441,7 @@ static json_utf8_header_t read_header(json_input_stream_t *stream) {
      return result;
 }
 
-__PUBLIC__ json_input_stream_t *new_json_utf8_stream(json_input_stream_t *raw, json_memory_t memory) {
+__PUBLIC__ json_input_stream_t *new_json_utf8_stream(json_input_stream_t *raw, cad_memory_t memory) {
      json_input_stream_t *result;
      json_utf8_header_t header = read_header(raw);
      if (header.byte_item[0] == 0) {

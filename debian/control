@@ -1,7 +1,7 @@
 Source: libyacjp
 Priority: extra
 Maintainer: Cyril ADRIAN <cyril.adrian@gmail.com>
-Build-Depends: debhelper (>= 8.0.0)
+Build-Depends: debhelper (>= 8.0.0), libcad-dev (>= 0.0.1)
 Standards-Version: 3.9.3
 Section: libs
 Homepage: http://www.github.com/cadrian/yacjp
@@ -12,6 +12,7 @@ Package: libyacjp-dev
 Section: libdevel
 Architecture: any
 Depends: libyacjp (= ${binary:Version}), ${misc:Depends}
+Recommends: libcad-dev (>= 0.0.1)
 Description: Yet Another C-JSON Parser
  A JSON parser and pretty printer written in C, with a modular
  structure.
@@ -21,7 +22,7 @@ Description: Yet Another C-JSON Parser
 Package: libyacjp-dbg
 Section: debug
 Architecture: any
-Depends: libyacjp (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: libyacjp (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, libcad-dbg (>= 0.0.1)
 Description: Yet Another C-JSON Parser
  A JSON parser and pretty printer written in C, with a modular
  structure.
@@ -31,7 +32,7 @@ Description: Yet Another C-JSON Parser
 Package: libyacjp
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libcad (>= 0.0.1)
 Description: Yet Another C-JSON Parser
  A JSON parser and pretty printer written in C, with a modular
  structure.

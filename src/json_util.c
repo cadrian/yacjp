@@ -26,10 +26,6 @@
 
 #include "json.h"
 
-__PUBLIC__ json_memory_t stdlib_memory = {
-     malloc, free
-};
-
 static void dont_free_visitor(json_visitor_t *this) {
      /* nothing */
 }

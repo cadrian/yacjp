@@ -18,6 +18,7 @@
 #define _YACJP_JSON_H_
 
 #include <stdarg.h>
+#include <cad_shared.h>
 
 /**
  * @file
@@ -26,7 +27,6 @@
  * This header provides all the necessary definitions to use the library.
  */
 
-#include "json_shared.h"
 #include "json_stream.h"
 #include "json_value.h"
 
@@ -57,7 +57,7 @@ typedef void (*json_on_error_fn)(json_input_stream_t *stream, int line, int colu
  * @return the parsed JSON value, or NULL if an error occured (in the
  * latter case, the on_error function was also called).
  */
-__PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, json_memory_t memory);
+__PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, cad_memory_t memory);
 
 /**
  * @}
@@ -154,7 +154,7 @@ __PUBLIC__ extern short json_extend_spaces;
  * @return a visitor that is able to write a JSON value to the given
  * `stream`.
  */
-__PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, json_memory_t memory, short options);
+__PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, cad_memory_t memory, short options);
 
 /**
  * @}

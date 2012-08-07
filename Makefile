@@ -65,7 +65,7 @@ target/test: $(shell find test/data -type f)
 
 target/libyacjp.so: target $(OBJ)
 	echo "Linking shared library: $@"
-	$(CC) -shared -o $@ -lm $(OBJ)
+	$(CC) -shared -o $@ -lm -lcad $(OBJ)
 	echo
 
 target/libyacjp.a: target $(OBJ)
@@ -112,7 +112,7 @@ target/out/%.o: src/%.c include/*.h
 
 target/out/%.exe: test/%.c test/*.h target/libyacjp.so
 	echo "Compiling test: $<"
-	$(CC) $(CFLAGS) -I include -L target -lyacjp $< -o $@
+	$(CC) $(CFLAGS) -I include -L target -lyacjp -lcad $< -o $@
 
 .PHONY: all lib doc clean run-test release debuild
 .SILENT:

@@ -23,8 +23,7 @@
  */
 
 #include <stdio.h>
-
-#include "json_shared.h"
+#include <cad_shared.h>
 
 /**
  * @addtogroup json_stream
@@ -94,7 +93,7 @@ struct json_input_stream {
  *
  * @return a stream that reads bytes from the given string.
  */
-__PUBLIC__ json_input_stream_t *new_json_input_stream_from_string         (char *string, json_memory_t memory);
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_string         (char *string, cad_memory_t memory);
 
 /**
  * Creates a new JSON input stream that reads bytes from the given
@@ -105,7 +104,7 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_string         (char 
  *
  * @return a stream that reads bytes from the given file.
  */
-__PUBLIC__ json_input_stream_t *new_json_input_stream_from_file           (FILE *file,   json_memory_t memory);
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_file           (FILE *file,   cad_memory_t memory);
 
 /**
  * Creates a new JSON input stream that reads bytes from the given
@@ -116,7 +115,7 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file           (FILE 
  *
  * @return a stream that reads bytes from the given file descriptor.
  */
-__PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int fd,       json_memory_t memory);
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int fd,       cad_memory_t memory);
 
 /**
  * @}
@@ -183,7 +182,7 @@ struct json_output_stream {
  *
  * @return a stream that writes bytes to a string.
  */
-__PUBLIC__ json_output_stream_t *new_json_output_stream_from_string         (char **string, json_memory_t memory);
+__PUBLIC__ json_output_stream_t *new_json_output_stream_from_string         (char **string, cad_memory_t memory);
 
 /**
  * Creates a new JSON output stream using the memory manager and
@@ -194,7 +193,7 @@ __PUBLIC__ json_output_stream_t *new_json_output_stream_from_string         (cha
  *
  * @return a stream that writes bytes into the given file.
  */
-__PUBLIC__ json_output_stream_t *new_json_output_stream_from_file           (FILE *file,    json_memory_t memory);
+__PUBLIC__ json_output_stream_t *new_json_output_stream_from_file           (FILE *file,    cad_memory_t memory);
 
 /**
  * Creates a new JSON output stream using the memory manager and
@@ -205,7 +204,7 @@ __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file           (FIL
  *
  * @return a stream that writes bytes into the given file descriptor.
  */
-__PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd,        json_memory_t memory);
+__PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd,        cad_memory_t memory);
 
 /**
  * @}
@@ -223,7 +222,7 @@ __PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int
  *
  * @return the UTF-8 input stream
  */
-__PUBLIC__ json_input_stream_t *new_json_utf8_stream(json_input_stream_t *raw, json_memory_t memory);
+__PUBLIC__ json_input_stream_t *new_json_utf8_stream(json_input_stream_t *raw, cad_memory_t memory);
 
 /**
  * @}

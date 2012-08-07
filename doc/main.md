@@ -27,7 +27,7 @@ not counting tests; see the Statistics chapter).
 
 ## The YacJP philosophy
 
-C does not mean "not object". Actually the whole YacJP library is
+C does not mean ``not object''. Actually the whole YacJP library is
 built using object-oriented techniques: one may find encapsulation,
 polymorphism, and even some design patterns (composites, factories,
 visitors).
@@ -36,9 +36,8 @@ YacJP is _compact_, but not at the price of extensibility and
 legibility.
 
 YacJP is _customizable_: the user may provide specific hooks such as
-their own \ref json_memory_t "implementation" of `malloc(3)` and
-`free(3)`, a \ref json_on_error_fn "custom parse error handler", and
-so on.
+their own implementation of `malloc(3)` and `free(3)`, a \ref
+json_on_error_fn "custom parse error handler", and so on.
 
 YacJP is _extendable_: the user may provide their own implementation
 of \ref json_stream "input/output streams", as long as they provide
@@ -166,19 +165,4 @@ the JSON values.
 The first tool is the JSON values killer that correctly (recursively)
 frees all the memory allocated by JSON values.
 
-The second tool is used virtually everywhere: the memory manager. The
-library uses a pair of functions similar to `malloc(3)` and `free(3)`
-to handle memory chunks allocation and deallocation. Those functions
-are available through a structure `json_memory_t` passed to most YacJP
-functions. The library provides a standard ("stdlib") \ref
-stdlib_memory "memory manager" but the user is free to provide her
-own.
-
-The third tool is a lookup function.
-
-
-\defgroup json_hash Hash tables
-
-The library provides a general-purpose hash table. It is internally
-used by \ref json_object "JSON objects" but it may be used anywhere
-associative tables are needed.
+The second tool is a lookup function.

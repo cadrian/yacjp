@@ -42,7 +42,7 @@ struct json_parse_context {
      json_on_error_fn on_error;
 
      // the memory manager
-     json_memory_t memory;
+     cad_memory_t memory;
 
      // the input stream
      json_input_stream_t *raw_stream;
@@ -224,7 +224,7 @@ static char *utf8(json_parse_context_t *context, json_string_t *string) {
 /* The parser public function                                             */
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-__PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, json_memory_t memory) {
+__PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, cad_memory_t memory) {
      json_parse_context_t _context = {
           .on_error      = on_error ? on_error : &default_on_error,
           .raw_stream    = stream,

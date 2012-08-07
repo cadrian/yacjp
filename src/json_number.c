@@ -28,7 +28,7 @@
 
 struct json_number_impl {
      struct json_number fn;
-     json_memory_t memory;
+     cad_memory_t memory;
 
      int sign;
      int integral;
@@ -105,7 +105,7 @@ static json_number_t fn = {
      (json_number_to_string_fn)to_string,
 };
 
-__PUBLIC__ json_number_t *json_new_number(json_memory_t memory) {
+__PUBLIC__ json_number_t *json_new_number(cad_memory_t memory) {
      struct json_number_impl *result = (struct json_number_impl *)memory.malloc(sizeof(struct json_number_impl));
      if (!result) return NULL;
      result->fn     = fn;

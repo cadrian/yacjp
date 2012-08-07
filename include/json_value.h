@@ -27,8 +27,7 @@
  */
 
 #include <ctype.h>
-
-#include "json_shared.h"
+#include <cad_shared.h>
 
 /**
  * @addtogroup json_value
@@ -729,7 +728,7 @@ struct json_visitor {
  *
  * @return the new object
  */
-__PUBLIC__ json_object_t *json_new_object(json_memory_t memory);
+__PUBLIC__ json_object_t *json_new_object(cad_memory_t memory);
 
 /**
  * Creates a new array and returns it.
@@ -738,7 +737,7 @@ __PUBLIC__ json_object_t *json_new_object(json_memory_t memory);
  *
  * @return the new array
  */
-__PUBLIC__ json_array_t  *json_new_array (json_memory_t memory);
+__PUBLIC__ json_array_t  *json_new_array (cad_memory_t memory);
 
 /**
  * Creates a new string and returns it.
@@ -747,7 +746,7 @@ __PUBLIC__ json_array_t  *json_new_array (json_memory_t memory);
  *
  * @return the new string
  */
-__PUBLIC__ json_string_t *json_new_string(json_memory_t memory);
+__PUBLIC__ json_string_t *json_new_string(cad_memory_t memory);
 
 /**
  * Creates a new number and returns it.
@@ -756,7 +755,7 @@ __PUBLIC__ json_string_t *json_new_string(json_memory_t memory);
  *
  * @return the new number
  */
-__PUBLIC__ json_number_t *json_new_number(json_memory_t memory);
+__PUBLIC__ json_number_t *json_new_number(cad_memory_t memory);
 
 /**
  * Gets the JSON const value associated with the given const.

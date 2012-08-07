@@ -28,7 +28,7 @@
 
 struct json_input_stream_string {
      struct json_input_stream fn;
-     json_memory_t memory;
+     cad_memory_t memory;
 
      char *string;
      int index;
@@ -56,7 +56,7 @@ static json_input_stream_t input_fn = {
      (json_input_stream_item_fn)item      ,
 };
 
-__PUBLIC__ json_input_stream_t *new_json_input_stream_from_string(char *string, json_memory_t memory) {
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_string(char *string, cad_memory_t memory) {
      struct json_input_stream_string *result = (struct json_input_stream_string *)memory.malloc(sizeof(struct json_input_stream_string));
      if (!result) return NULL;
      result->fn     = input_fn;
@@ -70,7 +70,7 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_string(char *string, 
 
 struct json_output_stream_string {
      struct json_output_stream fn;
-     json_memory_t memory;
+     cad_memory_t memory;
 
      char **string;
      int capacity;
@@ -122,7 +122,7 @@ static json_output_stream_t output_fn = {
      (json_output_stream_flush_fn)flush      ,
 };
 
-__PUBLIC__ json_output_stream_t *new_json_output_stream_from_string(char **string, json_memory_t memory) {
+__PUBLIC__ json_output_stream_t *new_json_output_stream_from_string(char **string, cad_memory_t memory) {
      struct json_output_stream_string *result = (struct json_output_stream_string *)memory.malloc(sizeof(struct json_output_stream_string));
      if (!result) return NULL;
      result->fn       = output_fn;

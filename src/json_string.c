@@ -34,7 +34,7 @@ typedef struct low_surrogate {
 
 struct json_string_impl {
      struct json_string fn;
-     json_memory_t memory;
+     cad_memory_t memory;
 
      int              string_count;
      int              string_capacity;
@@ -314,7 +314,7 @@ static json_string_t fn = {
      (json_string_add_utf8_fn  )add        ,
 };
 
-__PUBLIC__ json_string_t *json_new_string(json_memory_t memory) {
+__PUBLIC__ json_string_t *json_new_string(cad_memory_t memory) {
      struct json_string_impl *result = (struct json_string_impl *)memory.malloc(sizeof(struct json_string_impl));
      if (!result) return NULL;
      result->fn              = fn;

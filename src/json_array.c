@@ -27,7 +27,7 @@
 
 struct json_array_impl {
      struct json_array fn;
-     json_memory_t memory;
+     cad_memory_t memory;
 
      int capacity;
      int count;
@@ -125,7 +125,7 @@ static json_array_t fn = {
      (json_array_del_fn   )del   ,
 };
 
-__PUBLIC__ json_array_t *json_new_array(json_memory_t memory) {
+__PUBLIC__ json_array_t *json_new_array(cad_memory_t memory) {
      struct json_array_impl *result = (struct json_array_impl *)memory.malloc(sizeof(struct json_array_impl));
      if (!result) return NULL;
      result->fn       = fn;

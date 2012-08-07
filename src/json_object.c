@@ -22,15 +22,15 @@
  */
 
 #include <string.h>
+#include <cad_hash.h>
 
 #include "json_value.h"
-#include "hash.h"
 
 struct json_object_impl {
      struct json_object fn;
-     json_memory_t memory;
+     cad_memory_t memory;
 
-     hash_t *hash;
+     cad_hash_t *hash;
 };
 
 static void accept(struct json_object_impl *this, json_visitor_t *visitor) {
@@ -46,7 +46,7 @@ static void keys_iterator(struct json_object_impl *this, int index, const char *
 }
 
 static void keys(struct json_object_impl *this, const char **keys) {
-     this->hash->iterate(this->hash, (hash_iterator_fn)keys_iterator, keys);
+     this->hash->iterate(this->hash, (cad_hash_iterator_fn)keys_iterator, keys);
 }
 
 static json_value_t *get(struct json_object_impl *this, const char *key) {
@@ -76,11 +76,11 @@ static json_object_t fn = {
      (json_object_del_fn   )del    ,
 };
 
-__PUBLIC__ json_object_t *json_new_object(json_memory_t memory) {
+__PUBLIC__ json_object_t *json_new_object(cad_memory_t memory) {
      struct json_object_impl *result = (struct json_object_impl *)memory.malloc(sizeof(struct json_object_impl));
      if (!result) return NULL;
      result->fn     = fn;
      result->memory = memory;
-     result->hash   = new_hash(memory, hash_strings);
+     result->hash   = cad_hash_new(memory, cad_hash_strings);
      return &(result->fn);
 }

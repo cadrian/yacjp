@@ -31,7 +31,7 @@
 
 struct json_input_stream_file_descriptor {
      struct json_input_stream fn;
-     json_memory_t memory;
+     cad_memory_t memory;
 
      int fd;
      char buffer[BUFFER_SIZE];
@@ -71,7 +71,7 @@ static json_input_stream_t input_fn = {
      (json_input_stream_item_fn)item      ,
 };
 
-__PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int fd, json_memory_t memory) {
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int fd, cad_memory_t memory) {
      struct json_input_stream_file_descriptor *result = (struct json_input_stream_file_descriptor *)memory.malloc(sizeof(struct json_input_stream_file_descriptor));
      if (!result) return NULL;
      result->fn     = input_fn;
@@ -87,7 +87,7 @@ __PUBLIC__ json_input_stream_t *new_json_input_stream_from_file_descriptor(int f
 
 struct json_output_stream_file_descriptor {
      struct json_output_stream fn;
-     json_memory_t memory;
+     cad_memory_t memory;
 
      int   fd;
      char *buffer;
@@ -131,7 +131,7 @@ static json_output_stream_t output_fn = {
      (json_output_stream_flush_fn)flush      ,
 };
 
-__PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd, json_memory_t memory) {
+__PUBLIC__ json_output_stream_t *new_json_output_stream_from_file_descriptor(int fd, cad_memory_t memory) {
      struct json_output_stream_file_descriptor *result = (struct json_output_stream_file_descriptor*)memory.malloc(sizeof(struct json_output_stream_file_descriptor));
      result->fn       = output_fn;
      result->memory   = memory;
