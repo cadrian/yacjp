@@ -1,5 +1,5 @@
-usr/include/libyacjp/*
-usr/lib/libyacjp/lib*.a
-usr/lib/libyacjp/lib*.so
+usr/include/*
+usr/lib/lib*.a
+usr/lib/lib*.so
 #usr/lib/pkgconfig/*
 #usr/share/pkgconfig/*
