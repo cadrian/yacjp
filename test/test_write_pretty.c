@@ -32,6 +32,7 @@ int main() {
      char *out_source;
      char expected[1024];
      FILE *file = fopen("target/out/data/config.ini", "r");
+     int n;
      assert(file != NULL);
 
      stream = new_json_input_stream_from_file(file, stdlib_memory);
@@ -47,9 +48,10 @@ int main() {
 
      memset(expected, 0, 1024);
      file = fopen("target/out/data/config.ref", "r");
-     fread(expected, 1, 1024, file);
+     n = fread(expected, 1, 1024, file);
      fclose(file);
 
+     assert(n == strlen(expected));
      assert(0 == strcmp(expected, out_source));
 
      return 0;

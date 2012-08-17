@@ -101,7 +101,7 @@ static void free_output(struct json_input_stream_file_descriptor *this) {
 
 static void put(struct json_output_stream_file_descriptor *this, const char *format, ...) {
      va_list args;
-     int n;
+     int i, n, m;
      va_start(args, format);
      n = vsnprintf(this->buffer, this->capacity, format, args);
      va_end(args);
@@ -118,7 +118,14 @@ static void put(struct json_output_stream_file_descriptor *this, const char *for
           va_end(args);
      }
 
-     write(this->fd, this->buffer, n);
+     while (m < n) {
+          i = write(this->fd, this->buffer + m, n - m);
+          if (!i) {
+               // TODO: lost characters!!
+               return;
+          }
+          m += i;
+     }
 }
 
 static void flush(struct json_output_stream_file_descriptor *this) {
