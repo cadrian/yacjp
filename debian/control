@@ -11,7 +11,7 @@ Homepage: http://www.github.com/cadrian/yacjp
 Package: libyacjp-dev
 Section: libdevel
 Architecture: any
-Depends: libyacjp (= ${binary:Version}), ${misc:Depends}
+Depends: libyacjp0 (= ${binary:Version}), ${misc:Depends}
 Recommends: libcad-dev (>= 0.0.1)
 Description: Yet Another C-JSON Parser
  A JSON parser and pretty printer written in C, with a modular
@@ -19,17 +19,17 @@ Description: Yet Another C-JSON Parser
  Also provides an all-purpose hash table, utf-8 input/output streams,
  and utf-16/32 to utf-8 input streams.
 
-Package: libyacjp-dbg
-Section: debug
-Architecture: any
-Depends: libyacjp (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, libcad-dbg (>= 0.0.1)
-Description: Yet Another C-JSON Parser
- A JSON parser and pretty printer written in C, with a modular
- structure.
- Also provides an all-purpose hash table, utf-8 input/output streams,
- and utf-16/32 to utf-8 input streams.
+#Package: libyacjp-dbg
+#Section: debug
+#Architecture: any
+#Depends: libyacjp0 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, libcad-dbg (>= 0.0.1)
+#Description: Yet Another C-JSON Parser
+# A JSON parser and pretty printer written in C, with a modular
+# structure.
+# Also provides an all-purpose hash table, utf-8 input/output streams,
+# and utf-16/32 to utf-8 input streams.
 
-Package: libyacjp
+Package: libyacjp0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libcad (>= 0.0.1)
@@ -41,9 +41,9 @@ Description: Yet Another C-JSON Parser
 
 Package: libyacjp-doc
 Section: doc
-Architecture: any
+Architecture: all
 Depends: ${misc:Depends}
-Recommends: libyacjp (= ${binary:Version})
+Recommends: libyacjp0 (= ${binary:Version})
 Description: Yet Another C-JSON Parser
  A JSON parser and pretty printer written in C, with a modular
  structure.

@@ -1,2 +1,5 @@
 *.ex
 *.EX
+files
+*.log
+*.substvars
