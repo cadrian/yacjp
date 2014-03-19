@@ -8,7 +8,7 @@ env:
 before_install:
   - "echo 'deb http://apt.cadrian.net/ unstable main' | sudo tee /etc/apt/sources.list.d/cadrian.list"
   - "sudo apt-get update -qq"
-  - "sudo apt-get install -qq libcad0 libcad-dev rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts"
+  - "sudo apt-get install -qq --force-yes libcad0 libcad-dev rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts"
   - ".travis.conf/splice_key.sh"
 install:
   - "make lib"
