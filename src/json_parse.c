@@ -402,7 +402,8 @@ static json_array_t *parse_array(json_parse_context_t *context) {
 
 static json_number_t *parse_number(json_parse_context_t *context) {
      json_number_t * result = NULL;
-     int state, i=0, d=0, dx=0, x=0, n=1, nx=1;
+     int state, dx=0, x=0, n=1, nx=1;
+     unsigned int i=0, d=0;
      if (item(context) == '-') {
           n = -1;
           next(context);
@@ -426,7 +427,7 @@ static json_number_t *parse_number(json_parse_context_t *context) {
      case '1': case '2': case '3':
      case '4': case '5': case '6':
      case '7': case '8': case '9':
-          i = item(context) - '0';
+          i = (unsigned int)(item(context) - '0');
           state = NUM_STATE_INTEGRAL;
           next(context);
           break;
@@ -458,7 +459,7 @@ static json_number_t *parse_number(json_parse_context_t *context) {
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
                     case '7': case '8': case '9':
-                         i = i * 10 + c - '0';
+                         i = i * 10 + (unsigned int)(c - '0');
                          state = NUM_STATE_INTEGRAL;
                          next(context);
                          break;
@@ -473,7 +474,7 @@ static json_number_t *parse_number(json_parse_context_t *context) {
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
                     case '7': case '8': case '9':
-                         d = c - '0';
+                         d = (unsigned int)(c - '0');
                          dx = 1;
                          state = NUM_STATE_DECIMAL_MORE;
                          next(context);
@@ -494,7 +495,7 @@ static json_number_t *parse_number(json_parse_context_t *context) {
                     case '1': case '2': case '3':
                     case '4': case '5': case '6':
                     case '7': case '8': case '9':
-                         d = d * 10 + c - '0';
+                         d = d * 10 + (unsigned int)(c - '0');
                          dx++;
                          state = NUM_STATE_DECIMAL_MORE;
                          next(context);

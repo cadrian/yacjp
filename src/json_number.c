@@ -31,8 +31,8 @@ struct json_number_impl {
      cad_memory_t memory;
 
      int sign;
-     int integral;
-     int decimal;
+     unsigned int integral;
+     unsigned int decimal;
      int decimal_exp;
      int exponent;
 };
@@ -46,17 +46,16 @@ static int is_int(struct json_number_impl *this) {
 }
 
 static int to_int(struct json_number_impl *this) {
-     return this->sign * this->integral * pow(10, this->exponent)
-          + this->sign * this->decimal * pow(10, (this->exponent - this->decimal_exp));
+     return this->sign * (int)this->integral * pow(10, this->exponent)
+          + this->sign * (int)this->decimal * pow(10, (this->exponent - this->decimal_exp));
 }
 
 static double to_double(struct json_number_impl *this) {
-     int sign = this->integral >= 0 ? 1 : -1;
      return this->sign * (double)this->integral * pow(10, this->exponent)
           + this->sign * (double)this->decimal / pow(10, (this->decimal_exp - this->exponent));
 }
 
-static void set(struct json_number_impl *this, int s, int i, int d, int dx, int x) {
+static void set(struct json_number_impl *this, int s, unsigned int i, unsigned int d, int dx, int x) {
      this->sign = s;
      this->integral = i;
      this->decimal = d;
