@@ -1,0 +1,24 @@
+language: c
+compiler:
+  - gcc
+env:
+  global:
+    - "BUILD_DIR=$TRAVIS_BUILD_DIR"
+    - "LD_LIBRARY_PATH=\"$BUILD_DIR/target:$LD_LIBRARY_PATH\""
+before_install:
+  - "sudo touch /etc/apt/sources.list"
+  - "echo 'deb http://apt.cadrian.net/ unstable main' | sudo tee -a /etc/apt/sources.list"
+  - "sudo apt-get update -qq"
+  - "sudo apt-get install -qq rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts"
+  - ".travis.conf/splice_key.sh"
+install:
+  - "make lib"
+script:
+  - "make run-test"
+  - "make release"
+  - "sudo dpkg -i target/dpkg/*.deb"
+#after_success:
+#  - "rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -q -C -o StrictHostKeyChecking=no' target/*.deb target/*.dsc target/*.tar.gz $RSYNC:~/apt/incoming/"
+#  - "rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -q -C -o StrictHostKeyChecking=no' target/*.changes $RSYNC:~/apt/incoming/"
+cache:
+  apt: true
