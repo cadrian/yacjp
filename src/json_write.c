@@ -74,7 +74,7 @@ static void write_object(json_writer_t *this, json_object_t *visited) {
           newline_and_indent(this);
           this->stream->put(this->stream, "\"%s\":", keys[i]);
           if (this->options & json_extend_spaces) {
-               this->stream->put(this->stream, "%*s", key_space - strlen(keys[i]) + 1, "");
+               this->stream->put(this->stream, "%*s", (int)(key_space - strlen(keys[i]) + 1), "");
           }
           v->accept(v, (json_visitor_t*)this);
      }

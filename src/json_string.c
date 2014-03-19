@@ -24,6 +24,7 @@
 #include <stdarg.h>
 #include <alloca.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "json_value.h"
@@ -132,13 +133,14 @@ static void accept(struct json_string_impl *this, json_visitor_t *visitor) {
 
 static unicode_char_t get(struct json_string_impl *this, unsigned int index) {
      unicode_char_t result = this->string[index];
-     if (result & 0x0000F800 == 0x0000D800) {
-          result = result & 0x000007FF + 64;
-          result = result * 1024 + get_low_surrogate(this, index);
+     if ((result & 0x0000F800) == 0x0000D800) {
+          result = (result & 0x000007FF) + 64;
+          result =  result * 1024 + get_low_surrogate(this, index);
      }
      else {
           result = result & 0x0000FFFF;
      }
+     return result;
 }
 
 static int valid_unicode(unicode_char_t v) {
