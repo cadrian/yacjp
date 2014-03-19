@@ -6,11 +6,9 @@ env:
     - "BUILD_DIR=$TRAVIS_BUILD_DIR"
     - "LD_LIBRARY_PATH=\"$BUILD_DIR/target:$LD_LIBRARY_PATH\""
 before_install:
-  - "ls -l /etc/apt/sources.list*"
-  - "sudo touch /etc/apt/sources.list"
-  - "echo 'deb http://apt.cadrian.net/ unstable main' | sudo tee -a /etc/apt/sources.list"
-  - "sudo apt-get update -q"
-  - "sudo apt-get install -q -y libcad rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts"
+  - "echo 'deb http://apt.cadrian.net/ unstable main' | sudo tee /etc/apt/sources.list.d/cadrian.list"
+  - "sudo apt-get update -qq"
+  - "sudo apt-get install -qq libcad0 libcad-dev rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts"
   - ".travis.conf/splice_key.sh"
 install:
   - "make lib"
