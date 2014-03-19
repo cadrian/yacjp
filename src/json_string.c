@@ -23,6 +23,7 @@
 
 #include <stdarg.h>
 #include <alloca.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include "json_value.h"
@@ -269,7 +270,7 @@ static int count(struct json_string_impl *this) {
 static size_t utf8(struct json_string_impl *this, char *buffer, size_t size) {
      size_t result = 0;
      int i;
-     low_surrogate_t ls;
+     //low_surrogate_t ls;
      for (i = 0; i < this->string_count; i++) {
           int v = this->string[i];
           if (v < 128) {

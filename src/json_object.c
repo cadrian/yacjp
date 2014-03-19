@@ -81,6 +81,6 @@ __PUBLIC__ json_object_t *json_new_object(cad_memory_t memory) {
      if (!result) return NULL;
      result->fn     = fn;
      result->memory = memory;
-     result->hash   = cad_hash_new(memory, cad_hash_strings);
+     result->hash   = cad_new_hash(memory, cad_hash_strings);
      return &(result->fn);
 }
