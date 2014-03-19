@@ -9,7 +9,7 @@ before_install:
   - "sudo touch /etc/apt/sources.list"
   - "echo 'deb http://apt.cadrian.net/ unstable main' | sudo tee -a /etc/apt/sources.list"
   - "sudo apt-get update -qq"
-  - "sudo apt-get install -qq rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts"
+  - "sudo apt-get install -qq libcad rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts"
   - ".travis.conf/splice_key.sh"
 install:
   - "make lib"
