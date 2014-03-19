@@ -47,7 +47,7 @@ polymorphism in C.
 YacJP is _user-friendly_: to implement actions on the JSON values
 tree, one just need to provide a \ref json_visitor "visitor" structure
 which is a list of functions, one for each data type (objects, arrays,
-and so on). Implementing such a structure is straightforward; there
+and so on). Implementing such a structure is straightforward. There
 are examples of such implementations in YacJP itself:
 
  * the \ref json_kill "kill" visitor allows to correctly (recursively)
