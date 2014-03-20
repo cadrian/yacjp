@@ -95,7 +95,7 @@ script:
   - make release
   - sudo dpkg -i target/dpkg/*.deb
 after_success:
-  - rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -q -C -o StrictHostKeyChecking=no' target/*.deb target/*.dsc target/*.tar.gz $RSYNC:apt/incoming/
-  - rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -q -C -o StrictHostKeyChecking=no' target/*.changes $RSYNC:apt/incoming/
+  - rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -q -C -o StrictHostKeyChecking=no' target/dpkg/*.deb target/dpkg/*.dsc target/dpkg/*.tar.gz $RSYNC:apt/incoming/
+  - rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -q -C -o StrictHostKeyChecking=no' target/dpkg/*.changes $RSYNC:apt/incoming/
 cache:
-  - apt
+  apt: true
