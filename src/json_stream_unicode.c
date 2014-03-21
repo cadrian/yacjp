@@ -158,7 +158,7 @@ static int utf16_next(json_utf16_input_stream_t *this) {
                     result = -1; // error
                }
                else {
-                    int unicode = ((w1 & 0x3FF) << 10) | (w2 & 0x3FF) + 0x10000;
+                    int unicode = (((w1 & 0x3FF) << 10) | (w2 & 0x3FF)) + 0x10000;
                     unicode_to_utf8(&(this->header), &(this->max_index), unicode);
                }
           }
