@@ -81,21 +81,19 @@ env:
     - secure: "fXiy+Q96/4R3+1KHslhEYzhq9dP5ypCXv4Yn9/iuEOdzEZSIcQviefxFcYVz/zlSHeRN0jEfN40Drti8VfXKezkqD5C8P9Cg+WiSGC8+NbJSHuHFMYxAajG2gD05GuAM2gPxzJ8vgkQizno4O3H+kAr8L4AuG/iUC3yi8O0r/Z8="
     - secure: "b6NdMZ7DV7B8ZUnOIUd5OC5tte4FwIlQijLrA66rjlw+sSwKcpb7EMnw9EPyQrMOnEDgSbJ9dM9qhVedlduKCvB/jW9wV/m7+uZGHYLBB8yt6nvO6TfWA5ney+fc4Pg+evufETI7QgmwCezMNh29gDWhIpsyZ7/aXWpeWBF6Hiw="
     - secure: "ecX8ASh1qnIPrU5JDrHMScp03swoWCHOcPbOiArmnqo9c719dhpvXyFqVMj7B7etdRnkgeTvduZKnE7CSi6bg6NmPCC03C93n8IhqrLvwMuUwA3FE50Uz1KBjXC8vC5itRiJ0/17NXa+pf8ps488cef8iNzB/zzzOIYgpHYDieQ="
+    - secure: "EvEmx+wb1tM5QGuBE8u1TSikA6HNR2M7Obx1Q+celC+cdXqzSC0jmDCrs3lHiqy81k6WiVD3nY9he3ifuFvDd9lXQUOv0fGnk2GydXusl8A/AM3sMFhQfOZsEtOb6idkTn/75qttYms9TMaPbN28U9Iz2XCPJYSi0YMPFxr71Vs="
 before_install:
   - echo 'deb http://apt.cadrian.net/ unstable main' | sudo tee /etc/apt/sources.list.d/cadrian.list
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq --force-yes libcad0 libcad-dev rsync graphviz doxygen doxygen-latex
-    texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
-    fonts-linuxlibertine fonts-inconsolata devscripts
-  - .travis.conf/splice_key.sh
+  - "sudo apt-get update -q"
+  - "sudo apt-get install -q rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts ntp"
+  - "sudo service ntp restart"
+  - ".travis.conf/splice_key.sh"
 install:
   - make lib
 script:
-  - make run-test
-  - make release
-  - sudo dpkg -i target/dpkg/*.deb
+  - "make clean run-test; build/build.sh main; sudo dpkg -i target/dpkg/*.deb"
 after_success:
-  - rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -q -C -o StrictHostKeyChecking=no' target/dpkg/*.deb target/dpkg/*.dsc target/dpkg/*.tar.gz $RSYNC:apt/incoming/
-  - rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -q -C -o StrictHostKeyChecking=no' target/dpkg/*.changes $RSYNC:apt/incoming/
+  - "rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -p '$PORT' -q -C -o StrictHostKeyChecking=no' target/dpkg/*.deb target/dpkg/*.dsc target/dpkg/*.tar.gz $RSYNC:apt/incoming/"
+  - "rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -p '$PORT' -q -C -o StrictHostKeyChecking=no' target/dpkg/*.changes $RSYNC:apt/incoming/"
 cache:
   apt: true
