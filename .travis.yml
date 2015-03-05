@@ -86,7 +86,6 @@ before_install:
   - echo 'deb http://apt.cadrian.net/ unstable main' | sudo tee /etc/apt/sources.list.d/cadrian.list
   - "sudo apt-get update -q"
   - "sudo apt-get install -q --force-yes libcad0 libcad-dev libpcre3 libpcre3-dev rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts"
-  - "sudo service ntp restart"
   - ".travis.conf/splice_key.sh"
 install:
   - make lib
