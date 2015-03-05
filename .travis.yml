@@ -88,10 +88,11 @@ before_install:
   - "sudo apt-get install -q --force-yes libcad0 libcad-dev libpcre3 libpcre3-dev rsync graphviz doxygen doxygen-latex texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-linuxlibertine fonts-inconsolata devscripts"
   - ".travis.conf/splice_key.sh"
 install:
-  - make lib
+  - "make lib"
 script:
   - "make clean run-test; build/build.sh main; sudo dpkg -i target/dpkg/*.deb"
 after_success:
+  - "ls -l target/dpkg"
   - "rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -p '$PORT' -q -C -o StrictHostKeyChecking=no' target/dpkg/*.deb target/dpkg/*.dsc target/dpkg/*.tar.gz $RSYNC:apt/incoming/"
   - "rsync -aSH --stats -e 'ssh -i '$HOME'/.ssh/id_rsa_travis -p '$PORT' -q -C -o StrictHostKeyChecking=no' target/dpkg/*.changes $RSYNC:apt/incoming/"
 cache:
