@@ -22,6 +22,8 @@
 static void fill_object(json_object_t *object, unsigned int depth) {
      static unsigned long count = 0;
 
+     assert(object != NULL);
+
      json_object_t *foo = json_new_object(stdlib_memory);
      json_object_t *bar = json_new_object(stdlib_memory);
      json_string_t *string = json_new_string(stdlib_memory);

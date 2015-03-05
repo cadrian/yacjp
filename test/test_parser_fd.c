@@ -43,5 +43,7 @@ int main() {
      value = json_parse(stream, on_error, stdlib_memory);
      close(fd);
 
+     assert(value != NULL);
+
      return 0;
 }

@@ -30,5 +30,7 @@ int main() {
      stream = new_json_input_stream_from_string(source, stdlib_memory);
      value = json_parse(stream, on_error, stdlib_memory);
 
+     assert(value != NULL);
+
      return 0;
 }

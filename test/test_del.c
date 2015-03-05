@@ -43,7 +43,7 @@ int main() {
 
      {
           json_object_t *object = (json_object_t*)value;
-          json_object_t *main;
+          json_object_t *mainobj;
           json_number_t *fullscreen;
           json_number_t *width;
           json_number_t *height;
@@ -51,43 +51,43 @@ int main() {
           json_string_t *profile;
           char profile_value[8];
           int count;
-          main = (json_object_t*)object->get(object, "main");
-          assert(main != NULL);
+          mainobj = (json_object_t*)object->get(object, "main");
+          assert(mainobj != NULL);
 
-          fullscreen = (json_number_t*)main->get(main, "fullscreen");
+          fullscreen = (json_number_t*)mainobj->get(mainobj, "fullscreen");
           assert(fullscreen != NULL);
           assert(fullscreen->is_int(fullscreen));
           assert(fullscreen->to_int(fullscreen) == 0);
           assert(fullscreen->to_double(fullscreen) == 0.0);
 
-          width = (json_number_t*)main->get(main, "width");
+          width = (json_number_t*)mainobj->get(mainobj, "width");
           assert(width != NULL);
           assert(width->is_int(width));
           assert(width->to_int(width) == 800);
           assert(width->to_double(width) == 800.0);
 
-          height = (json_number_t*)main->get(main, "height");
+          height = (json_number_t*)mainobj->get(mainobj, "height");
           assert(height != NULL);
           assert(height->is_int(height));
           assert(height->to_int(height) == 480);
           assert(height->to_double(height) == 480.0);
 
-          framerate = (json_number_t*)main->get(main, "framerate");
+          framerate = (json_number_t*)mainobj->get(mainobj, "framerate");
           assert(framerate != NULL);
           assert(framerate->is_int(framerate));
           assert(framerate->to_int(framerate) == 520);
           assert(framerate->to_double(framerate) == 520.0);
 
-          profile = (json_string_t*)main->get(main, "profile");
+          profile = (json_string_t*)mainobj->get(mainobj, "profile");
           assert(profile != NULL);
           memset(profile_value, 1, 8); // not \0 to ensure that the NUL character is correctly written by the utf8 converter
           count = profile->utf8(profile, profile_value, 8);
           assert(count == 4);
           assert(0 == strcmp("test", profile_value));
 
-          main->del(main, "width"); // has the same hashed position as "framerate" in the map
-          assert(main->get(main, "framerate") != NULL);
-          assert(main->get(main, "framerate") == (json_value_t*)framerate);
+          mainobj->del(mainobj, "width"); // has the same hashed position as "framerate" in the map
+          assert(mainobj->get(mainobj, "framerate") != NULL);
+          assert(mainobj->get(mainobj, "framerate") == (json_value_t*)framerate);
      }
 
      return 0;

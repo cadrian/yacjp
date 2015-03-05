@@ -50,7 +50,7 @@ int main() {
 
      {
           json_object_t *object = (json_object_t*)value;
-          json_object_t *main;
+          json_object_t *mainobj;
           json_number_t *fullscreen;
           json_number_t *width;
           json_number_t *height;
@@ -58,58 +58,58 @@ int main() {
           char profile_value[8];
           int count;
 
-          main = (json_object_t*)json_lookup(value, "main", JSON_STOP);
-          assert(main == (json_object_t*)object->get(object, "main"));
+          mainobj = (json_object_t*)json_lookup(value, "main", JSON_STOP);
+          assert(mainobj == (json_object_t*)object->get(object, "main"));
 
           fullscreen = (json_number_t*)json_lookup(value, "main", "fullscreen");
-          assert(fullscreen == (json_number_t*)main->get(main, "fullscreen"));
+          assert(fullscreen == (json_number_t*)mainobj->get(mainobj, "fullscreen"));
           assert(fullscreen->is_int(fullscreen));
           assert(fullscreen->to_int(fullscreen) == 0);
           assert(fullscreen->to_double(fullscreen) == 0.0);
 
           width = (json_number_t*)json_lookup(value, "main", "width");
-          assert(width == (json_number_t*)main->get(main, "width"));
+          assert(width == (json_number_t*)mainobj->get(mainobj, "width"));
           assert(width->is_int(width));
           assert(width->to_int(width) == 800);
           assert(width->to_double(width) == 800.0);
 
           height = (json_number_t*)json_lookup(value, "main", "height");
-          assert(height == (json_number_t*)main->get(main, "height"));
+          assert(height == (json_number_t*)mainobj->get(mainobj, "height"));
           assert(height->is_int(height));
           assert(height->to_int(height) == 480);
           assert(height->to_double(height) == 480.0);
 
           profile = (json_string_t*)json_lookup(value, "main", "profile");
-          assert(profile == (json_string_t*)main->get(main, "profile"));
+          assert(profile == (json_string_t*)mainobj->get(mainobj, "profile"));
           memset(profile_value, 1, 8); // not \0 to ensure that the NUL character is correctly written by the utf8 converter
           count = profile->utf8(profile, profile_value, 8);
           assert(count == 4);
           assert(0 == strcmp("test", profile_value));
 
           // variadic version
-          main = (json_object_t*)json_vlookup_wrapper(value, "main", JSON_STOP);
-          assert(main == (json_object_t*)object->get(object, "main"));
+          mainobj = (json_object_t*)json_vlookup_wrapper(value, "main", JSON_STOP);
+          assert(mainobj == (json_object_t*)object->get(object, "main"));
 
           fullscreen = (json_number_t*)json_vlookup_wrapper(value, "main", "fullscreen");
-          assert(fullscreen == (json_number_t*)main->get(main, "fullscreen"));
+          assert(fullscreen == (json_number_t*)mainobj->get(mainobj, "fullscreen"));
           assert(fullscreen->is_int(fullscreen));
           assert(fullscreen->to_int(fullscreen) == 0);
           assert(fullscreen->to_double(fullscreen) == 0.0);
 
           width = (json_number_t*)json_vlookup_wrapper(value, "main", "width");
-          assert(width == (json_number_t*)main->get(main, "width"));
+          assert(width == (json_number_t*)mainobj->get(mainobj, "width"));
           assert(width->is_int(width));
           assert(width->to_int(width) == 800);
           assert(width->to_double(width) == 800.0);
 
           height = (json_number_t*)json_vlookup_wrapper(value, "main", "height");
-          assert(height == (json_number_t*)main->get(main, "height"));
+          assert(height == (json_number_t*)mainobj->get(mainobj, "height"));
           assert(height->is_int(height));
           assert(height->to_int(height) == 480);
           assert(height->to_double(height) == 480.0);
-          
+
           profile = (json_string_t*)json_vlookup_wrapper(value, "main", "profile");
-          assert(profile == (json_string_t*)main->get(main, "profile"));
+          assert(profile == (json_string_t*)mainobj->get(mainobj, "profile"));
           memset(profile_value, 1, 8); // not \0 to ensure that the NUL character is correctly written by the utf8 converter
           count = profile->utf8(profile, profile_value, 8);
           assert(count == 4);

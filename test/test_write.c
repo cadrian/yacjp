@@ -14,6 +14,8 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+
 #include "test.h"
 #include "json.h"
 
