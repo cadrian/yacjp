@@ -38,13 +38,13 @@ int main() {
 
      out = new_json_output_stream_from_string(&out_source, stdlib_memory);
      assert(NULL == out_source);
-     writer = json_write_to(out, stdlib_memory, json_compact);
 
      cloner = json_clone(&clone, stdlib_memory);
      value->accept(value, cloner);
 
      assert(NULL != clone);
 
+     writer = json_write_to(out, stdlib_memory, json_compact);
      clone->accept(clone, writer);
 
      assert(NULL != out_source);
