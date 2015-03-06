@@ -76,6 +76,16 @@ __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_f
  */
 __PUBLIC__ json_visitor_t *json_kill();
 
+/**
+ * This visitor recursively clones the JSON value. The resulting value is placed into result.
+ *
+ * @param[out] result must not be NULL
+ * @param[in] memory the memory manager that will allocate memory
+ *
+ * @return the cloner; the caller must free() it.
+ */
+__PUBLIC__ json_visitor_t *json_clone(json_value_t **result, cad_memory_t memory);
+
 typedef union json_stop {
      char *key;
      int   index;
