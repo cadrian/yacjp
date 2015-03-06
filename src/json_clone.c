@@ -34,14 +34,18 @@ static void visit_value(struct json_visitor_clone *this, json_value_t *visited) 
      json_output_stream_t *out;
      json_input_stream_t *in;
 
-     out = new_json_output_stream_from_string(&buffer, this->memory);
-     json_write_to(out, this->memory, 0);
+     if (visited == NULL) {
+          *(this->result) = NULL;
+     } else {
+          out = new_json_output_stream_from_string(&buffer, this->memory);
+          json_write_to(out, this->memory, 0);
 
-     in = new_json_input_stream_from_string(buffer, this->memory);
-     *(this->result) = json_parse(in, NULL, this->memory);
+          in = new_json_input_stream_from_string(buffer, this->memory);
+          *(this->result) = json_parse(in, NULL, this->memory);
 
-     this->memory.free(buffer);
-     this->memory.free(out);
+          this->memory.free(buffer);
+          this->memory.free(out);
+     }
 }
 
 static void free_(struct json_visitor_clone *this) {
