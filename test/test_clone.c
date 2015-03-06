@@ -29,12 +29,14 @@ static void on_error(json_input_stream_t *s, int line, int column, const char *f
 static char *source = "{\"foo\":\"data\",\"key\":[1,2],\"bat\":{\"a\":1.4e+9}}";
 
 int main() {
-     json_value_t *value, *clone;
-     json_visitor_t *writer, *cloner;
-     char *out_source;
+     json_value_t *value = NULL, *clone = NULL;
+     json_visitor_t *writer = NULL, *cloner = NULL;
+     char *out_source = NULL;
 
      stream = new_json_input_stream_from_string(source, stdlib_memory);
      value = json_parse(stream, on_error, stdlib_memory);
+
+     assert(NULL != value);
 
      out = new_json_output_stream_from_string(&out_source, stdlib_memory);
      assert(NULL == out_source);
