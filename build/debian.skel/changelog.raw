@@ -3,7 +3,6 @@ libyacjp (0.0.4#SNAPSHOT#) unstable; urgency=low
   * #7 - decimal value not parseable
   * debian native format
   * now depends on the split libcad
-  * added a clone visitor
 
  -- Cyril ADRIAN <cyril.adrian@gmail.com>  #DATE#
 
