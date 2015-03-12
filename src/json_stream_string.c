@@ -89,11 +89,11 @@ static void put(struct json_output_stream_string *this, const char *format, ...)
      va_list args;
 
      va_start(args, format);
-     c = vsnprintf("", 0, format, args);
+     c = vsnprintf("", 0, format, args) + 1;
      va_end(args);
 
      if (new_capacity == 0) {
-          new_capacity = 4;
+          new_capacity = 128;
      }
      while (c + this->count > new_capacity) {
           new_capacity *= 2;
