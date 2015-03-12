@@ -200,7 +200,7 @@ typedef unsigned int  (*json_array_count_fn ) (json_array_t *this);
  *
  * @return the value at the given index.
  */
-typedef json_value_t *(*json_array_get_fn   ) (json_array_t *this, int index);
+typedef json_value_t *(*json_array_get_fn   ) (json_array_t *this, unsigned int index);
 
 /**
  * Sets a `value` at the given `index`, maybe overwriting an existing
@@ -210,7 +210,7 @@ typedef json_value_t *(*json_array_get_fn   ) (json_array_t *this, int index);
  * @param[in] index the index of the value to put
  * @param[in] value the value to put
  */
-typedef void          (*json_array_set_fn   ) (json_array_t *this, int index, json_value_t *value);
+typedef void          (*json_array_set_fn   ) (json_array_t *this, unsigned int index, json_value_t *value);
 
 /**
  * Inserts a `value` at the given `index`, pushing the subsequent ones
@@ -220,7 +220,7 @@ typedef void          (*json_array_set_fn   ) (json_array_t *this, int index, js
  * @param[in] index the index of the value to insert
  * @param[in] value the value to insert
  */
-typedef void          (*json_array_ins_fn   ) (json_array_t *this, int index, json_value_t *value);
+typedef void          (*json_array_ins_fn   ) (json_array_t *this, unsigned int index, json_value_t *value);
 
 /**
  * Adds a value immediately after all the known ones (@ref
@@ -242,7 +242,7 @@ typedef void          (*json_array_add_fn   ) (json_array_t *this,            js
  * @param[in] this the target JSON array
  * @param[in] index the index of the value to put
  */
-typedef void          (*json_array_del_fn   ) (json_array_t *this, int index);
+typedef void          (*json_array_del_fn   ) (json_array_t *this, unsigned int index);
 
 /**
  * The JSON array public interface.

@@ -60,7 +60,7 @@ static unsigned int count(struct json_array_impl *this) {
      return this->count;
 }
 
-static json_value_t *get(struct json_array_impl *this, int index) {
+static json_value_t *get(struct json_array_impl *this, unsigned int index) {
      json_value_t *result = NULL;
      if (index >= 0 && index < this->count) {
           result = this->values[index];
@@ -68,7 +68,7 @@ static json_value_t *get(struct json_array_impl *this, int index) {
      return result;
 }
 
-static void set(struct json_array_impl *this, int index, json_value_t *value) {
+static void set(struct json_array_impl *this, unsigned int index, json_value_t *value) {
      if (index < this->count) {
           this->values[index] = value;
      }
@@ -81,7 +81,7 @@ static void set(struct json_array_impl *this, int index, json_value_t *value) {
      }
 }
 
-static void ins(struct json_array_impl *this, int index, json_value_t *value) {
+static void ins(struct json_array_impl *this, unsigned int index, json_value_t *value) {
      if (index >= this->count) {
           set(this, index, value);
      }
@@ -102,7 +102,7 @@ static void add(struct json_array_impl *this, json_value_t *value) {
      set(this, this->count, value);
 }
 
-static void del(struct json_array_impl *this, int index) {
+static void del(struct json_array_impl *this, unsigned int index) {
      if (index >= 0 && index < this->count) {
           memmove(this->values + index, this->values + index + 1, this->count - index - 1);
           this->count--;

@@ -243,6 +243,7 @@ __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_f
           error(context, "Trailing characters", 0);
      }
      memory.free(_context.utf8_buffer);
+     memory.free(_context.stream);
      return result;
 }
 
@@ -252,6 +253,7 @@ __PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_f
 
 static json_value_t *parse_value(json_parse_context_t *context) {
      json_value_t *result = NULL;
+
      skip_blanks(context);
      switch(item(context)) {
      case '{':
@@ -291,6 +293,7 @@ static json_value_t *parse_value(json_parse_context_t *context) {
      default:
           error(context, "Invalid character '%c' (%d)", item(context), item(context));
      }
+
      return result;
 }
 
@@ -300,6 +303,7 @@ static json_object_t *parse_object(json_parse_context_t *context) {
      json_value_t  *value;
 
      int done = 0, err = 0;
+
      next(context);
      while (!done && !err) {
           skip_blanks(context);
@@ -351,6 +355,7 @@ static json_object_t *parse_object(json_parse_context_t *context) {
                }
           }
      }
+
      return result;
 }
 
@@ -359,6 +364,7 @@ static json_array_t *parse_array(json_parse_context_t *context) {
      json_value_t  *value;
 
      int done = 0, err = 0;
+
      next(context);
      while (!done && !err) {
           skip_blanks(context);
@@ -388,6 +394,7 @@ static json_array_t *parse_array(json_parse_context_t *context) {
                }
           }
      }
+
      return result;
 }
 
@@ -404,6 +411,7 @@ static json_number_t *parse_number(json_parse_context_t *context) {
      json_number_t * result = NULL;
      int state, dx=0, x=0, n=1, nx=1;
      unsigned int i=0, d=0;
+
      if (item(context) == '-') {
           n = -1;
           next(context);
@@ -568,6 +576,7 @@ static json_number_t *parse_number(json_parse_context_t *context) {
           result = json_new_number(context->memory);
           result->set(result, n, i, d, dx, nx*x);
      }
+
      return result;
 }
 
@@ -676,6 +685,7 @@ static json_string_t *parse_string(json_parse_context_t *context) {
           result->free(result);
           result = NULL;
      }
+
      return result;
 }
 
