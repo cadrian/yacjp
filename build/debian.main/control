@@ -19,16 +19,20 @@ Description: Yet Another C-JSON Parser
  structure.
  Also provides an all-purpose hash table, utf-8 input/output streams,
  and utf-16/32 to utf-8 input streams.
+ .
+ The development files.
 
-#Package: libyacjp-dbg
-#Section: debug
-#Architecture: any
-#Depends: libyacjp0 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, libcad-dbg (>> 0.0.2)
-#Description: Yet Another C-JSON Parser
-# A JSON parser and pretty printer written in C, with a modular
-# structure.
-# Also provides an all-purpose hash table, utf-8 input/output streams,
-# and utf-16/32 to utf-8 input streams.
+Package: libyacjp0-dbg
+Section: debug
+Architecture: any
+Depends: libyacjp0 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, libcad0-dbg (>> 0.0.2)
+Description: Yet Another C-JSON Parser
+ A JSON parser and pretty printer written in C, with a modular
+ structure.
+ Also provides an all-purpose hash table, utf-8 input/output streams,
+ and utf-16/32 to utf-8 input streams.
+ .
+ The debugging symbols.
 
 Package: libyacjp0
 Section: libs
@@ -39,6 +43,8 @@ Description: Yet Another C-JSON Parser
  structure.
  Also provides an all-purpose hash table, utf-8 input/output streams,
  and utf-16/32 to utf-8 input streams.
+ .
+ The main library.
 
 Package: libyacjp-doc
 Section: doc
@@ -50,3 +56,5 @@ Description: Yet Another C-JSON Parser
  structure.
  Also provides an all-purpose hash table, utf-8 input/output streams,
  and utf-16/32 to utf-8 input streams.
+ .
+ The documentation.
