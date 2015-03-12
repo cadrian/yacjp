@@ -97,7 +97,6 @@ static void write_array(json_writer_t *this, json_array_t  *visited) {
           newline_and_indent(this);
           v->accept(v, (json_visitor_t*)this);
      }
-     visited->free(visited);
      this->depth--;
      newline_and_indent(this);
      this->stream->put(this->stream, "]");
