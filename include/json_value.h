@@ -463,7 +463,7 @@ typedef int    (*json_number_is_int_fn   ) (json_number_t *this);
  *
  * @see json_number_is_int_fn
  */
-typedef int    (*json_number_to_int_fn   ) (json_number_t *this);
+typedef long   (*json_number_to_int_fn   ) (json_number_t *this);
 
 /**
  * Gets the number as a double.
@@ -484,7 +484,7 @@ typedef double (*json_number_to_double_fn) (json_number_t *this);
  * @param[in] decimal_exp the decimal exponent; the actual decimal part is `decimal * 10^-decimal_exp`
  * @param[in] exp the exponent
  */
-typedef void   (*json_number_set_fn      ) (json_number_t *this, int sign, unsigned int integral, unsigned int decimal, int decimal_exp, int exp);
+typedef void   (*json_number_set_fn      ) (json_number_t *this, int sign, unsigned long integral, unsigned long decimal, int decimal_exp, int exp);
 
 /**
  * Fills the string buffer with the exact representation of the JSON

@@ -31,8 +31,8 @@ struct json_number_impl {
      cad_memory_t memory;
 
      int sign;
-     unsigned int integral;
-     unsigned int decimal;
+     unsigned long integral;
+     unsigned long decimal;
      int decimal_exp;
      int exponent;
 };
@@ -45,9 +45,9 @@ static int is_int(struct json_number_impl *this) {
      return this->decimal_exp <= this->exponent;
 }
 
-static int to_int(struct json_number_impl *this) {
-     return this->sign * (int)this->integral * pow(10, this->exponent)
-          + this->sign * (int)this->decimal * pow(10, (this->exponent - this->decimal_exp));
+static long to_int(struct json_number_impl *this) {
+     return this->sign * (long)this->integral * pow(10, this->exponent)
+          + this->sign * (long)this->decimal * pow(10, (this->exponent - this->decimal_exp));
 }
 
 static double to_double(struct json_number_impl *this) {
@@ -73,19 +73,19 @@ static int to_string(struct json_number_impl *this, char *buffer, size_t size) {
      }
      if (this->decimal_exp == 0) {
           if (this->exponent == 0) {
-               return snprintf(buffer, size, "%s%01d", sign, this->integral);
+               return snprintf(buffer, size, "%s%01lu", sign, this->integral);
           }
           else {
-               return snprintf(buffer, size, "%s%01de%+d", sign, this->integral, this->exponent);
+               return snprintf(buffer, size, "%s%01lue%+d", sign, this->integral, this->exponent);
           }
      }
      else {
-          int n = this->decimal_exp - snprintf("", 0, "%d", this->decimal);
+          int n = this->decimal_exp - snprintf("", 0, "%lu", this->decimal);
           if (this->exponent == 0) {
-               return snprintf(buffer, size, "%s%d.%0*d", sign, this->integral, n, this->decimal);
+               return snprintf(buffer, size, "%s%lu.%0*lu", sign, this->integral, n, this->decimal);
           }
           else {
-               return snprintf(buffer, size, "%s%d.%0*de%+d", sign, this->integral, n, this->decimal, this->exponent);
+               return snprintf(buffer, size, "%s%lu.%0*lue%+d", sign, this->integral, n, this->decimal, this->exponent);
           }
      }
 }
