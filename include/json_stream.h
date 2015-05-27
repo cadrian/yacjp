@@ -93,7 +93,7 @@ struct json_input_stream {
  *
  * @return a stream that reads bytes from the given string.
  */
-__PUBLIC__ json_input_stream_t *new_json_input_stream_from_string         (char *string, cad_memory_t memory);
+__PUBLIC__ json_input_stream_t *new_json_input_stream_from_string         (const char *string, cad_memory_t memory);
 
 /**
  * Creates a new JSON input stream that reads bytes from the given
