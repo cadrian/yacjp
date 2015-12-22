@@ -19,10 +19,10 @@
 #include "test.h"
 #include "json.h"
 
-static json_input_stream_t *stream;
-static json_output_stream_t *out;
+static cad_input_stream_t *stream;
+static cad_output_stream_t *out;
 
-static void on_error(json_input_stream_t *s, int line, int column, const char *format, ...) {
+static void on_error(cad_input_stream_t *s, int line, int column, const char *format, ...) {
      assert(0);
 }
 
@@ -33,10 +33,10 @@ int main() {
      json_visitor_t *writer;
      char *out_source;
 
-     stream = new_json_input_stream_from_string(source, stdlib_memory);
+     stream = new_cad_input_stream_from_string(source, stdlib_memory);
      value = json_parse(stream, on_error, stdlib_memory);
 
-     out = new_json_output_stream_from_string(&out_source, stdlib_memory);
+     out = new_cad_output_stream_from_string(&out_source, stdlib_memory);
      assert(NULL == out_source);
      writer = json_write_to(out, stdlib_memory, json_compact);
      value->accept(value, writer);

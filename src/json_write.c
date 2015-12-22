@@ -35,7 +35,7 @@ typedef struct json_writer {
      json_visitor_t fn;
      cad_memory_t memory;
 
-     json_output_stream_t *stream;
+     cad_output_stream_t *stream;
      short options;
      int depth;
      char *buffer;
@@ -204,7 +204,7 @@ static json_visitor_t fn = {
      (json_visit_const_fn )write_const ,
 };
 
-__PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, cad_memory_t memory, short options) {
+__PUBLIC__ json_visitor_t *json_write_to(cad_output_stream_t *stream, cad_memory_t memory, short options) {
      json_writer_t *result = (json_writer_t*)memory.malloc(sizeof(json_writer_t));
      result->fn       = fn;
      result->memory   = memory;

@@ -23,9 +23,9 @@
 #include "test.h"
 #include "json.h"
 
-static json_input_stream_t *stream;
+static cad_input_stream_t *stream;
 
-static void on_error(json_input_stream_t *s, int line, int column, const char *format, ...) {
+static void on_error(cad_input_stream_t *s, int line, int column, const char *format, ...) {
      char *a = 0;
      va_list args;
      assert(stream == s);
@@ -39,7 +39,7 @@ int main() {
      json_value_t *value;
      int fd = open("target/out/data/config.ini", O_RDONLY);
 
-     stream = new_json_input_stream_from_file_descriptor(fd, stdlib_memory);
+     stream = new_cad_input_stream_from_file_descriptor(fd, stdlib_memory);
      value = json_parse(stream, on_error, stdlib_memory);
      close(fd);
 

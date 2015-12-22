@@ -37,7 +37,7 @@
 
 /**
  * The user must provide a function of this type, to be called by the
- * JSON parser if an error is met while parsing a JSON stream.
+ * JSON parser if an error is met while parsing a stream.
  *
  * @param[in] stream the input stream that was parsed when the error occurred
  * @param[in] line the line number of the error
@@ -45,10 +45,10 @@
  * @param[in] format the format of the error message, printf()-compliant
  * @param[in] ... the arguments of the format
  */
-typedef void (*json_on_error_fn)(json_input_stream_t *stream, int line, int column, const char *format, ...);
+typedef void (*json_on_error_fn)(cad_input_stream_t *stream, int line, int column, const char *format, ...);
 
 /**
- * Parses a JSON stream.
+ * Parses a stream.
  *
  * @param[in] stream the stream that contains the JSON data to parse
  * @param[in] on_error the function to call if a parse error occurs
@@ -57,7 +57,7 @@ typedef void (*json_on_error_fn)(json_input_stream_t *stream, int line, int colu
  * @return the parsed JSON value, or NULL if an error occured (in the
  * latter case, the on_error function was also called).
  */
-__PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, cad_memory_t memory);
+__PUBLIC__ json_value_t *json_parse(cad_input_stream_t *stream, json_on_error_fn on_error, cad_memory_t memory);
 
 /**
  * @}
@@ -154,7 +154,7 @@ __PUBLIC__ extern short json_extend_spaces;
  * @return a visitor that is able to write a JSON value to the given
  * `stream`.
  */
-__PUBLIC__ json_visitor_t *json_write_to(json_output_stream_t *stream, cad_memory_t memory, short options);
+__PUBLIC__ json_visitor_t *json_write_to(cad_output_stream_t *stream, cad_memory_t memory, short options);
 
 /**
  * @}

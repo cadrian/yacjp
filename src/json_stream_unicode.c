@@ -15,7 +15,7 @@
 */
 
 /**
- * @ingroup json_utf8_stream
+ * @ingroup json_unicode_stream
  * @file
  *
  * This file contains the implementation of the JSON utf8 streams.
@@ -72,9 +72,9 @@ static void unicode_to_utf8(json_utf8_header_t *header, int *max_index, int unic
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 typedef struct json_utf8_input_stream {
-     json_input_stream_t fn;
+     cad_input_stream_t fn;
      cad_memory_t memory;
-     json_input_stream_t *nested;
+     cad_input_stream_t *nested;
      json_utf8_header_t header;
 } json_utf8_input_stream_t;
 
@@ -104,13 +104,13 @@ static int utf8_item(json_utf8_input_stream_t *this) {
      return result;
 }
 
-static json_input_stream_t utf8_fn = {
-     (json_input_stream_free_fn)utf8_free,
-     (json_input_stream_next_fn)utf8_next,
-     (json_input_stream_item_fn)utf8_item,
+static cad_input_stream_t utf8_fn = {
+     (cad_input_stream_free_fn)utf8_free,
+     (cad_input_stream_next_fn)utf8_next,
+     (cad_input_stream_item_fn)utf8_item,
 };
 
-static json_input_stream_t *new_utf8_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
+static cad_input_stream_t *new_utf8_stream(json_utf8_header_t header, cad_input_stream_t *raw, cad_memory_t memory) {
      json_utf8_input_stream_t *result = (json_utf8_input_stream_t*)memory.malloc(sizeof(json_utf8_input_stream_t));
      result->fn     = utf8_fn;
      result->memory = memory;
@@ -121,13 +121,13 @@ static json_input_stream_t *new_utf8_stream(json_utf8_header_t header, json_inpu
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-typedef int (*read_short_fn)(json_input_stream_t *);
+typedef int (*read_short_fn)(cad_input_stream_t *);
 
 typedef struct json_utf16_input_stream {
-     json_input_stream_t fn;
+     cad_input_stream_t fn;
      read_short_fn read_short;
      cad_memory_t memory;
-     json_input_stream_t *nested;
+     cad_input_stream_t *nested;
      json_utf8_header_t header;
      int max_index;
 } json_utf16_input_stream_t;
@@ -171,7 +171,7 @@ static int utf16_item(json_utf16_input_stream_t *this) {
      return result;
 }
 
-static int utf16le_read_short(json_input_stream_t *stream) {
+static int utf16le_read_short(cad_input_stream_t *stream) {
      int r, h, l;
 
      l = stream->item(stream);
@@ -197,7 +197,7 @@ static int utf16le_read_short(json_input_stream_t *stream) {
      return ((h << 8) | l) & 0xFFFF;
 }
 
-static int utf16be_read_short(json_input_stream_t *stream) {
+static int utf16be_read_short(cad_input_stream_t *stream) {
      int r, h, l;
 
      h = stream->item(stream);
@@ -223,13 +223,13 @@ static int utf16be_read_short(json_input_stream_t *stream) {
      return ((h << 8) | l) & 0xFFFF;
 }
 
-static json_input_stream_t utf16_fn = {
-     (json_input_stream_free_fn)utf16_free,
-     (json_input_stream_next_fn)utf16_next,
-     (json_input_stream_item_fn)utf16_item,
+static cad_input_stream_t utf16_fn = {
+     (cad_input_stream_free_fn)utf16_free,
+     (cad_input_stream_next_fn)utf16_next,
+     (cad_input_stream_item_fn)utf16_item,
 };
 
-static json_utf16_input_stream_t *new_utf16_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
+static json_utf16_input_stream_t *new_utf16_stream(json_utf8_header_t header, cad_input_stream_t *raw, cad_memory_t memory) {
      json_utf16_input_stream_t *result = (json_utf16_input_stream_t*)memory.malloc(sizeof(json_utf16_input_stream_t));
      result->fn     = utf16_fn;
      result->memory = memory;
@@ -238,7 +238,7 @@ static json_utf16_input_stream_t *new_utf16_stream(json_utf8_header_t header, js
      return result;
 }
 
-static json_input_stream_t *new_utf16be_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
+static cad_input_stream_t *new_utf16be_stream(json_utf8_header_t header, cad_input_stream_t *raw, cad_memory_t memory) {
      json_utf16_input_stream_t *result = new_utf16_stream(header, raw, memory);
      result->read_short = utf16be_read_short;
      result->header.byte_item[0] = result->header.byte_item[1];
@@ -247,7 +247,7 @@ static json_input_stream_t *new_utf16be_stream(json_utf8_header_t header, json_i
      return &(result->fn);
 }
 
-static json_input_stream_t *new_utf16le_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
+static cad_input_stream_t *new_utf16le_stream(json_utf8_header_t header, cad_input_stream_t *raw, cad_memory_t memory) {
      json_utf16_input_stream_t *result = new_utf16_stream(header, raw, memory);
      result->read_short = utf16le_read_short;
      result->header.byte_item[1] = result->header.byte_item[2];
@@ -257,13 +257,13 @@ static json_input_stream_t *new_utf16le_stream(json_utf8_header_t header, json_i
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-typedef int (*read_int_fn)(json_input_stream_t *);
+typedef int (*read_int_fn)(cad_input_stream_t *);
 
 typedef struct json_utf32_input_stream {
-     json_input_stream_t fn;
+     cad_input_stream_t fn;
      read_int_fn read_int;
      cad_memory_t memory;
-     json_input_stream_t *nested;
+     cad_input_stream_t *nested;
      json_utf8_header_t header;
      int max_index;
 } json_utf32_input_stream_t;
@@ -297,7 +297,7 @@ static int utf32_item(json_utf32_input_stream_t *this) {
      return result;
 }
 
-static int utf32le_read_int(json_input_stream_t *stream) {
+static int utf32le_read_int(cad_input_stream_t *stream) {
      int r, hh, h, l, ll;
 
      ll = stream->item(stream);
@@ -343,7 +343,7 @@ static int utf32le_read_int(json_input_stream_t *stream) {
      return ((hh << 24) | (h << 16) | (l << 8) | (ll));
 }
 
-static int utf32be_read_int(json_input_stream_t *stream) {
+static int utf32be_read_int(cad_input_stream_t *stream) {
      int r, hh, h, l, ll;
 
      hh = stream->item(stream);
@@ -388,13 +388,13 @@ static int utf32be_read_int(json_input_stream_t *stream) {
      return ((hh << 24) | (h << 16) | (l << 8) | (ll));
 }
 
-static json_input_stream_t utf32_fn = {
-     (json_input_stream_free_fn)utf32_free,
-     (json_input_stream_next_fn)utf32_next,
-     (json_input_stream_item_fn)utf32_item,
+static cad_input_stream_t utf32_fn = {
+     (cad_input_stream_free_fn)utf32_free,
+     (cad_input_stream_next_fn)utf32_next,
+     (cad_input_stream_item_fn)utf32_item,
 };
 
-static json_utf32_input_stream_t *new_utf32_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
+static json_utf32_input_stream_t *new_utf32_stream(json_utf8_header_t header, cad_input_stream_t *raw, cad_memory_t memory) {
      json_utf32_input_stream_t *result = (json_utf32_input_stream_t*)memory.malloc(sizeof(json_utf32_input_stream_t));
      result->fn     = utf32_fn;
      result->memory = memory;
@@ -403,7 +403,7 @@ static json_utf32_input_stream_t *new_utf32_stream(json_utf8_header_t header, js
      return result;
 }
 
-static json_input_stream_t *new_utf32be_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
+static cad_input_stream_t *new_utf32be_stream(json_utf8_header_t header, cad_input_stream_t *raw, cad_memory_t memory) {
      json_utf32_input_stream_t *result = new_utf32_stream(header, raw, memory);
      result->read_int = utf32be_read_int;
      result->header.byte_item[0] = result->header.byte_item[3];
@@ -411,7 +411,7 @@ static json_input_stream_t *new_utf32be_stream(json_utf8_header_t header, json_i
      return &(result->fn);
 }
 
-static json_input_stream_t *new_utf32le_stream(json_utf8_header_t header, json_input_stream_t *raw, cad_memory_t memory) {
+static cad_input_stream_t *new_utf32le_stream(json_utf8_header_t header, cad_input_stream_t *raw, cad_memory_t memory) {
      json_utf32_input_stream_t *result = new_utf32_stream(header, raw, memory);
      result->read_int = utf32le_read_int;
      result->max_index = 0;
@@ -420,7 +420,7 @@ static json_input_stream_t *new_utf32le_stream(json_utf8_header_t header, json_i
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-static json_utf8_header_t read_header(json_input_stream_t *stream) {
+static json_utf8_header_t read_header(cad_input_stream_t *stream) {
      json_utf8_header_t result;
 
      int i;
@@ -441,8 +441,8 @@ static json_utf8_header_t read_header(json_input_stream_t *stream) {
      return result;
 }
 
-__PUBLIC__ json_input_stream_t *new_json_utf8_stream(json_input_stream_t *raw, cad_memory_t memory) {
-     json_input_stream_t *result;
+__PUBLIC__ cad_input_stream_t *new_json_utf8_stream(cad_input_stream_t *raw, cad_memory_t memory) {
+     cad_input_stream_t *result;
      json_utf8_header_t header = read_header(raw);
      if (header.byte_item[0] == 0) {
           if (header.byte_item[1] == 0) {

@@ -17,9 +17,9 @@
 #include "test.h"
 #include "json.h"
 
-static json_input_stream_t *stream;
+static cad_input_stream_t *stream;
 
-static void on_error(json_input_stream_t *s, int line, int column, const char *format, ...) {
+static void on_error(cad_input_stream_t *s, int line, int column, const char *format, ...) {
      assert(0);
 }
 
@@ -29,7 +29,7 @@ int main() {
      json_value_t *value;
      json_object_t *root;
      json_number_t *zero_dot_four, *negative_zero_dot_four;
-     stream = new_json_input_stream_from_string(source, stdlib_memory);
+     stream = new_cad_input_stream_from_string(source, stdlib_memory);
      value = json_parse(stream, on_error, stdlib_memory);
 
      root = (json_object_t*)value;

@@ -73,32 +73,9 @@ along with YacJP.  If not, see http://www.gnu.org/licenses/
 Copyleft © 2012--2015 Cyril ADRIAN
 
 
-\defgroup json_stream Byte streams
-
-The library proposes several implementations of input and output
-streams.
-
-\{
-\defgroup json_in_stream Input streams
-
-Input streams act as byte cursors: their state is the current byte,
-change it by reading yet another byte.
-\{
-\}
-
-\defgroup json_out_stream Output streams
-
-Output streams act as byte buckets: fill them and flush them.
-\{
-\}
-
 \defgroup json_unicode_stream Output streams
 
 Specific unicode input streams that provide utf8 data.
-\{
-\}
-
-\}
 
 
 \defgroup json_value JSON values
@@ -135,13 +112,12 @@ such pointer for each known JSON constant: `false`, `true`, and
 
 \}
 
-\defgroup json_parse Parsing from a JSON stream
+\defgroup json_parse Parsing from a stream
 
 The library provides a function that drives the JSON parsing, while
 using callbacks for both memory management and error management.
 
-The parsing function uses the \ref json_stream "JSON input streams" as
-byte providers.
+The parsing function uses the "input streams" as byte providers.
 
 The JSON parser has two not normed extensions:
 
@@ -153,8 +129,8 @@ The JSON parser has two not normed extensions:
 
 \defgroup json_write Writing to an output stream
 
-Writing to a \ref json_stream "JSON output stream" is only a matter of
-using a writer object.
+Writing to a "output stream" is only a matter of using a writer
+object.
 
 
 \defgroup json_utils Tools

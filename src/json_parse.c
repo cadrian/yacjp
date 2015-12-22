@@ -26,7 +26,7 @@
 
 #include "json.h"
 
-static void default_on_error(json_input_stream_t *stream, int line, int column, const char *format, ...) {
+static void default_on_error(cad_input_stream_t *stream, int line, int column, const char *format, ...) {
      va_list args;
      va_start(args, format);
      fprintf(stderr, "**** Syntax error line %d, column %d: ", line, column);
@@ -45,8 +45,8 @@ struct json_parse_context {
      cad_memory_t memory;
 
      // the input stream
-     json_input_stream_t *raw_stream;
-     json_input_stream_t *stream;
+     cad_input_stream_t *raw_stream;
+     cad_input_stream_t *stream;
 
      // parser info
      int line;
@@ -224,7 +224,7 @@ static char *utf8(json_parse_context_t *context, json_string_t *string) {
 /* The parser public function                                             */
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-__PUBLIC__ json_value_t *json_parse(json_input_stream_t *stream, json_on_error_fn on_error, cad_memory_t memory) {
+__PUBLIC__ json_value_t *json_parse(cad_input_stream_t *stream, json_on_error_fn on_error, cad_memory_t memory) {
      json_parse_context_t _context = {
           .on_error      = on_error ? on_error : &default_on_error,
           .raw_stream    = stream,

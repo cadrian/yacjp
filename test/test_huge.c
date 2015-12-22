@@ -48,7 +48,7 @@ static void fill_object(json_object_t *object, unsigned int depth) {
 
 int main() {
      json_object_t *object = json_new_object(stdlib_memory);
-     json_output_stream_t *out = new_json_output_stream_from_file(stdout, stdlib_memory);
+     cad_output_stream_t *out = new_cad_output_stream_from_file(stdout, stdlib_memory);
      fill_object(object, 1000);
 
      object->accept(object, json_write_to(out, stdlib_memory, json_extend_spaces));
