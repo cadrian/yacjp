@@ -14,7 +14,8 @@ some flaws in the better known _cJSON_ library:
  * a one-size-fits-all structure, with fields for all types of JSON
    values (mixed fields include next/previous links, children,
    strings, and numbers)
- * no way to _output_ JSON
+ * arrays and objects are implemented using linked objects, may
+   cause performance problems
 
 To fix those flaws, YacJP provides the following features:
 
