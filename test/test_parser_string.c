@@ -19,7 +19,7 @@
 
 static cad_input_stream_t *stream;
 
-static void on_error(cad_input_stream_t *s, int line, int column, const char *format, ...) {
+static void on_error(cad_input_stream_t *s, int line, int column, void *data, const char *format, ...) {
      assert(0);
 }
 
@@ -30,7 +30,7 @@ int main() {
      json_object_t *root;
      json_number_t *zero_dot_four, *negative_zero_dot_four;
      stream = new_cad_input_stream_from_string(source, stdlib_memory);
-     value = json_parse(stream, on_error, stdlib_memory);
+     value = json_parse(stream, on_error, NULL, stdlib_memory);
 
      root = (json_object_t*)value;
      zero_dot_four = (json_number_t*)(root->get(root, "zero_dot_four"));

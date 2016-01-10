@@ -19,7 +19,7 @@
 
 static cad_input_stream_t *stream;
 
-static void on_error(cad_input_stream_t *s, int line, int column, const char *format, ...) {
+static void on_error(cad_input_stream_t *s, int line, int column, void *data, const char *format, ...) {
      assert(0);
 }
 
@@ -28,7 +28,7 @@ static char *source = "{\n\"key\":[1, 2, ],\n\"foo\": \"data\",\n\"bar\": {\"a\"
 int main() {
      json_value_t *value;
      stream = new_cad_input_stream_from_string(source, stdlib_memory);
-     value = json_parse(stream, on_error, stdlib_memory);
+     value = json_parse(stream, on_error, NULL, stdlib_memory);
 
      assert(value != NULL);
 

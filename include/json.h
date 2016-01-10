@@ -42,22 +42,24 @@
  * @param[in] stream the input stream that was parsed when the error occurred
  * @param[in] line the line number of the error
  * @param[in] column the column number of the error
+ * @param[in] data error data payload, see @ref json_parse
  * @param[in] format the format of the error message, printf()-compliant
  * @param[in] ... the arguments of the format
  */
-typedef void (*json_on_error_fn)(cad_input_stream_t *stream, int line, int column, const char *format, ...);
+typedef void (*json_on_error_fn)(cad_input_stream_t *stream, int line, int column, void *data, const char *format, ...);
 
 /**
  * Parses a stream.
  *
  * @param[in] stream the stream that contains the JSON data to parse
  * @param[in] on_error the function to call if a parse error occurs
+ * @param[in] error_data error data payload
  * @param[in] memory the memory manager that will allocate memory for the parsed JSON objects
  *
  * @return the parsed JSON value, or NULL if an error occured (in the
  * latter case, the on_error function was also called).
  */
-__PUBLIC__ json_value_t *json_parse(cad_input_stream_t *stream, json_on_error_fn on_error, cad_memory_t memory);
+__PUBLIC__ json_value_t *json_parse(cad_input_stream_t *stream, json_on_error_fn on_error, void *error_data, cad_memory_t memory);
 
 /**
  * @}

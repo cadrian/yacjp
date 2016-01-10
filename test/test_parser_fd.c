@@ -25,7 +25,7 @@
 
 static cad_input_stream_t *stream;
 
-static void on_error(cad_input_stream_t *s, int line, int column, const char *format, ...) {
+static void on_error(cad_input_stream_t *s, int line, int column, void *data, const char *format, ...) {
      char *a = 0;
      va_list args;
      assert(stream == s);
@@ -40,7 +40,7 @@ int main() {
      int fd = open("target/out/data/config.ini", O_RDONLY);
 
      stream = new_cad_input_stream_from_file_descriptor(fd, stdlib_memory);
-     value = json_parse(stream, on_error, stdlib_memory);
+     value = json_parse(stream, on_error, NULL, stdlib_memory);
      close(fd);
 
      assert(value != NULL);

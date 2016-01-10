@@ -22,7 +22,7 @@
 static cad_input_stream_t *stream;
 static cad_output_stream_t *out;
 
-static void on_error(cad_input_stream_t *s, int line, int column, const char *format, ...) {
+static void on_error(cad_input_stream_t *s, int line, int column, void *data, const char *format, ...) {
      assert(0);
 }
 
@@ -36,7 +36,7 @@ int main() {
      assert(file != NULL);
 
      stream = new_cad_input_stream_from_file(file, stdlib_memory);
-     value = json_parse(stream, on_error, stdlib_memory);
+     value = json_parse(stream, on_error, NULL, stdlib_memory);
      fclose(file);
 
      out = new_cad_output_stream_from_string(&out_source, stdlib_memory);
