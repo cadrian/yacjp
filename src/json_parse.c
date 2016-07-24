@@ -199,6 +199,7 @@ static int skip_word(json_parse_context_t *context, const char *word) {
      while (result && *word) {
           result = *word == item(context);
           next(context);
+          word++;
      }
      return result;
 }
