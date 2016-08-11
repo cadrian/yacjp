@@ -27,6 +27,8 @@ static void on_error(cad_input_stream_t *s, int line, int column, void *data, co
 }
 
 int main() {
+     set_hash_salt(no_salt);
+
      json_value_t *value;
      json_visitor_t *writer;
      char *out_source;

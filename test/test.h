@@ -14,8 +14,13 @@
   along with YacJP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cad_hash.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+static __attribute__((unused)) int no_salt(void) {
+     return 0;
+}
 
 static void assert_(int test, const char *message, int line, const char *file) {
      int *a = 0;

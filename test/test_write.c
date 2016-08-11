@@ -29,6 +29,8 @@ static void on_error(cad_input_stream_t *s, int line, int column, void *data, co
 static char *source = "{\"foo\":\"data\",\"key\":[1,2],\"bat\":{\"a\":1.4e+9}}";
 
 int main() {
+     set_hash_salt(no_salt);
+
      json_value_t *value;
      json_visitor_t *writer;
      char *out_source;

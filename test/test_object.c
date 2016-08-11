@@ -20,6 +20,8 @@
 #include "json.h"
 
 int main() {
+     set_hash_salt(no_salt);
+
      json_object_t *value = json_new_object(stdlib_memory);
      json_value_t *v;
      json_value_t *t = (json_value_t*)json_const(json_true);
