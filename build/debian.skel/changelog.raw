@@ -1,4 +1,4 @@
-libyacjp (0.0.4#SNAPSHOT#) unstable; urgency=low
+libyacjp (0.0.4) unstable; urgency=low
 
   * #7 - decimal value not parseable
   * debian native format
